@@ -132,3 +132,14 @@ Awaiting UI Shell phase and Screenshot Gate.
 - Wired `Say Bye` to `onEnter`, including the fullscreen/Homescreen transition through `src/App.jsx`.
 - Added accessible `:focus-visible` styling for the splash button in `src/index.css`.
 - Updated `PROJECT_CONSTITUTION.md` to lock this entrance interaction as the `Say Bye` pill decision.
+
+## 2026-11-21 13:49:09 UTC — Phase 4 and 5 Gallery & Supabase Wiring
+- Created `src/hooks/useMemorialData.js` to load profile, timeline, relationships, schedule, awareness profiles, and approved guestbook memories from Supabase with warm fallback data.
+- Built the Story timeline with live timeline events, relationships, Polaroid milestones, era pills, staggered Framer Motion, and readable body copy.
+- Built Her Legacy with QuoteCard reflections, three palette values, approved tributes, and native share/clipboard fallback behavior.
+- Built The Gathering with live schedule cards, date and venue information, directions links, attendance validation, loading/error/success states, Supabase RSVP insertion, and local fallback storage.
+- Built Her Home with an expandable guestbook form, required-name and memory validation, 5000-character limit, Supabase pending-approval insertion, instant local tribute display, and approved QuoteCard feed.
+- All primary controls preserve 44px minimum touch areas and body copy remains readable at 15–16px.
+
+### Current Phase
+Phase 5 complete — real memorial content, visual asset approval, and live hosted Supabase credentials remain the final data-quality gate before production launch.
