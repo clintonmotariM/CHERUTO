@@ -139,7 +139,7 @@ export default function StoryPage() {
         transition={{ duration: 0.32, ease: 'easeOut' }}
         style={{ width: '100%', overflow: 'hidden', background: 'var(--white)', borderRadius: '18px', padding: '12px', boxShadow: '0 10px 28px rgba(93, 64, 55, 0.12)', position: 'relative' }}
       >
-        <div style={{ width: '100%', height: '256px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: photo.fallbackGradient }}>
+        <div style={{ width: '100%', height: '285px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: photo.fallbackGradient }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={`${item.id}-${photoIndex}`}
@@ -171,6 +171,11 @@ export default function StoryPage() {
   )
 
   return (
+    <>
+      <style>{`
+        .story-card:focus { outline: none; }
+        .story-card:focus-visible { outline: 3px solid var(--accent-green); outline-offset: 3px; }
+      `}</style>
     <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} style={{ paddingTop: 'max(14px, calc(var(--safe-top) + 10px))', paddingBottom: '24px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <header style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px auto', padding: '4px 22px', borderRadius: '999px', backgroundColor: 'var(--white)', border: '1px solid rgba(93,64,55,.10)', boxShadow: '0 6px 20px rgba(93,64,55,.08)' }}>
         <h2 style={{ margin: 0, fontFamily: 'var(--font-script)', fontSize: 'clamp(1.6rem, 5vw, 1.9rem)', lineHeight: 1, color: 'var(--text-brown)', whiteSpace: 'nowrap' }}>Her Story</h2>
@@ -183,7 +188,7 @@ export default function StoryPage() {
           const isExpanded = expandedId === chapter.id
           const polaroidLeft = index % 2 === 0
           return (
-            <motion.article layout key={chapter.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(chapter.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(chapter.id) } }} style={{ width: '100%', minHeight: '44px', cursor: 'pointer' }}>
+            <motion.article className="story-card" layout key={chapter.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(chapter.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(chapter.id) } }} style={{ width: '100%', minHeight: '44px', cursor: 'pointer' }}>
               {isExpanded ? <AnimatePresence initial={false}>{expandedCard(chapter)}</AnimatePresence> : (
                 <div style={{ display: 'grid', gridTemplateColumns: polaroidLeft ? '66px 1fr' : '1fr 66px', alignItems: 'center', gap: '8px', textAlign: polaroidLeft ? 'left' : 'right', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
                   {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{chapter.image_url ? <img src={chapter.image_url} alt={chapter.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}</PolaroidFrame>}
@@ -207,7 +212,7 @@ export default function StoryPage() {
             const polaroidLeft = (sectionIndex * 2 + cardIndex) % 2 === 0
             const badgeColor = sectionIndex === 0 ? 'var(--accent-purple)' : sectionIndex === 1 ? 'var(--btn-pink)' : 'var(--accent-green)'
             return (
-              <motion.article layout key={relationship.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(relationship.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(relationship.id) } }} style={{ width: '100%', minHeight: '44px', cursor: 'pointer' }}>
+              <motion.article className="story-card" layout key={relationship.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(relationship.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(relationship.id) } }} style={{ width: '100%', minHeight: '44px', cursor: 'pointer' }}>
                 {isExpanded ? <AnimatePresence initial={false}>{expandedCard(relationship)}</AnimatePresence> : (
                   <div style={{ display: 'grid', gridTemplateColumns: polaroidLeft ? '66px 1fr' : '1fr 66px', alignItems: 'center', gap: '8px', textAlign: polaroidLeft ? 'left' : 'right', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
                     {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{relationship.photos[0].src ? <img src={relationship.photos[0].src} alt={relationship.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}</PolaroidFrame>}
@@ -224,5 +229,6 @@ export default function StoryPage() {
         </div>
       ))}
     </motion.section>
+    </>
   )
 }
