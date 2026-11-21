@@ -71,5 +71,12 @@ A screenshot is required from the human before proceeding to UI styling.
 - Updated `src/styles/common.css` to use `var(--font-sans)` for the body.
 - Verified `BottomNav.jsx` uses the five Lucide-backed tabs and 44px minimum touch targets.
 
+## 2026-11-21 08:48:51 UTC — Local PWA Deployment
+- Created the project package manifest and added React, React DOM, and Vite runtime scripts.
+- Added `dev`, `build`, and `preview` npm scripts.
+- Successfully ran the production build with Vite.
+- Local preview deployed at `http://localhost:4173/`.
+- Network preview deployed at `http://192.168.1.119:4173/` for testing on another device.
+
 ### Current Phase
 Awaiting UI Shell phase and Screenshot Gate.
