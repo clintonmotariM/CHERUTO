@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Navigation from './components/layout/Navigation'
 import ExitButton from './components/ui/ExitButton'
 import Button from './components/ui/Button'
-import SplashScreen from './components/SplashScreen'
+import BottomNav from './components/layout/BottomNav'
 import useImmersiveMode from './hooks/useImmersiveMode'
 
 const sections = {
@@ -36,18 +36,48 @@ export default function App() {
   }
 
   if (!entered) {
-    return <SplashScreen onEnter={enterMemorial} />
+    return null
   }
 
   return (
-    <div className="app-shell edge-to-edge">
+    <div
+      style={{
+        minHeight: '100dvh',
+        backgroundColor: 'var(--bg-cream)',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}
+    >
       <ExitButton />
 
-      <main className="quiet-gallery safe-top" id="main-content">
-        <header className="gallery-header">
-          <p className="gallery-eyebrow">{section.eyebrow}</p>
-          <h1>{section.title}</h1>
-        </header>
+      <main
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          width: '100%',
+          maxWidth: '600px',
+          margin: '0 auto',
+          padding: '24px',
+          paddingBottom: '120px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          textAlign: 'center',
+        }}
+      >
+        <h1
+          style={{
+            fontFamily: 'var(--font-script)',
+            fontSize: '3rem',
+            marginTop: '40px',
+          }}
+        >
+          Cherono
+        </h1>
+        <p style={{ marginTop: '16px', color: 'var(--text-brown)' }}>
+          A lively celebration of life.
+        </p>
 
         <section className="gallery-section" aria-live="polite">
           <p>Content will appear here.</p>
@@ -55,7 +85,7 @@ export default function App() {
         </section>
       </main>
 
-      <Navigation activeItem={activeItem} onNavigate={setActiveItem} />
+      <BottomNav />
     </div>
   )
 }

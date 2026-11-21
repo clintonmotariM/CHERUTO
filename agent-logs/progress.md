@@ -78,5 +78,14 @@ A screenshot is required from the human before proceeding to UI styling.
 - Local preview deployed at `http://localhost:4173/`.
 - Network preview deployed at `http://192.168.1.119:4173/` for testing on another device.
 
+## 2026-11-21 08:56:50 UTC — Centered PWA Layout Architecture
+- Replaced the legacy app shell with the fixed 100dvh cream canvas and isolated scrollable main area.
+- Centered the 600px content column horizontally and added bottom clearance for the navigation pill.
+- Rebuilt `src/components/layout/BottomNav.jsx` as a centered, fixed, elevated 500px maximum-width pill.
+- Added the five tabs with Lucide icons and pink active-state transitions.
+- Verified the app with `npm run build`; the production bundle completes successfully.
+- Rebuilt preview is available at `http://localhost:4174/` while the earlier preview occupies port 4173.
+- Awaiting Screenshot Gate for centered `Cherono` script text and floating navigation proof.
+
 ### Current Phase
 Awaiting UI Shell phase and Screenshot Gate.
