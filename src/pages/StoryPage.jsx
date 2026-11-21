@@ -32,10 +32,26 @@ const chapterDefaults = [
 ]
 
 const relationshipDefaults = {
-  Family: [{ id: 'family-fallback', name: 'Family', relationship_type: 'Cheruto was deeply rooted in the love, strength, and stories shared by family.', fullStory: 'Within her family, Cheruto gave and received a lasting kind of love: patient, playful, honest, and enduring. Her place in the family story remains a source of comfort and courage.', photos: [{ src: '', caption: 'Family', fallbackGradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' }] }],
-  Friends: [{ id: 'friends-fallback', name: 'Friends', relationship_type: 'Cheru made space for joy, laughter, honest conversation, and lifelong friendship.', fullStory: 'Cheru’s friendships were generous and real. She celebrated milestones, listened closely, shared laughter, and made every friend feel as though they belonged.', photos: [{ src: '', caption: 'Friends', fallbackGradient: 'linear-gradient(145deg, var(--btn-pink), #F5B7A7)' }] }],
-  Community: [{ id: 'community-fallback', name: 'Community', relationship_type: 'Her warmth reached beyond close circles and touched everyone she met.', fullStory: 'Cheruto’s kindness extended outward through the community. Her example continues to remind us that a caring word, an open hand, and an inclusive heart can leave a lasting legacy.', photos: [{ src: '', caption: 'Community', fallbackGradient: 'linear-gradient(145deg, var(--accent-green), var(--accent-purple))' }] }],
+  Family: [{
+    id: 'family-fallback', name: 'Family', badge: 'Kin', title: 'Loved and Supported',
+    relationship_type: 'Deeply rooted in family love, strength, and shared stories.',
+    fullStory: 'Within her family, Cheruto gave and received a lasting kind of love: patient, playful, honest, and enduring. Her place in the family story remains a source of comfort and courage.',
+    photos: [{ src: '', caption: 'Family', fallbackGradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' }],
+  }],
+  Friends: [{
+    id: 'friends-fallback', name: 'Friends', badge: 'Circle', title: 'Shared in Joy',
+    relationship_type: 'Honest conversation, laughter, and lifelong friendship.',
+    fullStory: 'Cheru’s friendships were generous and real. She celebrated milestones, listened closely, shared laughter, and made every friend feel as though they belonged.',
+    photos: [{ src: '', caption: 'Friends', fallbackGradient: 'linear-gradient(145deg, var(--btn-pink), #F5B7A7)' }],
+  }],
+  Community: [{
+    id: 'community-fallback', name: 'Community', badge: 'Impact', title: 'Touched Many Lives',
+    relationship_type: 'Warmth that reached beyond close circles to everyone she met.',
+    fullStory: 'Cheruto’s kindness extended outward through the community. Her example continues to remind us that a caring word, an open hand, and an inclusive heart can leave a lasting legacy.',
+    photos: [{ src: '', caption: 'Community', fallbackGradient: 'linear-gradient(145deg, var(--accent-green), var(--accent-purple))' }],
+  }],
 }
+
 
 export default function StoryPage() {
   const [expandedId, setExpandedId] = useState(null)
@@ -65,22 +81,17 @@ export default function StoryPage() {
       return name.includes('community')
     })
 
+    const fallback = relationshipDefaults[sectionName][0]
+
     return {
       name: sectionName,
-      cards: nameMatches.length ? nameMatches.map((relationship, index) => {
-        const fallback = relationshipDefaults[sectionName][0]
-        return {
-          ...fallback,
-          ...relationship,
-          id: relationship.id || `${sectionName.toLowerCase()}-${index}`,
-          fullStory: relationship.relationship_type
-            ? `${relationship.relationship_type} Cheruto’s place in this circle remains a treasured part of Cheru’s living legacy.`
-            : fallback.fullStory,
-          photos: relationship.image_url
-            ? [{ src: relationship.image_url, caption: relationship.name, fallbackGradient: fallback.photos[0].fallbackGradient }]
-            : fallback.photos,
-        }
-      }) : relationshipDefaults[sectionName],
+      cards: [{
+        ...fallback,
+        id: `${sectionName.toLowerCase()}-unified-card`,
+        photos: nameMatches[0]?.image_url
+          ? [{ src: nameMatches[0].image_url, caption: fallback.title, fallbackGradient: fallback.photos[0].fallbackGradient }]
+          : fallback.photos,
+      }],
     }
   })
 
@@ -204,22 +215,38 @@ export default function StoryPage() {
         })}
       </div>
 
-      {relationshipSections.map((section) => (
+      {relationshipSections.map((section, sectionIndex) => (
         <div key={section.name} style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
           <h3 style={sectionHeaderStyle}>{section.name}</h3>
           {section.cards.map((relationship) => {
             const isExpanded = expandedId === relationship.id
+            const polaroidLeft = sectionIndex !== 1
             return (
               <motion.article layout key={relationship.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(relationship.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(relationship.id) } }} style={{ width: '100%', minHeight: '44px', cursor: 'pointer' }}>
                 {isExpanded ? (
                   <AnimatePresence initial={false}>{expandedCard(relationship)}</AnimatePresence>
                 ) : (
-                  <div style={{ width: '100%', borderRadius: '16px', padding: '12px 16px', background: 'var(--white)', boxShadow: '0 6px 18px rgba(93,64,55,.07)', textAlign: 'left' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                      <strong style={{ color: 'var(--accent-purple)', fontSize: '15px' }}>{relationship.name}</strong>
-                      <ChevronDown size={16} aria-hidden="true" />
+                  <div style={{ display: 'grid', gridTemplateColumns: polaroidLeft ? '72px 1fr' : '1fr 72px', alignItems: 'center', gap: '8px', textAlign: polaroidLeft ? 'left' : 'right', background: 'var(--white)', borderRadius: '16px', padding: '12px 14px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
+                    {polaroidLeft && (
+                      <PolaroidFrame style={{ width: '72px', height: '82px', padding: '6px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>
+                        {relationship.photos[0].src ? <img src={relationship.photos[0].src} alt={relationship.name} style={{ width: '100%', height: '70px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '70px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}
+                      </PolaroidFrame>
+                    )}
+
+                    <div>
+                      <span style={{ display: 'inline-block', marginBottom: '4px', padding: '4px 8px', borderRadius: '999px', background: sectionIndex === 0 ? 'var(--accent-purple)' : sectionIndex === 1 ? 'var(--btn-pink)' : 'var(--accent-green)', color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>{relationship.badge}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: polaroidLeft ? 'flex-start' : 'flex-end', gap: '6px' }}>
+                        <h3 style={{ fontSize: '15px', margin: '0 0 2px', color: 'var(--text-brown)' }}>{relationship.title}</h3>
+                        <ChevronDown size={16} aria-hidden="true" />
+                      </div>
+                      <p style={{ fontSize: '14px', lineHeight: 1.4, color: 'var(--text-brown)', margin: 0 }}>{relationship.relationship_type}</p>
                     </div>
-                    <p style={{ fontSize: '14px', lineHeight: 1.4, color: 'var(--text-brown)', marginTop: '4px' }}>{relationship.relationship_type}</p>
+
+                    {!polaroidLeft && (
+                      <PolaroidFrame style={{ width: '72px', height: '82px', padding: '6px', borderRadius: '6px', transform: 'rotate(2deg)' }}>
+                        {relationship.photos[0].src ? <img src={relationship.photos[0].src} alt={relationship.name} style={{ width: '100%', height: '70px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '70px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}
+                      </PolaroidFrame>
+                    )}
                   </div>
                 )}
               </motion.article>
