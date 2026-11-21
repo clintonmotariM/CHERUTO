@@ -2,6 +2,8 @@ import { useState } from 'react'
 import Navigation from './components/layout/Navigation'
 import ExitButton from './components/ui/ExitButton'
 import Button from './components/ui/Button'
+import SplashScreen from './components/SplashScreen'
+import useImmersiveMode from './hooks/useImmersiveMode'
 
 const sections = {
   Home: {
@@ -23,11 +25,22 @@ const sections = {
 }
 
 export default function App() {
+  const [entered, setEntered] = useState(false)
   const [activeItem, setActiveItem] = useState('Home')
+  const { enterFullscreen } = useImmersiveMode(true)
   const section = sections[activeItem]
 
+  const enterMemorial = async () => {
+    await enterFullscreen()
+    setEntered(true)
+  }
+
+  if (!entered) {
+    return <SplashScreen onEnter={enterMemorial} />
+  }
+
   return (
-    <div className="app-shell">
+    <div className="app-shell edge-to-edge">
       <ExitButton />
 
       <main className="quiet-gallery safe-top" id="main-content">

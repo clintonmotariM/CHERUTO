@@ -16,7 +16,7 @@ export default function ExitButton({ onExit }) {
     <button
       type="button"
       className="exit-button"
-      aria-label="Exit memorial"
+      aria-label="Exit fullscreen memorial"
       title="Exit"
       onClick={handleExit}
     >

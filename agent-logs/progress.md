@@ -1,31 +1,29 @@
 # Agent Progress
 
 ## Session State
-Phase 2: System Inventory and lively palette implementation. Git initialization remains active.
+Phase 3: PWA fullscreen and immersive interaction integration.
 
 ## Decisions Locked
-- Locked mobile-first bottom navigation.
-- Locked Exit button positioning in the top-right safe area.
-- Locked Git main branch.
-- Locked public read access and moderated guestbook submissions in Supabase RLS.
-- Locked the initial commit as `feat: initialize mobile-first PWA shell, supabase schema, and agent logs`.
-- Locked `PROJECT_CONSTITUTION.md` as the absolute project law.
-- Locked Cherono's Lively Palette: cream `#FFF9F2`, brown `#5D4037`, pink `#FF4D85`, purple `#9D4EDD`, and green `#2ECC71`.
-- Locked the 44px exit button, 64px minimum bottom navigation, and pink primary button styles.
-- Locked public-read, moderated guestbook, and attendance submission RLS behavior.
+- Locked `display: fullscreen` in `public/manifest.json`.
+- Locked portrait PWA orientation and edge-to-edge safe-area support.
+- Locked first-gesture fullscreen activation through `touchstart` and `click`.
+- Locked the full-screen splash prompt: “Tap anywhere to enter the memorial.”
+- Locked design variables: cream `#FFF9F2`, brown `#5D4037`, pink `#FF4D85`, purple `#9D4EDD`, green `#2ECC71`, touch target `44px`, nav height `64px`, and base font `16px`.
+- Locked the top-right Exit control at `44x44px` with semi-transparent brown styling.
 
 ## Files Created/Modified
-- `PROJECT_CONSTITUTION.md` — defines the project's absolute mobile, palette, exit, and asset rules.
-- `supabase/migrations/20231024000000_create_tables.sql` — creates the memorial, timeline, relationship, guestbook, attendance, schedule, and awareness tables.
-- `supabase/migrations/20231024000001_enable_rls.sql` — enables RLS, defines public policies, and grants Data API role access.
-- `src/index.css` — applies the lively CSS variables, safe areas, viewport reset, pink buttons, and thumb-zone navigation styles.
-- `src/App.jsx` — updates the mobile shell copy and adds the reusable pink `Button` component.
-- `src/components/layout/Navigation.jsx` — creates the fixed four-item thumb-zone navigation.
-- `src/components/ui/Button.jsx` — creates the palette-compliant pink button with hover and active states.
-- `src/components/ui/ExitButton.jsx` — creates the safe-area-aware top-right exit control.
-- `src/lib/supabaseClient.js` — initializes the browser Supabase client.
-- `.gitignore` — excludes dependencies, environment secrets, macOS metadata, and build output.
-- `agent-logs/progress.md` — maintains session state and decisions.
+- `PROJECT_CONSTITUTION.md` — absolute fullscreen PWA and design-system law.
+- `public/manifest.json` — fullscreen portrait PWA manifest and palette metadata.
+- `public/sw.js` — cache-first offline service worker.
+- `index.html` — viewport, Apple PWA, status-bar, manifest, and entry markup.
+- `src/main.jsx` — React entry point and service-worker registration.
+- `src/hooks/useImmersiveMode.js` — first touch/click fullscreen activation.
+- `src/components/SplashScreen.jsx` — full-screen first-tap memorial prompt.
+- `src/App.jsx` — splash gate and immersive app shell.
+- `src/index.css` — exact variables, `100dvh`, safe areas, fullscreen splash, navigation, and Exit styles.
+- `src/components/ui/ExitButton.jsx` — safe-area top-right fullscreen exit control.
+- `src/lib/supabaseClient.js` — browser Supabase client remains available for app data.
+- `agent-logs/progress.md` — PWA implementation and decision tracking.
 
 ## Pending Screenshot Gate
 A screenshot is required from the human before proceeding to UI styling.

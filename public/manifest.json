@@ -1,0 +1,25 @@
+{
+  "name": "Cherono — Celebration of Life",
+  "short_name": "Cherono",
+  "description": "A lively memorial gallery celebrating Cherono's life.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#FFF9F2",
+  "theme_color": "#FF4D85",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
