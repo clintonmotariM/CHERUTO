@@ -19,7 +19,7 @@ body {
   font-size: var(--base-font);
   min-height: 100dvh;
   overscroll-behavior-y: none;
-  font-family: system-ui, sans-serif;
+  font-family: var(--font-sans);
 }
 
 .safe-top {

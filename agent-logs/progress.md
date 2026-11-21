@@ -63,5 +63,13 @@ A screenshot is required from the human before proceeding to UI styling.
 - Added active pink pill styling, white text, 20px icons, 10–11px labels, 44px minimum touch targets, and 0.3s transitions.
 - Positioned the pill 16px from each side and above the safe-bottom area at a 20px minimum.
 
+## 2026-11-21 08:43:44 UTC — Dependency and Typography Sweep
+- Installed `react-router-dom`, `@supabase/supabase-js`, `lucide-react`, and `framer-motion`.
+- Confirmed all four dependencies are resolvable in the project toolchain.
+- Added Google Fonts links for `Great Vibes` and `Inter` to `index.html`.
+- Added `--font-script: 'Great Vibes', cursive` and `--font-sans: 'Inter', system-ui, sans-serif` to `src/styles/tokens.css`.
+- Updated `src/styles/common.css` to use `var(--font-sans)` for the body.
+- Verified `BottomNav.jsx` uses the five Lucide-backed tabs and 44px minimum touch targets.
+
 ### Current Phase
 Awaiting UI Shell phase and Screenshot Gate.
