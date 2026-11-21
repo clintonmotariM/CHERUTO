@@ -96,5 +96,11 @@ A screenshot is required from the human before proceeding to UI styling.
 - Kept Lucide icons consistent: Home, BookOpen, Heart, Users, and MapPin.
 - Production build completed successfully after the page integration.
 
+## 2026-11-21 09:07:08 UTC — Project Vision and Build Summary
+- Added `agent-logs/PROJECT_OVERVIEW.md`, documenting what the Cherono memorial PWA is, why it is being made, its goals, current experience, and work completed so far.
+- The app is documented as a warm, mobile-first, QR-accessible celebration-of-life PWA.
+- Its key goals are accessible memorial entry, respectful joyful presentation, simple five-section navigation, offline support, preserved guest memories, and consistent component-driven design.
+- Current work includes PWA setup, Supabase foundations, CSS tokens, Great Vibes and Inter typography, five page components, Lucide icons, Framer Motion transitions, and a centered floating bottom navigation.
+
 ### Current Phase
 Awaiting UI Shell phase and Screenshot Gate.
