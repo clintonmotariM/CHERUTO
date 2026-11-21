@@ -1,0 +1,15 @@
+:root {
+  --bg-cream: #FFF9F2;
+  --text-brown: #5D4037;
+  --btn-pink: #FF4D85;
+  --btn-pink-hover: #E03C70;
+  --accent-purple: #9D4EDD;
+  --accent-green: #2ECC71;
+  --white: #FFFFFF;
+  --overlay-brown: rgba(93, 64, 55, 0.85);
+  --touch-target: 44px;
+  --nav-height: 64px;
+  --base-font: 16px;
+  --safe-top: env(safe-area-inset-top);
+  --safe-bottom: env(safe-area-inset-bottom);
+}
