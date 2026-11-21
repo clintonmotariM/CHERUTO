@@ -39,8 +39,8 @@ export default function GatheringPage() {
 
     if (!supabase) {
       try {
-        const existing = JSON.parse(localStorage.getItem('cherono-rsvp') || '[]')
-        localStorage.setItem('cherono-rsvp', JSON.stringify([...existing, record]))
+        const existing = JSON.parse(localStorage.getItem('cheruto-rsvp') || '[]')
+        localStorage.setItem('cheruto-rsvp', JSON.stringify([...existing, record]))
       } catch {}
       setStatus({ type: 'success', message: 'We look forward to celebrating with you' })
       setForm({ name: '', contact: '', partySize: 1, note: '' })

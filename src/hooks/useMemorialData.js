@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
 const fallbackProfile = {
-  full_name: 'Cherono',
-  preferred_name: 'Cherono',
+  full_name: 'Cheruto',
+  preferred_name: 'Cheruto',
   birth_date: null,
   passing_date: null,
   biography: 'A life remembered with love, laughter, and the many moments that made her unforgettable.',
@@ -27,11 +27,11 @@ const fallbackSchedule = [
 ]
 
 const fallbackAwareness = [
-  { id: 'a1', name: 'Shared Legacy', relationship_or_context: 'Family and friends', memorial_note: 'Cherono’s warmth lives on through every act of kindness shared in her name.' },
+  { id: 'a1', name: 'Shared Legacy', relationship_or_context: 'Family and friends', memorial_note: 'Cheruto’s warmth lives on through every act of kindness shared in her name.' },
 ]
 
 const fallbackMemories = [
-  { id: 'm1', author_name: 'Family', relationship: 'Family', memory: 'We carry Cherono’s joy, strength, and laughter with us always.', is_approved: true },
+  { id: 'm1', author_name: 'Family', relationship: 'Family', memory: 'We carry Cheruto’s joy, strength, and laughter with us always.', is_approved: true },
 ]
 
 export default function useMemorialData() {

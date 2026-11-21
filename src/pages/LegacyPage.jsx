@@ -9,7 +9,7 @@ export default function LegacyPage() {
   const [toast, setToast] = useState('')
 
   const shareMemorial = async () => {
-    const shareData = { title: 'Cherono — Celebration of Life', text: 'Remember and celebrate Cherono’s life.', url: window.location.href }
+    const shareData = { title: 'Cheruto — Celebration of Life', text: 'Remember and celebrate Cheruto’s life.', url: window.location.href }
     try {
       if (navigator.share) {
         await navigator.share(shareData)

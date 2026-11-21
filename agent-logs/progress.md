@@ -45,7 +45,7 @@ A screenshot is required from the human before proceeding to UI styling.
 ## Component-First Update
 
 ### CSS Architecture Complete
-- `src/styles/tokens.css` contains the exact Cherono palette, sizing, and safe-area variables.
+- `src/styles/tokens.css` contains the exact Cheruto palette, sizing, and safe-area variables.
 - `src/styles/common.css` contains the reset, body defaults, and safe-area utilities.
 - `src/index.css` imports only `tokens.css` and `common.css`.
 
@@ -85,7 +85,7 @@ A screenshot is required from the human before proceeding to UI styling.
 - Added the five tabs with Lucide icons and pink active-state transitions.
 - Verified the app with `npm run build`; the production bundle completes successfully.
 - Rebuilt preview is available at `http://localhost:4174/` while the earlier preview occupies port 4173.
-- Awaiting Screenshot Gate for centered `Cherono` script text and floating navigation proof.
+- Awaiting Screenshot Gate for centered `Cheruto` script text and floating navigation proof.
 
 ## 2026-11-21 09:04:17 UTC — Memorial Pages and Visible Bottom Navigation
 - Created five memorial pages: Home, Story, Legacy, Gathering, and Her Home.
@@ -97,7 +97,7 @@ A screenshot is required from the human before proceeding to UI styling.
 - Production build completed successfully after the page integration.
 
 ## 2026-11-21 09:07:08 UTC — Project Vision and Build Summary
-- Added `agent-logs/PROJECT_OVERVIEW.md`, documenting what the Cherono memorial PWA is, why it is being made, its goals, current experience, and work completed so far.
+- Added `agent-logs/PROJECT_OVERVIEW.md`, documenting what the Cheruto memorial PWA is, why it is being made, its goals, current experience, and work completed so far.
 - The app is documented as a warm, mobile-first, QR-accessible celebration-of-life PWA.
 - Its key goals are accessible memorial entry, respectful joyful presentation, simple five-section navigation, offline support, preserved guest memories, and consistent component-driven design.
 - Current work includes PWA setup, Supabase foundations, CSS tokens, Great Vibes and Inter typography, five page components, Lucide icons, Framer Motion transitions, and a centered floating bottom navigation.
@@ -111,7 +111,7 @@ Awaiting UI Shell phase and Screenshot Gate.
 - Unified `src/index.css` around token and common imports plus token-mapped helper classes.
 - Updated `BottomNav.jsx` to use 11px tab labels with 44px minimum touch areas and safe-bottom positioning.
 - Wired the live splash, fullscreen hook, Exit button, 600px scroll shell, five pages, and BottomNav state flow in `src/App.jsx`.
-- Added 192px, 512px, and 180px Cherono pink/C-monogram PWA icons.
+- Added 192px, 512px, and 180px Cheruto pink/C-monogram PWA icons.
 - Installed `@supabase/supabase-js` and changed the client to warn and export `null` when environment values are missing.
 - Created `.env.example` with the two required Vite Supabase variables.
 - Production build completed successfully; the preview is running at `http://localhost:4175/` and the network URL is `http://192.168.1.119:4175/`.
@@ -126,7 +126,7 @@ Awaiting UI Shell phase and Screenshot Gate.
 
 ## 2026-11-21 13:36:54 UTC — Say Bye Splash Screen Upgrade
 - Rebuilt `src/components/SplashScreen.jsx` as a centered 100dvh cream `<section>` rather than a full-screen button.
-- Locked the opening `Cherono` script title at `clamp(4rem, 18vw, 6.5rem)` in `var(--text-brown)`.
+- Locked the opening `Cheruto` script title at `clamp(4rem, 18vw, 6.5rem)` in `var(--text-brown)`.
 - Removed the “Tap anywhere to enter the memorial.” prompt completely.
 - Added the pink 52px minimum-height `Say Bye` pill with Inter typography, warm elevation, entrance motion, and tactile tap feedback.
 - Wired `Say Bye` to `onEnter`, including the fullscreen/Homescreen transition through `src/App.jsx`.
@@ -143,3 +143,11 @@ Awaiting UI Shell phase and Screenshot Gate.
 
 ### Current Phase
 Phase 5 complete — real memorial content, visual asset approval, and live hosted Supabase credentials remain the final data-quality gate before production launch.
+
+## 2026-11-21 14:02:32 UTC — Cheruto Solemn Splash and Global Name Lock
+- Updated the splash heading to `Cheruto` with `clamp(4.2rem, 18vw, 6.5rem)` typography and `var(--text-brown)` color.
+- Replaced the bright Say Bye background with solemn `#5C343D`, warm cream text, a subtle rose border, and grounded warm shadow.
+- Added reduced-motion-safe 4.8-second melancholic sigh animation with vertical drift, opacity, scale, and halo pulse.
+- Updated the Say Bye aria-label to enter the Cheruto memorial.
+- Replaced all repository `Cherono` / `cherono` / `CHERONO` instances with `Cheruto` / `cheruto` / `CHERUTO` across code, manifest, PWA cache, config, docs, and logs.
+- Verified the case-insensitive `cherono` repo scan returns zero matches.

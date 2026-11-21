@@ -12,7 +12,7 @@ export default function HerHomePage() {
   const [form, setForm] = useState({ name: '', relationship: '', memory: '' })
   const [localMemories, setLocalMemories] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('cherono-memories') || '[]')
+      return JSON.parse(localStorage.getItem('cheruto-memories') || '[]')
     } catch {
       return []
     }
@@ -60,8 +60,8 @@ export default function HerHomePage() {
       }
     } else {
       try {
-        const existing = JSON.parse(localStorage.getItem('cherono-memories') || '[]')
-        localStorage.setItem('cherono-memories', JSON.stringify([record, ...existing]))
+        const existing = JSON.parse(localStorage.getItem('cheruto-memories') || '[]')
+        localStorage.setItem('cheruto-memories', JSON.stringify([record, ...existing]))
       } catch {}
     }
 
@@ -77,7 +77,7 @@ export default function HerHomePage() {
       <h2 style={{ fontFamily: 'var(--font-script)', fontSize: '42px', color: 'var(--text-brown)' }}>Her Home</h2>
 
       <div style={{ width: '100%', maxWidth: '460px', padding: '20px', background: 'var(--white)', borderRadius: '22px', boxShadow: '0 8px 24px rgba(93,64,55,.08)' }}>
-        <p style={{ fontSize: '16px', lineHeight: 1.65 }}>Leave a remembrance, share a photo, or carry a message of love for Cherono and her family.</p>
+        <p style={{ fontSize: '16px', lineHeight: 1.65 }}>Leave a remembrance, share a photo, or carry a message of love for Cheruto and her family.</p>
         <Button type="button" onClick={() => setFormOpen((open) => !open)} aria-expanded={formOpen} style={{ width: '100%', marginTop: '14px', borderRadius: '999px' }}>{formOpen ? 'Close Tribute Form' : 'Leave a Memory'}</Button>
       </div>
 

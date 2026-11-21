@@ -1,13 +1,13 @@
 # PROJECT CONSTITUTION
 
-This document is the absolute law for Cherono's memorial PWA.
+This document is the absolute law for Cheruto's memorial PWA.
 
 ## 1. Fullscreen PWA
 
 - `public/manifest.json` must use `"display": "fullscreen"`.
 - `src/hooks/useImmersiveMode.js` must request fullscreen on the first `touchstart` or `click` user interaction.
 - First-entry and splash interactions must not depend on app data loading.
-- The splash entrance must display the centered `Cherono` script title and a pink `Say Bye` pill button; it must not use a generic “Tap anywhere” prompt.
+- The splash entrance must display the centered `Cheruto` script title and a pink `Say Bye` pill button; it must not use a generic “Tap anywhere” prompt.
 
 ## 2. Design System
 
