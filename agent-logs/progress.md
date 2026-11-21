@@ -104,3 +104,15 @@ A screenshot is required from the human before proceeding to UI styling.
 
 ### Current Phase
 Awaiting UI Shell phase and Screenshot Gate.
+
+## 2026-11-21 09:40:49 UTC — Sprint 1 Phase 2 Shell Lock
+- Deleted duplicate legacy `Navigation.jsx` and layout `ExitButton.jsx` files.
+- Deleted the duplicate `supabase/migrations/enable_rls.sql` migration.
+- Unified `src/index.css` around token and common imports plus token-mapped helper classes.
+- Updated `BottomNav.jsx` to use 11px tab labels with 44px minimum touch areas and safe-bottom positioning.
+- Wired the live splash, fullscreen hook, Exit button, 600px scroll shell, five pages, and BottomNav state flow in `src/App.jsx`.
+- Added 192px, 512px, and 180px Cherono pink/C-monogram PWA icons.
+- Installed `@supabase/supabase-js` and changed the client to warn and export `null` when environment values are missing.
+- Created `.env.example` with the two required Vite Supabase variables.
+- Production build completed successfully; the preview is running at `http://localhost:4175/` and the network URL is `http://192.168.1.119:4175/`.
+- Screenshot Gate: Splash, all five tabs, centered shell, and Exit button are ready for visual verification.

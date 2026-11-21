@@ -1,5 +1,11 @@
 const CACHE_NAME = 'cherono-memorial-v1'
-const APP_SHELL = ['/', '/manifest.json']
+const APP_SHELL = [
+  '/',
+  '/manifest.json',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
+  '/icons/apple-touch-icon.png',
+]
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

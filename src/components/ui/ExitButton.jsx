@@ -18,6 +18,7 @@ export default function ExitButton({ onExit }) {
       className="exit-button"
       aria-label="Exit fullscreen memorial"
       title="Exit"
+      style={{ position: 'fixed', top: 'max(var(--safe-top), 16px)', right: '16px', zIndex: 100 }}
       onClick={handleExit}
     >
       <span aria-hidden="true">×</span>

@@ -1,0 +1,1195 @@
+# PWA Fullscreen & Gesture Navigation Guide
+
+Based on Eagles Market implementation. A complete reference for adding fullscreen PWA behavior and gesture navigation to your web app.
+
+---
+
+## Table of Contents
+
+1. [Overview](#overview)
+2. [Prerequisites](#prerequisites)
+3. [Fullscreen Implementation](#fullscreen-implementation)
+4. [Gesture Navigation](#gesture-navigation)
+5. [Browser Compatibility](#browser-compatibility)
+6. [Testing Guide](#testing-guide)
+7. [Copy-Paste Snippets](#copy-paste-snippets)
+
+---
+
+## Overview
+
+### What This Guide Covers
+
+| Feature | Purpose | User Experience |
+|---------|---------|-----------------|
+| **Fullscreen PWA** | Hide browser chrome, app-like feel | No address bar, immersive experience |
+| **Swipe Back** | Navigate back with gesture | iOS/Android native feel |
+
+### Display Mode Comparison
+
+| Mode | Browser UI | Status Bar | Use Case |
+|------|-----------|------------|----------|
+| `browser` | Full UI | System | Regular websites |
+| `standalone` | Hidden | Visible | **Recommended for most PWAs** |
+| `fullscreen` | Hidden | Hidden | Games, media players |
+| `minimal-ui` | Minimal | Visible | Navigation needed |
+
+---
+
+## Prerequisites
+
+### HTTPS Required
+
+PWA features **only work on HTTPS** (or localhost for development).
+
+```bash
+# For local development with HTTPS tunnel
+npx localtunnel --port 3000
+# or
+npx ngrok http 3000
+```
+
+### Manifest Setup
+
+```json
+{
+  "name": "Your App",
+  "short_name": "App",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#C8862A",
+  "background_color": "#080604",
+  "start_url": "/",
+  "scope": "/",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192" },
+    { "src": "/icon-512.png", "sizes": "512x512" }
+  ]
+}
+```
+
+### HTML Meta Tags
+
+```html
+<!-- PWA Manifest -->
+<link rel="manifest" href="/manifest.json" />
+
+<!-- iOS Support -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Your App" />
+<link rel="apple-touch-icon" href="/icon-192.png" />
+
+<!-- Android Support -->
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="theme-color" content="#C8862A" />
+
+<!-- Viewport (prevents zoom, handles notches) -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+```
+
+---
+
+## Fullscreen Implementation
+
+### Multi-Browser Detection
+
+Different browsers use different APIs to detect PWA standalone mode:
+
+```javascript
+function isStandaloneMode() {
+  const checks = {
+    // Chromium browsers (Chrome, Edge, Opera, Samsung, Brave)
+    displayStandalone: window.matchMedia('(display-mode: standalone)').matches,
+    displayFullscreen: window.matchMedia('(display-mode: fullscreen)').matches,
+    displayMinimalUi: window.matchMedia('(display-mode: minimal-ui)').matches,
+    
+    // iOS Safari (iPhone/iPad)
+    iosStandalone: window.navigator.standalone === true,
+    
+    // Android Trusted Web Activity / WebView
+    androidTwa: document.referrer.includes('android-app://'),
+  };
+  
+  const isStandalone = Object.values(checks).some(Boolean);
+  
+  // Debug logging
+  console.log('[PWA] Standalone detection:', checks, { result: isStandalone });
+  
+  return isStandalone;
+}
+```
+
+### React Hook: useStandaloneDetection
+
+```javascript
+import { useState, useEffect } from 'react';
+
+export function useStandaloneDetection() {
+  const [isStandalone, setIsStandalone] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return isStandaloneMode();
+  });
+
+  useEffect(() => {
+    // Check immediately and after delays (some browsers report late)
+    const check = () => setIsStandalone(isStandaloneMode());
+    
+    check();
+    const t1 = setTimeout(check, 500);
+    const t2 = setTimeout(check, 1500);
+    
+    // Listen for display mode changes
+    const mql = window.matchMedia('(display-mode: standalone)');
+    const handler = (e) => setIsStandalone(e.matches || isStandaloneMode());
+    
+    mql.addEventListener('change', handler);
+    
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      mql.removeEventListener('change', handler);
+    };
+  }, []);
+
+  return isStandalone;
+}
+```
+
+### Fullscreen Prompt Component
+
+Shows a modal offering fullscreen mode on first visit:
+
+```jsx
+function FullscreenPrompt({ onDismiss }) {
+  const [isVisible, setIsVisible] = useState(false);
+  const isStandalone = useStandaloneDetection();
+
+  useEffect(() => {
+    // Don't show if already in PWA mode
+    if (isStandalone) {
+      onDismiss?.();
+      return;
+    }
+    
+    // Check previous preference
+    const preferFullscreen = localStorage.getItem('prefer-fullscreen');
+    
+    if (preferFullscreen === 'true') {
+      enterFullscreen();
+    } else if (preferFullscreen === 'false') {
+      onDismiss?.();
+    } else {
+      // First visit - show prompt after delay
+      setTimeout(() => setIsVisible(true), 300);
+    }
+  }, [isStandalone]);
+
+  const enterFullscreen = async () => {
+    try {
+      const doc = document.documentElement;
+      
+      if (doc.requestFullscreen) {
+        await doc.requestFullscreen();
+      } else if (doc.webkitRequestFullscreen) {
+        await doc.webkitRequestFullscreen();
+      } else if (doc.msRequestFullscreen) {
+        await doc.msRequestFullscreen();
+      }
+      
+      localStorage.setItem('prefer-fullscreen', 'true');
+      setIsVisible(false);
+      onDismiss?.();
+    } catch (err) {
+      console.error('Fullscreen failed:', err);
+      alert('Fullscreen not supported. Try "Add to Home Screen" instead.');
+    }
+  };
+
+  const continueNormal = () => {
+    localStorage.setItem('prefer-fullscreen', 'false');
+    setIsVisible(false);
+    onDismiss?.();
+  };
+
+  if (!isVisible || isStandalone) return null;
+
+  return (
+    <div style={styles.overlay}>
+      <div style={styles.modal}>
+        <h2>Go Fullscreen?</h2>
+        <p>Enter fullscreen for the best app experience</p>
+        <button onClick={enterFullscreen} style={styles.primary}>
+          Enter Fullscreen
+        </button>
+        <button onClick={continueNormal} style={styles.secondary}>
+          Continue in Browser
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+## Gesture Navigation
+
+### useSwipeBack Hook
+
+Enables swipe-right-to-go-back gesture (like native iOS/Android apps):
+
+```javascript
+import { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+/**
+ * Swipe-right gesture to navigate back
+ * @param {Object} options
+ * @param {boolean} options.disabled - Disable gesture
+ * @param {number} options.threshold - Min pixels to trigger (default: 50)
+ * @param {number} options.maxVertical - Max vertical drift allowed (default: 80)
+ */
+export function useSwipeBack({ 
+  disabled = false, 
+  threshold = 50, 
+  maxVertical = 80 
+} = {}) {
+  const navigate = useNavigate();
+  const startX = useRef(0);
+  const startY = useRef(0);
+
+  useEffect(() => {
+    if (disabled) return;
+
+    const onTouchStart = (e) => {
+      startX.current = e.changedTouches[0].screenX;
+      startY.current = e.changedTouches[0].screenY;
+    };
+
+    const onTouchEnd = (e) => {
+      const dx = startX.current - e.changedTouches[0].screenX;
+      const dy = Math.abs(startY.current - e.changedTouches[0].screenY);
+
+      // Ignore if:
+      // - Too much vertical movement (scrolling, not swiping)
+      // - Not swiped right enough
+      // - No history to go back to
+      if (dy >= maxVertical) return;
+      if (dx >= -threshold) return;
+      if (window.history.length <= 1) return;
+
+      navigate(-1);
+    };
+
+    // Use passive listeners for better scroll performance
+    document.addEventListener('touchstart', onTouchStart, { passive: true });
+    document.addEventListener('touchend', onTouchEnd, { passive: true });
+
+    return () => {
+      document.removeEventListener('touchstart', onTouchStart);
+      document.removeEventListener('touchend', onTouchEnd);
+    };
+  }, [disabled, threshold, maxVertical, navigate]);
+}
+```
+
+### Usage with Path Exclusions
+
+```jsx
+// App.jsx
+const SWIPE_DISABLED_PATHS = new Set([
+  '/login',
+  '/role-select', 
+  '/marketplace',
+  '/gallery',  // Has its own horizontal swipe
+]);
+
+function App() {
+  const { pathname } = useLocation();
+  
+  useSwipeBack({ 
+    disabled: SWIPE_DISABLED_PATHS.has(pathname) 
+  });
+  
+  return <Routes>...</Routes>;
+}
+```
+
+### Gesture Parameters
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `threshold` | 50px | Minimum horizontal swipe to trigger back |
+| `maxVertical` | 80px | Max vertical movement before ignoring |
+
+### Why These Values?
+
+- **50px**: Comfortable swipe distance, prevents accidental triggers
+- **80px**: Allows natural scroll while still catching deliberate swipes
+
+---
+
+## Browser Compatibility
+
+### Standalone Detection
+
+| Browser | Detection Method | Reliability |
+|---------|-----------------|-------------|
+| Chrome Android | `display-mode: standalone` | ✅ Reliable |
+| Edge Android | `display-mode: standalone` | ✅ Reliable |
+| Opera Android | `display-mode: standalone` | ✅ Reliable |
+| Samsung Internet | `display-mode: standalone` | ✅ Reliable |
+| Firefox Android | `display-mode: standalone` | ✅ Reliable |
+| Safari iOS | `navigator.standalone` | ✅ Reliable |
+| Chrome iOS | Limited (WebKit wrapper) | ⚠️ Partial |
+| WebView/TWA | `document.referrer` | ✅ Reliable |
+
+### Fullscreen API
+
+| Browser | Support | Notes |
+|---------|---------|-------|
+| Chrome | ✅ Full | `requestFullscreen()` |
+| Edge | ✅ Full | `requestFullscreen()` |
+| Safari | ✅ Webkit | `webkitRequestFullscreen()` |
+| Firefox | ✅ Full | `requestFullscreen()` |
+| Opera | ✅ Full | `requestFullscreen()` |
+
+### Gesture Events
+
+| Browser | Touch Events | Notes |
+|---------|-------------|-------|
+| All Mobile | ✅ Yes | `touchstart`, `touchend` |
+| Desktop Chrome | ✅ Yes | With DevTools mobile emulation |
+| Desktop Safari | ✅ Yes | With DevTools mobile emulation |
+
+---
+
+## Testing Guide
+
+### Testing Fullscreen Behavior
+
+1. **Local Testing (Limited)**
+   ```bash
+   # Start your dev server
+   npm run dev
+   
+   # Open Chrome DevTools → Device Toolbar
+   # Select iPhone or Android preset
+   # Refresh page
+   ```
+
+2. **Real Device Testing (Recommended)**
+   ```bash
+   # Create HTTPS tunnel
+   npx localtunnel --port 3000
+   
+   # On your phone:
+   # 1. Open the HTTPS URL
+   # 2. Tap "Add to Home Screen"
+   # 3. Launch from home screen icon
+   # 4. Verify: No address bar, app opens fullscreen
+   ```
+
+3. **Debug Logging**
+   ```javascript
+   // Add to console to check detection
+   console.log({
+     displayStandalone: window.matchMedia('(display-mode: standalone)').matches,
+     iosStandalone: window.navigator.standalone,
+     userAgent: navigator.userAgent
+   });
+   ```
+
+### Testing Gesture Navigation
+
+1. **Enable DevTools Touch Events**
+   - Chrome DevTools → Settings → Experiments → Enable touch events
+
+2. **Test Scenarios**
+   - Swipe right from left edge → Should go back
+   - Swipe left from right edge → Should not trigger
+   - Swipe diagonally → Should not trigger (too much vertical)
+   - Scroll vertically → Should not trigger back
+
+3. **Verify on Real Device**
+   ```javascript
+   // Add temporary logging
+   document.addEventListener('touchend', (e) => {
+     console.log('Touch end:', e.changedTouches[0].screenX);
+   });
+   ```
+
+---
+
+## Copy-Paste Snippets
+
+### Complete App Integration
+
+```jsx
+// App.jsx
+import { BrowserRouter, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+
+// ==================== STANDALONE DETECTION ====================
+
+function isStandaloneMode() {
+  return (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.matchMedia('(display-mode: fullscreen)').matches ||
+    window.matchMedia('(display-mode: minimal-ui)').matches ||
+    window.navigator.standalone === true ||
+    document.referrer.includes('android-app://')
+  );
+}
+
+// ==================== SWIPE BACK HOOK ====================
+
+function useSwipeBack({ disabled = false, threshold = 50, maxVertical = 80 } = {}) {
+  const navigate = useNavigate();
+  const startX = useRef(0);
+  const startY = useRef(0);
+
+  useEffect(() => {
+    if (disabled) return;
+
+    const onTouchStart = (e) => {
+      startX.current = e.changedTouches[0].screenX;
+      startY.current = e.changedTouches[0].screenY;
+    };
+
+    const onTouchEnd = (e) => {
+      const dx = startX.current - e.changedTouches[0].screenX;
+      const dy = Math.abs(startY.current - e.changedTouches[0].screenY);
+
+      if (dy >= maxVertical) return;
+      if (dx >= -threshold) return;
+      if (window.history.length <= 1) return;
+
+      navigate(-1);
+    };
+
+    document.addEventListener('touchstart', onTouchStart, { passive: true });
+    document.addEventListener('touchend', onTouchEnd, { passive: true });
+
+    return () => {
+      document.removeEventListener('touchstart', onTouchStart);
+      document.removeEventListener('touchend', onTouchEnd);
+    };
+  }, [disabled, threshold, maxVertical, navigate]);
+}
+
+// ==================== FULLSCREEN PROMPT ====================
+
+function FullscreenPrompt({ onDismiss }) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (isStandaloneMode()) {
+      onDismiss?.();
+      return;
+    }
+
+    const preferFullscreen = localStorage.getItem('prefer-fullscreen');
+    
+    if (preferFullscreen === 'true') {
+      enterFullscreen();
+    } else if (!preferFullscreen) {
+      setTimeout(() => setIsVisible(true), 300);
+    } else {
+      onDismiss?.();
+    }
+  }, []);
+
+  const enterFullscreen = async () => {
+    try {
+      const doc = document.documentElement;
+      if (doc.requestFullscreen) await doc.requestFullscreen();
+      else if (doc.webkitRequestFullscreen) await doc.webkitRequestFullscreen();
+      else if (doc.msRequestFullscreen) await doc.msRequestFullscreen();
+      
+      localStorage.setItem('prefer-fullscreen', 'true');
+      setIsVisible(false);
+      onDismiss?.();
+    } catch (err) {
+      console.error('Fullscreen failed:', err);
+    }
+  };
+
+  const continueNormal = () => {
+    localStorage.setItem('prefer-fullscreen', 'false');
+    setIsVisible(false);
+    onDismiss?.();
+  };
+
+  if (!isVisible) return null;
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 999999,
+      background: 'rgba(0,0,0,0.9)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center'
+    }}>
+      <div style={{ textAlign: 'center', color: 'white' }}>
+        <h2>Go Fullscreen?</h2>
+        <button onClick={enterFullscreen}>Enter Fullscreen</button>
+        <button onClick={continueNormal}>Continue in Browser</button>
+      </div>
+    </div>
+  );
+}
+
+// ==================== MAIN APP ====================
+
+const SWIPE_DISABLED_PATHS = new Set(['/login', '/home', '/dashboard']);
+
+function App() {
+  const [showPrompt, setShowPrompt] = useState(true);
+  const { pathname } = useLocation();
+
+  useSwipeBack({ disabled: SWIPE_DISABLED_PATHS.has(pathname) });
+
+  return (
+    <>
+      {showPrompt && <FullscreenPrompt onDismiss={() => setShowPrompt(false)} />}
+      <Routes>{/* Your routes */}</Routes>
+    </>
+  );
+}
+```
+
+---
+
+## References
+
+- [MDN: Web App Manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest)
+- [MDN: Fullscreen API](https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API)
+- [MDN: Touch Events](https://developer.mozilla.org/en-US/docs/Web/API/Touch_events)
+- [Google: PWA Display Modes](https://developer.chrome.com/docs/devtools/progressive-web-apps/#display)
+- [Apple: Configuring Web Applications](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html)
+
+---
+
+## License
+
+This guide is based on the Eagles Market PWA implementation. Free to use and adapt for your projects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GESTURES 
+
+
+
+
+
+# PWA Fullscreen & Gesture Navigation Guide
+
+Based on Eagles Market implementation. A complete reference for adding fullscreen PWA behavior and gesture navigation to your web app.
+
+---
+
+## Table of Contents
+
+1. [Overview](#overview)
+2. [Prerequisites](#prerequisites)
+3. [Fullscreen Implementation](#fullscreen-implementation)
+4. [Gesture Navigation](#gesture-navigation)
+5. [Browser Compatibility](#browser-compatibility)
+6. [Testing Guide](#testing-guide)
+7. [Copy-Paste Snippets](#copy-paste-snippets)
+
+---
+
+## Overview
+
+### What This Guide Covers
+
+| Feature | Purpose | User Experience |
+|---------|---------|-----------------|
+| **Fullscreen PWA** | Hide browser chrome, app-like feel | No address bar, immersive experience |
+| **Swipe Back** | Navigate back with gesture | iOS/Android native feel |
+
+### Display Mode Comparison
+
+| Mode | Browser UI | Status Bar | Use Case |
+|------|-----------|------------|----------|
+| `browser` | Full UI | System | Regular websites |
+| `standalone` | Hidden | Visible | **Recommended for most PWAs** |
+| `fullscreen` | Hidden | Hidden | Games, media players |
+| `minimal-ui` | Minimal | Visible | Navigation needed |
+
+---
+
+## Prerequisites
+
+### HTTPS Required
+
+PWA features **only work on HTTPS** (or localhost for development).
+
+```bash
+# For local development with HTTPS tunnel
+npx localtunnel --port 3000
+# or
+npx ngrok http 3000
+```
+
+### Manifest Setup
+
+```json
+{
+  "name": "Your App",
+  "short_name": "App",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#C8862A",
+  "background_color": "#080604",
+  "start_url": "/",
+  "scope": "/",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192" },
+    { "src": "/icon-512.png", "sizes": "512x512" }
+  ]
+}
+```
+
+### HTML Meta Tags
+
+```html
+<!-- PWA Manifest -->
+<link rel="manifest" href="/manifest.json" />
+
+<!-- iOS Support -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Your App" />
+<link rel="apple-touch-icon" href="/icon-192.png" />
+
+<!-- Android Support -->
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="theme-color" content="#C8862A" />
+
+<!-- Viewport (prevents zoom, handles notches) -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+```
+
+---
+
+## Fullscreen Implementation
+
+### Multi-Browser Detection
+
+Different browsers use different APIs to detect PWA standalone mode:
+
+```javascript
+function isStandaloneMode() {
+  const checks = {
+    // Chromium browsers (Chrome, Edge, Opera, Samsung, Brave)
+    displayStandalone: window.matchMedia('(display-mode: standalone)').matches,
+    displayFullscreen: window.matchMedia('(display-mode: fullscreen)').matches,
+    displayMinimalUi: window.matchMedia('(display-mode: minimal-ui)').matches,
+    
+    // iOS Safari (iPhone/iPad)
+    iosStandalone: window.navigator.standalone === true,
+    
+    // Android Trusted Web Activity / WebView
+    androidTwa: document.referrer.includes('android-app://'),
+  };
+  
+  const isStandalone = Object.values(checks).some(Boolean);
+  
+  // Debug logging
+  console.log('[PWA] Standalone detection:', checks, { result: isStandalone });
+  
+  return isStandalone;
+}
+```
+
+### React Hook: useStandaloneDetection
+
+```javascript
+import { useState, useEffect } from 'react';
+
+export function useStandaloneDetection() {
+  const [isStandalone, setIsStandalone] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return isStandaloneMode();
+  });
+
+  useEffect(() => {
+    // Check immediately and after delays (some browsers report late)
+    const check = () => setIsStandalone(isStandaloneMode());
+    
+    check();
+    const t1 = setTimeout(check, 500);
+    const t2 = setTimeout(check, 1500);
+    
+    // Listen for display mode changes
+    const mql = window.matchMedia('(display-mode: standalone)');
+    const handler = (e) => setIsStandalone(e.matches || isStandaloneMode());
+    
+    mql.addEventListener('change', handler);
+    
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      mql.removeEventListener('change', handler);
+    };
+  }, []);
+
+  return isStandalone;
+}
+```
+
+### Fullscreen Prompt Component
+
+Shows a modal offering fullscreen mode on first visit:
+
+```jsx
+function FullscreenPrompt({ onDismiss }) {
+  const [isVisible, setIsVisible] = useState(false);
+  const isStandalone = useStandaloneDetection();
+
+  useEffect(() => {
+    // Don't show if already in PWA mode
+    if (isStandalone) {
+      onDismiss?.();
+      return;
+    }
+    
+    // Check previous preference
+    const preferFullscreen = localStorage.getItem('prefer-fullscreen');
+    
+    if (preferFullscreen === 'true') {
+      enterFullscreen();
+    } else if (preferFullscreen === 'false') {
+      onDismiss?.();
+    } else {
+      // First visit - show prompt after delay
+      setTimeout(() => setIsVisible(true), 300);
+    }
+  }, [isStandalone]);
+
+  const enterFullscreen = async () => {
+    try {
+      const doc = document.documentElement;
+      
+      if (doc.requestFullscreen) {
+        await doc.requestFullscreen();
+      } else if (doc.webkitRequestFullscreen) {
+        await doc.webkitRequestFullscreen();
+      } else if (doc.msRequestFullscreen) {
+        await doc.msRequestFullscreen();
+      }
+      
+      localStorage.setItem('prefer-fullscreen', 'true');
+      setIsVisible(false);
+      onDismiss?.();
+    } catch (err) {
+      console.error('Fullscreen failed:', err);
+      alert('Fullscreen not supported. Try "Add to Home Screen" instead.');
+    }
+  };
+
+  const continueNormal = () => {
+    localStorage.setItem('prefer-fullscreen', 'false');
+    setIsVisible(false);
+    onDismiss?.();
+  };
+
+  if (!isVisible || isStandalone) return null;
+
+  return (
+    <div style={styles.overlay}>
+      <div style={styles.modal}>
+        <h2>Go Fullscreen?</h2>
+        <p>Enter fullscreen for the best app experience</p>
+        <button onClick={enterFullscreen} style={styles.primary}>
+          Enter Fullscreen
+        </button>
+        <button onClick={continueNormal} style={styles.secondary}>
+          Continue in Browser
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+## Gesture Navigation
+
+### useSwipeBack Hook
+
+Enables swipe-right-to-go-back gesture (like native iOS/Android apps):
+
+```javascript
+import { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+/**
+ * Swipe-right gesture to navigate back
+ * @param {Object} options
+ * @param {boolean} options.disabled - Disable gesture
+ * @param {number} options.threshold - Min pixels to trigger (default: 50)
+ * @param {number} options.maxVertical - Max vertical drift allowed (default: 80)
+ */
+export function useSwipeBack({ 
+  disabled = false, 
+  threshold = 50, 
+  maxVertical = 80 
+} = {}) {
+  const navigate = useNavigate();
+  const startX = useRef(0);
+  const startY = useRef(0);
+
+  useEffect(() => {
+    if (disabled) return;
+
+    const onTouchStart = (e) => {
+      startX.current = e.changedTouches[0].screenX;
+      startY.current = e.changedTouches[0].screenY;
+    };
+
+    const onTouchEnd = (e) => {
+      const dx = startX.current - e.changedTouches[0].screenX;
+      const dy = Math.abs(startY.current - e.changedTouches[0].screenY);
+
+      // Ignore if:
+      // - Too much vertical movement (scrolling, not swiping)
+      // - Not swiped right enough
+      // - No history to go back to
+      if (dy >= maxVertical) return;
+      if (dx >= -threshold) return;
+      if (window.history.length <= 1) return;
+
+      navigate(-1);
+    };
+
+    // Use passive listeners for better scroll performance
+    document.addEventListener('touchstart', onTouchStart, { passive: true });
+    document.addEventListener('touchend', onTouchEnd, { passive: true });
+
+    return () => {
+      document.removeEventListener('touchstart', onTouchStart);
+      document.removeEventListener('touchend', onTouchEnd);
+    };
+  }, [disabled, threshold, maxVertical, navigate]);
+}
+```
+
+### Usage with Path Exclusions
+
+```jsx
+// App.jsx
+const SWIPE_DISABLED_PATHS = new Set([
+  '/login',
+  '/role-select', 
+  '/marketplace',
+  '/gallery',  // Has its own horizontal swipe
+]);
+
+function App() {
+  const { pathname } = useLocation();
+  
+  useSwipeBack({ 
+    disabled: SWIPE_DISABLED_PATHS.has(pathname) 
+  });
+  
+  return <Routes>...</Routes>;
+}
+```
+
+### Gesture Parameters
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `threshold` | 50px | Minimum horizontal swipe to trigger back |
+| `maxVertical` | 80px | Max vertical movement before ignoring |
+
+### Why These Values?
+
+- **50px**: Comfortable swipe distance, prevents accidental triggers
+- **80px**: Allows natural scroll while still catching deliberate swipes
+
+---
+
+## Browser Compatibility
+
+### Standalone Detection
+
+| Browser | Detection Method | Reliability |
+|---------|-----------------|-------------|
+| Chrome Android | `display-mode: standalone` | ✅ Reliable |
+| Edge Android | `display-mode: standalone` | ✅ Reliable |
+| Opera Android | `display-mode: standalone` | ✅ Reliable |
+| Samsung Internet | `display-mode: standalone` | ✅ Reliable |
+| Firefox Android | `display-mode: standalone` | ✅ Reliable |
+| Safari iOS | `navigator.standalone` | ✅ Reliable |
+| Chrome iOS | Limited (WebKit wrapper) | ⚠️ Partial |
+| WebView/TWA | `document.referrer` | ✅ Reliable |
+
+### Fullscreen API
+
+| Browser | Support | Notes |
+|---------|---------|-------|
+| Chrome | ✅ Full | `requestFullscreen()` |
+| Edge | ✅ Full | `requestFullscreen()` |
+| Safari | ✅ Webkit | `webkitRequestFullscreen()` |
+| Firefox | ✅ Full | `requestFullscreen()` |
+| Opera | ✅ Full | `requestFullscreen()` |
+
+### Gesture Events
+
+| Browser | Touch Events | Notes |
+|---------|-------------|-------|
+| All Mobile | ✅ Yes | `touchstart`, `touchend` |
+| Desktop Chrome | ✅ Yes | With DevTools mobile emulation |
+| Desktop Safari | ✅ Yes | With DevTools mobile emulation |
+
+---
+
+## Testing Guide
+
+### Testing Fullscreen Behavior
+
+1. **Local Testing (Limited)**
+   ```bash
+   # Start your dev server
+   npm run dev
+   
+   # Open Chrome DevTools → Device Toolbar
+   # Select iPhone or Android preset
+   # Refresh page
+   ```
+
+2. **Real Device Testing (Recommended)**
+   ```bash
+   # Create HTTPS tunnel
+   npx localtunnel --port 3000
+   
+   # On your phone:
+   # 1. Open the HTTPS URL
+   # 2. Tap "Add to Home Screen"
+   # 3. Launch from home screen icon
+   # 4. Verify: No address bar, app opens fullscreen
+   ```
+
+3. **Debug Logging**
+   ```javascript
+   // Add to console to check detection
+   console.log({
+     displayStandalone: window.matchMedia('(display-mode: standalone)').matches,
+     iosStandalone: window.navigator.standalone,
+     userAgent: navigator.userAgent
+   });
+   ```
+
+### Testing Gesture Navigation
+
+1. **Enable DevTools Touch Events**
+   - Chrome DevTools → Settings → Experiments → Enable touch events
+
+2. **Test Scenarios**
+   - Swipe right from left edge → Should go back
+   - Swipe left from right edge → Should not trigger
+   - Swipe diagonally → Should not trigger (too much vertical)
+   - Scroll vertically → Should not trigger back
+
+3. **Verify on Real Device**
+   ```javascript
+   // Add temporary logging
+   document.addEventListener('touchend', (e) => {
+     console.log('Touch end:', e.changedTouches[0].screenX);
+   });
+   ```
+
+---
+
+## Copy-Paste Snippets
+
+### Complete App Integration
+
+```jsx
+// App.jsx
+import { BrowserRouter, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+
+// ==================== STANDALONE DETECTION ====================
+
+function isStandaloneMode() {
+  return (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.matchMedia('(display-mode: fullscreen)').matches ||
+    window.matchMedia('(display-mode: minimal-ui)').matches ||
+    window.navigator.standalone === true ||
+    document.referrer.includes('android-app://')
+  );
+}
+
+// ==================== SWIPE BACK HOOK ====================
+
+function useSwipeBack({ disabled = false, threshold = 50, maxVertical = 80 } = {}) {
+  const navigate = useNavigate();
+  const startX = useRef(0);
+  const startY = useRef(0);
+
+  useEffect(() => {
+    if (disabled) return;
+
+    const onTouchStart = (e) => {
+      startX.current = e.changedTouches[0].screenX;
+      startY.current = e.changedTouches[0].screenY;
+    };
+
+    const onTouchEnd = (e) => {
+      const dx = startX.current - e.changedTouches[0].screenX;
+      const dy = Math.abs(startY.current - e.changedTouches[0].screenY);
+
+      if (dy >= maxVertical) return;
+      if (dx >= -threshold) return;
+      if (window.history.length <= 1) return;
+
+      navigate(-1);
+    };
+
+    document.addEventListener('touchstart', onTouchStart, { passive: true });
+    document.addEventListener('touchend', onTouchEnd, { passive: true });
+
+    return () => {
+      document.removeEventListener('touchstart', onTouchStart);
+      document.removeEventListener('touchend', onTouchEnd);
+    };
+  }, [disabled, threshold, maxVertical, navigate]);
+}
+
+// ==================== FULLSCREEN PROMPT ====================
+
+function FullscreenPrompt({ onDismiss }) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (isStandaloneMode()) {
+      onDismiss?.();
+      return;
+    }
+
+    const preferFullscreen = localStorage.getItem('prefer-fullscreen');
+    
+    if (preferFullscreen === 'true') {
+      enterFullscreen();
+    } else if (!preferFullscreen) {
+      setTimeout(() => setIsVisible(true), 300);
+    } else {
+      onDismiss?.();
+    }
+  }, []);
+
+  const enterFullscreen = async () => {
+    try {
+      const doc = document.documentElement;
+      if (doc.requestFullscreen) await doc.requestFullscreen();
+      else if (doc.webkitRequestFullscreen) await doc.webkitRequestFullscreen();
+      else if (doc.msRequestFullscreen) await doc.msRequestFullscreen();
+      
+      localStorage.setItem('prefer-fullscreen', 'true');
+      setIsVisible(false);
+      onDismiss?.();
+    } catch (err) {
+      console.error('Fullscreen failed:', err);
+    }
+  };
+
+  const continueNormal = () => {
+    localStorage.setItem('prefer-fullscreen', 'false');
+    setIsVisible(false);
+    onDismiss?.();
+  };
+
+  if (!isVisible) return null;
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 999999,
+      background: 'rgba(0,0,0,0.9)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center'
+    }}>
+      <div style={{ textAlign: 'center', color: 'white' }}>
+        <h2>Go Fullscreen?</h2>
+        <button onClick={enterFullscreen}>Enter Fullscreen</button>
+        <button onClick={continueNormal}>Continue in Browser</button>
+      </div>
+    </div>
+  );
+}
+
+// ==================== MAIN APP ====================
+
+const SWIPE_DISABLED_PATHS = new Set(['/login', '/home', '/dashboard']);
+
+function App() {
+  const [showPrompt, setShowPrompt] = useState(true);
+  const { pathname } = useLocation();
+
+  useSwipeBack({ disabled: SWIPE_DISABLED_PATHS.has(pathname) });
+
+  return (
+    <>
+      {showPrompt && <FullscreenPrompt onDismiss={() => setShowPrompt(false)} />}
+      <Routes>{/* Your routes */}</Routes>
+    </>
+  );
+}
+```
+
+---
+
+## References
+
+- [MDN: Web App Manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest)
+- [MDN: Fullscreen API](https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API)
+- [MDN: Touch Events](https://developer.mozilla.org/en-US/docs/Web/API/Touch_events)
+- [Google: PWA Display Modes](https://developer.chrome.com/docs/devtools/progressive-web-apps/#display)
+- [Apple: Configuring Web Applications](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html)
+
+---
+
+## License
+
+This guide is based on the Eagles Market PWA implementation. Free to use and adapt for your projects.

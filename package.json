@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/clintonmotariM/CHERONO#readme",
   "dependencies": {
+    "@supabase/supabase-js": "^2.119.2",
     "framer-motion": "^14.14.0",
     "lucide-react": "^1.77.0",
     "react": "^19.3.1",
