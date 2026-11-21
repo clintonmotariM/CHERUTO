@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { ChevronDown } from 'lucide-react'
 import useMemorialData from '../hooks/useMemorialData'
 import PolaroidFrame from '../components/ui/PolaroidFrame'
 
@@ -59,6 +59,7 @@ const relationshipDefaults = {
 export default function StoryPage() {
   const [expandedId, setExpandedId] = useState(null)
   const [photoIndexById, setPhotoIndexById] = useState({})
+  const shouldReduceMotion = useReducedMotion()
   const { timeline, relationships, loading } = useMemorialData()
 
   const chapters = timeline?.length ? timeline.map((event, index) => {
@@ -97,6 +98,24 @@ export default function StoryPage() {
   })
 
   const toggleExpanded = (id) => setExpandedId((current) => current === id ? null : id)
+
+  useEffect(() => {
+    if (!expandedId || shouldReduceMotion) return undefined
+
+    const activeItem = [...chapters, ...relationshipSections.flatMap((section) => section.cards)]
+      .find((item) => item.id === expandedId)
+
+    if (!activeItem || !activeItem.photos || activeItem.photos.length <= 1) return undefined
+
+    const timer = window.setInterval(() => {
+      setPhotoIndexById((current) => {
+        const currentIndex = current[expandedId] || 0
+        return { ...current, [expandedId]: (currentIndex + 1) % activeItem.photos.length }
+      })
+    }, 4200)
+
+    return () => window.clearInterval(timer)
+  }, [expandedId, shouldReduceMotion, chapters, relationshipSections])
   const getPhotoIndex = (id, count) => ((photoIndexById[id] || 0) < count ? (photoIndexById[id] || 0) : 0)
 
   const sectionHeaderStyle = {
@@ -112,28 +131,36 @@ export default function StoryPage() {
     const photo = photos[photoIndex]
 
     return (
-      <motion.div key={`expanded-${item.id}`} initial={{ opacity: 0, height: 0, y: -6 }} animate={{ opacity: 1, height: 'auto', y: 0 }} exit={{ opacity: 0, height: 0, y: -6 }} transition={{ duration: 0.32, ease: 'easeOut' }} style={{ width: '100%', overflow: 'hidden', background: 'var(--white)', borderRadius: '18px', padding: '12px', boxShadow: '0 10px 28px rgba(93, 64, 55, 0.12)', position: 'relative' }}>
-        <div style={{ width: '100%', height: '200px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: photo.fallbackGradient }}>
-          {photo.src && <img src={photo.src} alt={item.title || item.name || 'Cheruto memory'} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />}
-          <button type="button" aria-label="Collapse story card" title="Collapse" onClick={(event) => { event.stopPropagation(); toggleExpanded(item.id) }} style={{ position: 'absolute', top: '8px', right: '8px', width: '44px', height: '44px', minWidth: '44px', minHeight: '44px', display: 'grid', placeItems: 'center', padding: 0, border: '1px solid rgba(255,255,255,.35)', borderRadius: '50%', background: 'rgba(93,64,55,.72)', color: 'var(--white)', cursor: 'pointer', backdropFilter: 'blur(6px)' }}>
-            <ChevronUp size={32} strokeWidth={1.8} aria-hidden="true" />
-          </button>
+      <motion.div
+        key={`expanded-${item.id}`}
+        initial={{ opacity: 0, height: 0, y: -6 }}
+        animate={{ opacity: 1, height: 'auto', y: 0 }}
+        exit={{ opacity: 0, height: 0, y: -6 }}
+        transition={{ duration: 0.32, ease: 'easeOut' }}
+        style={{ width: '100%', overflow: 'hidden', background: 'var(--white)', borderRadius: '18px', padding: '12px', boxShadow: '0 10px 28px rgba(93, 64, 55, 0.12)', position: 'relative' }}
+      >
+        <div style={{ width: '100%', height: '256px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: photo.fallbackGradient }}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${item.id}-${photoIndex}`}
+              initial={{ opacity: 0, scale: 1.03 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.75, ease: 'easeInOut' }}
+              style={{ width: '100%', height: '100%', background: photo.fallbackGradient }}
+            >
+              {photo.src && <img src={photo.src} alt={item.title || item.name || 'Cheruto memory'} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
-        {photos.length > 1 && (
-          <div className="no-scrollbar" style={{ width: '100%', display: 'flex', gap: '8px', overflowX: 'auto', marginTop: '8px', paddingBottom: '2px' }}>
-            {photos.map((thumbnail, index) => (
-              <button key={`${item.id}-photo-${index}`} type="button" aria-label={`View photo ${index + 1}`} onClick={(event) => { event.stopPropagation(); setPhotoIndexById((current) => ({ ...current, [item.id]: index })) }} style={{ flex: '0 0 48px', width: '48px', height: '48px', minWidth: '44px', minHeight: '44px', padding: 0, border: photoIndex === index ? '2px solid var(--btn-pink)' : '1px solid rgba(93,64,55,.10)', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: thumbnail.fallbackGradient }}>
-                {thumbnail.src && <img src={thumbnail.src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />}
-              </button>
-            ))}
-          </div>
-        )}
-
-        <p style={{ margin: '10px 0 2px', padding: '0 4px', textAlign: 'left', fontSize: '14.5px', lineHeight: 1.55, color: 'var(--text-brown)' }}>{item.fullStory || item.relationship_type || item.description}</p>
+        <p style={{ margin: '12px 0 2px', padding: '0 4px', textAlign: 'left', fontSize: '14.5px', lineHeight: 1.55, color: 'var(--text-brown)' }}>
+          {item.fullStory || item.relationship_type || item.description}
+        </p>
       </motion.div>
     )
   }
+
 
   const collapsedInlineHeader = (item, era, badgeColor, isRightAligned) => (
     <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '4px', justifyContent: isRightAligned ? 'flex-end' : 'flex-start' }}>
