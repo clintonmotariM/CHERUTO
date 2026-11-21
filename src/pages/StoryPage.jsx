@@ -10,15 +10,9 @@ const chapterDefaults = [
 ]
 
 const relationshipDefaults = {
-  Family: [
-    { id: 'family-fallback', name: 'Family', relationship_type: 'Cheruto was deeply rooted in the love, strength, and stories shared by family.' },
-  ],
-  Friends: [
-    { id: 'friends-fallback', name: 'Friends', relationship_type: 'Cheru made space for joy, laughter, honest conversation, and lifelong friendship.' },
-  ],
-  Community: [
-    { id: 'community-fallback', name: 'Community', relationship_type: 'Her warmth reached beyond close circles and touched everyone she met.' },
-  ],
+  Family: [{ id: 'family-fallback', name: 'Family', relationship_type: 'Cheruto was deeply rooted in the love, strength, and stories shared by family.' }],
+  Friends: [{ id: 'friends-fallback', name: 'Friends', relationship_type: 'Cheru made space for joy, laughter, honest conversation, and lifelong friendship.' }],
+  Community: [{ id: 'community-fallback', name: 'Community', relationship_type: 'Her warmth reached beyond close circles and touched everyone she met.' }],
 }
 
 export default function StoryPage() {
@@ -39,25 +33,21 @@ export default function StoryPage() {
       if (sectionName === 'Friends') return name.includes('friend')
       return name.includes('community')
     })
-
-    return {
-      name: sectionName,
-      cards: matching.length ? matching : relationshipDefaults[sectionName],
-    }
+    return { name: sectionName, cards: matching.length ? matching : relationshipDefaults[sectionName] }
   })
 
   const sectionHeaderStyle = {
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: '28px auto 14px auto',
-    padding: '8px 22px',
+    margin: '18px auto 10px auto',
+    padding: '6px 20px',
     borderRadius: '999px',
     backgroundColor: 'var(--white)',
     border: '1px solid rgba(157, 78, 221, 0.18)',
     boxShadow: '0 4px 14px rgba(93, 64, 55, 0.06)',
     fontFamily: 'var(--font-script)',
-    fontSize: 'clamp(1.5rem, 5vw, 1.8rem)',
+    fontSize: 'clamp(1.35rem, 4.5vw, 1.6rem)',
     lineHeight: 1.15,
     color: 'var(--text-brown)',
   }
@@ -67,13 +57,12 @@ export default function StoryPage() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       style={{
-        paddingTop: 'max(28px, calc(var(--safe-top) + 20px))',
+        paddingTop: 'max(20px, calc(var(--safe-top) + 14px))',
         paddingBottom: '24px',
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: '18px',
       }}
     >
       <header
@@ -81,8 +70,8 @@ export default function StoryPage() {
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          margin: '0 auto 24px auto',
-          padding: '10px 28px',
+          margin: '0 auto 16px auto',
+          padding: '8px 24px',
           borderRadius: '999px',
           backgroundColor: 'var(--white)',
           border: '1px solid rgba(93, 64, 55, 0.10)',
@@ -103,47 +92,47 @@ export default function StoryPage() {
         </h2>
       </header>
 
-      {loading && <p style={{ fontSize: '13px', marginTop: '-12px' }}>Gathering memories…</p>}
+      {loading && <p style={{ fontSize: '14px', margin: '-6px 0 6px' }}>Gathering memories…</p>}
 
-      <div style={{ width: '100%', maxWidth: '460px', display: 'grid', gap: '20px', position: 'relative' }}>
+      <div style={{ width: '100%', maxWidth: '460px', display: 'grid', gap: '12px', position: 'relative' }}>
         {chapters.slice(0, 4).map((chapter, index) => (
           <motion.article
             key={`${chapter.title}-${index}`}
-            initial={{ opacity: 0, y: 18 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.09, duration: 0.42 }}
+            transition={{ delay: index * 0.07, duration: 0.36 }}
             style={{
               display: 'grid',
-              gridTemplateColumns: index % 2 ? '1fr 132px' : '132px 1fr',
+              gridTemplateColumns: index % 2 ? '1fr 72px' : '72px 1fr',
               alignItems: 'center',
-              gap: '12px',
+              gap: '8px',
               textAlign: index % 2 ? 'right' : 'left',
             }}
           >
             {index % 2 === 0 && (
-              <PolaroidFrame style={{ width: '132px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>
+              <PolaroidFrame style={{ width: '72px', height: '82px', padding: '6px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>
                 {chapter.image_url ? (
-                  <img src={chapter.image_url} alt={chapter.title} style={{ width: '112px', height: '112px', objectFit: 'cover', display: 'block' }} />
+                  <img src={chapter.image_url} alt={chapter.title} style={{ width: '100%', height: '70px', objectFit: 'cover', display: 'block' }} />
                 ) : (
-                  <div style={{ width: '112px', height: '112px', borderRadius: '3px', background: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' }} />
+                  <div style={{ width: '100%', height: '70px', borderRadius: '3px', background: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' }} />
                 )}
               </PolaroidFrame>
             )}
 
-            <div style={{ background: 'var(--white)', borderRadius: '20px', padding: '18px 20px', boxShadow: '0 8px 24px rgba(93,64,55,.08)' }}>
-              <span style={{ display: 'inline-block', marginBottom: '8px', padding: '5px 10px', borderRadius: '999px', background: 'var(--accent-purple)', color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>
+            <div style={{ background: 'var(--white)', borderRadius: '16px', padding: '12px 14px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
+              <span style={{ display: 'inline-block', marginBottom: '4px', padding: '4px 8px', borderRadius: '999px', background: 'var(--accent-purple)', color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>
                 {chapter.era}
               </span>
-              <h3 style={{ fontSize: '18px', color: 'var(--text-brown)', marginBottom: '6px' }}>{chapter.title}</h3>
-              <p style={{ fontSize: '16px', lineHeight: 1.55, color: 'var(--text-brown)' }}>{chapter.description}</p>
+              <h3 style={{ fontSize: '15px', marginBottom: '2px', color: 'var(--text-brown)' }}>{chapter.title}</h3>
+              <p style={{ fontSize: '14px', lineHeight: 1.4, color: 'var(--text-brown)' }}>{chapter.description}</p>
             </div>
 
             {index % 2 !== 0 && (
-              <PolaroidFrame style={{ width: '132px', borderRadius: '6px', transform: 'rotate(2deg)' }}>
+              <PolaroidFrame style={{ width: '72px', height: '82px', padding: '6px', borderRadius: '6px', transform: 'rotate(2deg)' }}>
                 {chapter.image_url ? (
-                  <img src={chapter.image_url} alt={chapter.title} style={{ width: '112px', height: '112px', objectFit: 'cover', display: 'block' }} />
+                  <img src={chapter.image_url} alt={chapter.title} style={{ width: '100%', height: '70px', objectFit: 'cover', display: 'block' }} />
                 ) : (
-                  <div style={{ width: '112px', height: '112px', borderRadius: '3px', background: 'linear-gradient(145deg, var(--btn-pink), #F5B7A7)' }} />
+                  <div style={{ width: '100%', height: '70px', borderRadius: '3px', background: 'linear-gradient(145deg, var(--btn-pink), #F5B7A7)' }} />
                 )}
               </PolaroidFrame>
             )}
@@ -152,23 +141,22 @@ export default function StoryPage() {
       </div>
 
       {relationshipSections.map((section) => (
-        <div key={section.name} style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div key={section.name} style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
           <h3 style={sectionHeaderStyle}>{section.name}</h3>
           {section.cards.map((relationship) => (
             <article
               key={relationship.id}
               style={{
                 width: '100%',
-                borderRadius: '20px',
-                padding: '18px 20px',
-                marginBottom: '10px',
+                borderRadius: '16px',
+                padding: '12px 16px',
                 background: 'var(--white)',
-                boxShadow: '0 8px 24px rgba(93,64,55,.08)',
+                boxShadow: '0 6px 18px rgba(93,64,55,.07)',
                 textAlign: 'left',
               }}
             >
-              <strong style={{ display: 'block', marginBottom: '6px', color: 'var(--accent-purple)', fontSize: '16px' }}>{relationship.name}</strong>
-              <p style={{ fontSize: '16px', lineHeight: 1.55, color: 'var(--text-brown)' }}>{relationship.relationship_type || `${section.name} stories and shared memories are part of Cheruto's lasting legacy.`}</p>
+              <strong style={{ display: 'block', marginBottom: '4px', color: 'var(--accent-purple)', fontSize: '15px' }}>{relationship.name}</strong>
+              <p style={{ fontSize: '14px', lineHeight: 1.4, color: 'var(--text-brown)' }}>{relationship.relationship_type || `${section.name} stories and shared memories are part of Cheruto's lasting legacy.`}</p>
             </article>
           ))}
         </div>

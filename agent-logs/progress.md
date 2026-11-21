@@ -159,3 +159,13 @@ Phase 5 complete — real memorial content, visual asset approval, and live host
 - Added vertically stacked centered Family, Friends, and Community pill headers with matching warm-white tribute cards underneath.
 - Added fallback Cheruto/Cheru relationship stories for Family, Friends, and Community while retaining live relationship data where available.
 - Confirmed `npm run build` completes successfully.
+
+## 2026-11-21 14:33:31 UTC — Hidden Scrollbar and Compact Story Gallery Rhythm
+- Added global scrollbar hiding for `html`, `body`, `main`, and `.no-scrollbar` while preserving touch and wheel scrolling.
+- Added `className="no-scrollbar"` to the live app scroll container and tightened horizontal padding from 24px to 18px.
+- Reduced StoryPage top clearance to `max(20px, calc(var(--safe-top) + 14px))`.
+- Reduced the Her Story pill bottom margin and padding for a tighter header rhythm.
+- Reduced timeline vertical gaps to 12px and compacted Polaroids to 72px wide by 82px tall.
+- Tightened timeline cards to 16px radius, 12px/14px padding, 15px titles, 14px descriptions, and compact era badges.
+- Reduced Family, Friends, and Community header and relationship-card spacing for more visible gallery content at a glance.
+- Confirmed `npm run build` completes successfully; preview is running on port 4175.
