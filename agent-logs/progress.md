@@ -151,3 +151,11 @@ Phase 5 complete — real memorial content, visual asset approval, and live host
 - Updated the Say Bye aria-label to enter the Cheruto memorial.
 - Replaced all repository `Cherono` / `cherono` / `CHERONO` instances with `Cheruto` / `cheruto` / `CHERUTO` across code, manifest, PWA cache, config, docs, and logs.
 - Verified the case-insensitive `cherono` repo scan returns zero matches.
+
+## 2026-11-21 14:09:46 UTC — Story Page Header and Relationship Sections
+- Reworked `src/pages/StoryPage.jsx` with safe-top and bottom clearance.
+- Replaced the oversized top heading with a centered, medium-sized `Her Story` white pill header.
+- Removed the bottom horizontal Family, Friends, and Community pills.
+- Added vertically stacked centered Family, Friends, and Community pill headers with matching warm-white tribute cards underneath.
+- Added fallback Cheruto/Cheru relationship stories for Family, Friends, and Community while retaining live relationship data where available.
+- Confirmed `npm run build` completes successfully.
