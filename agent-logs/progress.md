@@ -123,3 +123,12 @@ Awaiting UI Shell phase and Screenshot Gate.
 - Locked 44px minimum widths/heights for every pill item and kept the pill at 520px maximum with 24px viewport side clearance.
 - Added Lucide `X` as the pill Exit icon and removed `src/components/ui/ExitButton.jsx` after confirming there are no live references.
 - Updated `PROJECT_CONSTITUTION.md` so the Exit control rule now requires the bottom floating pill, with no top-right control.
+
+## 2026-11-21 13:36:54 UTC — Say Bye Splash Screen Upgrade
+- Rebuilt `src/components/SplashScreen.jsx` as a centered 100dvh cream `<section>` rather than a full-screen button.
+- Locked the opening `Cherono` script title at `clamp(4rem, 18vw, 6.5rem)` in `var(--text-brown)`.
+- Removed the “Tap anywhere to enter the memorial.” prompt completely.
+- Added the pink 52px minimum-height `Say Bye` pill with Inter typography, warm elevation, entrance motion, and tactile tap feedback.
+- Wired `Say Bye` to `onEnter`, including the fullscreen/Homescreen transition through `src/App.jsx`.
+- Added accessible `:focus-visible` styling for the splash button in `src/index.css`.
+- Updated `PROJECT_CONSTITUTION.md` to lock this entrance interaction as the `Say Bye` pill decision.

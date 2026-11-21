@@ -18,24 +18,28 @@
   z-index: 200;
   width: 100%;
   height: 100dvh;
-  border: 0;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  background: var(--bg-cream);
+  gap: 24px;
+  background-color: var(--bg-cream);
   color: var(--text-brown);
 }
 
 .splash-kicker {
+  margin: 0;
+  color: var(--text-brown);
   font-family: var(--font-script);
-  font-size: clamp(3.5rem, 16vw, 6rem);
+  font-size: clamp(4rem, 18vw, 6.5rem);
+  line-height: 1;
+  font-weight: 400;
 }
 
-.splash-prompt {
-  min-height: var(--touch-target);
-  font-family: var(--font-sans);
+.splash-screen button:focus-visible {
+  outline: 3px solid var(--accent-green);
+  outline-offset: 4px;
 }
 
 .lively-button {
