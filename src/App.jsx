@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import Navigation from './components/layout/Navigation'
 import ExitButton from './components/ui/ExitButton'
+import Button from './components/ui/Button'
 
 const sections = {
   Home: {
     eyebrow: 'In loving memory',
-    title: 'A quiet place to remember',
+    title: 'A lively celebration of life',
   },
   Story: {
     eyebrow: 'The life remembered',
@@ -37,6 +38,7 @@ export default function App() {
 
         <section className="gallery-section" aria-live="polite">
           <p>Content will appear here.</p>
+          <Button onClick={() => setActiveItem('Guestbook')}>Share a memory</Button>
         </section>
       </main>
 
