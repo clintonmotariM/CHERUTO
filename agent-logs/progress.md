@@ -45,7 +45,7 @@ A screenshot is required from the human before proceeding to UI styling.
 ## Component-First Update
 
 ### CSS Architecture Complete
-- `src/styles/tokens.css` contains the exact Cherono palette, sizing, and safe-area variables.
+- `src/styles/tokens.css` contains the exact Cheruto palette, sizing, and safe-area variables.
 - `src/styles/common.css` contains the reset, body defaults, and safe-area utilities.
 - `src/index.css` imports only `tokens.css` and `common.css`.
 
@@ -85,7 +85,7 @@ A screenshot is required from the human before proceeding to UI styling.
 - Added the five tabs with Lucide icons and pink active-state transitions.
 - Verified the app with `npm run build`; the production bundle completes successfully.
 - Rebuilt preview is available at `http://localhost:4174/` while the earlier preview occupies port 4173.
-- Awaiting Screenshot Gate for centered `Cherono` script text and floating navigation proof.
+- Awaiting Screenshot Gate for centered `Cheruto` script text and floating navigation proof.
 
 ## 2026-11-21 09:04:17 UTC — Memorial Pages and Visible Bottom Navigation
 - Created five memorial pages: Home, Story, Legacy, Gathering, and Her Home.
@@ -97,7 +97,7 @@ A screenshot is required from the human before proceeding to UI styling.
 - Production build completed successfully after the page integration.
 
 ## 2026-11-21 09:07:08 UTC — Project Vision and Build Summary
-- Added `agent-logs/PROJECT_OVERVIEW.md`, documenting what the Cherono memorial PWA is, why it is being made, its goals, current experience, and work completed so far.
+- Added `agent-logs/PROJECT_OVERVIEW.md`, documenting what the Cheruto memorial PWA is, why it is being made, its goals, current experience, and work completed so far.
 - The app is documented as a warm, mobile-first, QR-accessible celebration-of-life PWA.
 - Its key goals are accessible memorial entry, respectful joyful presentation, simple five-section navigation, offline support, preserved guest memories, and consistent component-driven design.
 - Current work includes PWA setup, Supabase foundations, CSS tokens, Great Vibes and Inter typography, five page components, Lucide icons, Framer Motion transitions, and a centered floating bottom navigation.
@@ -111,7 +111,7 @@ Awaiting UI Shell phase and Screenshot Gate.
 - Unified `src/index.css` around token and common imports plus token-mapped helper classes.
 - Updated `BottomNav.jsx` to use 11px tab labels with 44px minimum touch areas and safe-bottom positioning.
 - Wired the live splash, fullscreen hook, Exit button, 600px scroll shell, five pages, and BottomNav state flow in `src/App.jsx`.
-- Added 192px, 512px, and 180px Cherono pink/C-monogram PWA icons.
+- Added 192px, 512px, and 180px Cheruto pink/C-monogram PWA icons.
 - Installed `@supabase/supabase-js` and changed the client to warn and export `null` when environment values are missing.
 - Created `.env.example` with the two required Vite Supabase variables.
 - Production build completed successfully; the preview is running at `http://localhost:4175/` and the network URL is `http://192.168.1.119:4175/`.
@@ -126,9 +126,46 @@ Awaiting UI Shell phase and Screenshot Gate.
 
 ## 2026-11-21 13:36:54 UTC — Say Bye Splash Screen Upgrade
 - Rebuilt `src/components/SplashScreen.jsx` as a centered 100dvh cream `<section>` rather than a full-screen button.
-- Locked the opening `Cherono` script title at `clamp(4rem, 18vw, 6.5rem)` in `var(--text-brown)`.
+- Locked the opening `Cheruto` script title at `clamp(4rem, 18vw, 6.5rem)` in `var(--text-brown)`.
 - Removed the “Tap anywhere to enter the memorial.” prompt completely.
 - Added the pink 52px minimum-height `Say Bye` pill with Inter typography, warm elevation, entrance motion, and tactile tap feedback.
 - Wired `Say Bye` to `onEnter`, including the fullscreen/Homescreen transition through `src/App.jsx`.
 - Added accessible `:focus-visible` styling for the splash button in `src/index.css`.
 - Updated `PROJECT_CONSTITUTION.md` to lock this entrance interaction as the `Say Bye` pill decision.
+
+## 2026-11-21 13:49:09 UTC — Phase 4 and 5 Gallery & Supabase Wiring
+- Created `src/hooks/useMemorialData.js` to load profile, timeline, relationships, schedule, awareness profiles, and approved guestbook memories from Supabase with warm fallback data.
+- Built the Story timeline with live timeline events, relationships, Polaroid milestones, era pills, staggered Framer Motion, and readable body copy.
+- Built Her Legacy with QuoteCard reflections, three palette values, approved tributes, and native share/clipboard fallback behavior.
+- Built The Gathering with live schedule cards, date and venue information, directions links, attendance validation, loading/error/success states, Supabase RSVP insertion, and local fallback storage.
+- Built Her Home with an expandable guestbook form, required-name and memory validation, 5000-character limit, Supabase pending-approval insertion, instant local tribute display, and approved QuoteCard feed.
+- All primary controls preserve 44px minimum touch areas and body copy remains readable at 15–16px.
+
+### Current Phase
+Phase 5 complete — real memorial content, visual asset approval, and live hosted Supabase credentials remain the final data-quality gate before production launch.
+
+## 2026-11-21 14:02:32 UTC — Cheruto Solemn Splash and Global Name Lock
+- Updated the splash heading to `Cheruto` with `clamp(4.2rem, 18vw, 6.5rem)` typography and `var(--text-brown)` color.
+- Replaced the bright Say Bye background with solemn `#5C343D`, warm cream text, a subtle rose border, and grounded warm shadow.
+- Added reduced-motion-safe 4.8-second melancholic sigh animation with vertical drift, opacity, scale, and halo pulse.
+- Updated the Say Bye aria-label to enter the Cheruto memorial.
+- Replaced all repository `Cherono` / `cherono` / `CHERONO` instances with `Cheruto` / `cheruto` / `CHERUTO` across code, manifest, PWA cache, config, docs, and logs.
+- Verified the case-insensitive `cherono` repo scan returns zero matches.
+
+## 2026-11-21 14:09:46 UTC — Story Page Header and Relationship Sections
+- Reworked `src/pages/StoryPage.jsx` with safe-top and bottom clearance.
+- Replaced the oversized top heading with a centered, medium-sized `Her Story` white pill header.
+- Removed the bottom horizontal Family, Friends, and Community pills.
+- Added vertically stacked centered Family, Friends, and Community pill headers with matching warm-white tribute cards underneath.
+- Added fallback Cheruto/Cheru relationship stories for Family, Friends, and Community while retaining live relationship data where available.
+- Confirmed `npm run build` completes successfully.
+
+## 2026-11-21 14:33:31 UTC — Hidden Scrollbar and Compact Story Gallery Rhythm
+- Added global scrollbar hiding for `html`, `body`, `main`, and `.no-scrollbar` while preserving touch and wheel scrolling.
+- Added `className="no-scrollbar"` to the live app scroll container and tightened horizontal padding from 24px to 18px.
+- Reduced StoryPage top clearance to `max(20px, calc(var(--safe-top) + 14px))`.
+- Reduced the Her Story pill bottom margin and padding for a tighter header rhythm.
+- Reduced timeline vertical gaps to 12px and compacted Polaroids to 72px wide by 82px tall.
+- Tightened timeline cards to 16px radius, 12px/14px padding, 15px titles, 14px descriptions, and compact era badges.
+- Reduced Family, Friends, and Community header and relationship-card spacing for more visible gallery content at a glance.
+- Confirmed `npm run build` completes successfully; preview is running on port 4175.

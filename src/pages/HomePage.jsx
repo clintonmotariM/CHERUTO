@@ -52,7 +52,7 @@ export default function HomePage() {
       <button
         type="button"
         onClick={showNextPhoto}
-        aria-label="Show next Cherono memory"
+        aria-label="Show next Cheruto memory"
         style={{
           width: 'clamp(290px, 76vw, 350px)',
           aspectRatio: '4 / 5',
@@ -111,7 +111,7 @@ export default function HomePage() {
                 textShadow: '0 2px 12px rgba(93,64,55,.48)',
               }}
             >
-              Cherono
+              Cheruto
             </span>
           </motion.div>
         </AnimatePresence>

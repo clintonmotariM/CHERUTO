@@ -29,3 +29,20 @@ body {
 .safe-bottom {
   padding-bottom: var(--safe-bottom);
 }
+
+html,
+body,
+main,
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+main::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}

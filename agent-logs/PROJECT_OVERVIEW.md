@@ -1,10 +1,10 @@
-# Cherono Memorial PWA — Project Overview
+# Cheruto Memorial PWA — Project Overview
 
 **Last updated:** 2026-11-21 09:07:08 UTC
 
 ## What This App Is
 
-Cherono Memorial PWA is a mobile-first, installable celebration-of-life experience for family, friends, and guests. It is designed to feel like a quiet gallery with a lively, warm personality. Guests can enter through a QR code and move between the story, legacy, gathering information, and memorial home from a centered floating navigation pill.
+Cheruto Memorial PWA is a mobile-first, installable celebration-of-life experience for family, friends, and guests. It is designed to feel like a quiet gallery with a lively, warm personality. Guests can enter through a QR code and move between the story, legacy, gathering information, and memorial home from a centered floating navigation pill.
 
 The experience is intended to remain readable and comfortable on phones, including devices with notches and safe areas. It is also built as a PWA so it can work like an app, launch fullscreen, and remain available through cached assets when network access is limited.
 
@@ -12,7 +12,7 @@ The experience is intended to remain readable and comfortable on phones, includi
 
 This memorial experience is being created to provide one welcoming, lasting digital place where people can:
 
-- Honor Cherono's life and personality.
+- Honor Cheruto's life and personality.
 - Remember meaningful moments and relationships.
 - Learn gathering and memorial information.
 - Share appreciation, memories, and support.
@@ -32,11 +32,11 @@ The visual direction replaces a somber, generic memorial interface with a lively
 
 ## Current User Experience
 
-The app currently opens directly into a vertically scrollable 600px-centered canvas on a cream background. Cherono's name is displayed in an elegant script style, while the selected page appears below it. A fixed floating pill navigation remains centered above the bottom safe area and provides access to five sections:
+The app currently opens directly into a vertically scrollable 600px-centered canvas on a cream background. Cheruto's name is displayed in an elegant script style, while the selected page appears below it. A fixed floating pill navigation remains centered above the bottom safe area and provides access to five sections:
 
-- **Home:** An introduction and centerpiece for Cherono's celebration.
+- **Home:** An introduction and centerpiece for Cheruto's celebration.
 - **Story:** A timeline-style presentation of beginnings, passions, people, and defining moments.
-- **Legacy:** Reflections and a lasting statement of what Cherono leaves behind.
+- **Legacy:** Reflections and a lasting statement of what Cheruto leaves behind.
 - **Gathering:** Memorial service and gathering details.
 - **Her Home:** A place for memories and family-oriented guest interactions.
 
@@ -49,7 +49,7 @@ The app currently opens directly into a vertically scrollable 600px-centered can
 - Added a cache-first service worker and PWA manifest.
 - Added React, Vite, Lucide icons, Framer Motion, React Router, and Supabase dependencies.
 - Established CSS token and common-style architecture.
-- Added the Cherono palette: cream, brown, pink, purple, green, white, and overlay brown.
+- Added the Cheruto palette: cream, brown, pink, purple, green, white, and overlay brown.
 - Added Great Vibes and Inter typography tokens and font loading.
 - Created reusable UI shell components for buttons, Polaroid framing, quotes, and input fields.
 - Built the elevated floating pill navigation with Lucide icon and text labels.
@@ -59,7 +59,7 @@ The app currently opens directly into a vertically scrollable 600px-centered can
 - Added a 100dvh fixed app canvas with an independent vertically scrolling content column.
 - Established Vite development, build, and preview scripts.
 - Created Supabase migration foundations for the memorial profile, timeline, relationships, guestbook, attendance, schedule, and awareness profiles.
-- Published development progress to the CHERONO GitHub repository.
+- Published development progress to the CHERUTO GitHub repository.
 
 ## Next Intended Phase
 

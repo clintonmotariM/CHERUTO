@@ -17,8 +17,9 @@ export default function BottomNav({ activeTab = 'home', onChange, onExit }) {
         bottom: 'max(var(--safe-bottom), 20px)',
         left: '50%',
         transform: 'translateX(-50%)',
-        width: 'calc(100% - 24px)',
-        maxWidth: '520px',
+        width: 'fit-content',
+        minWidth: '320px',
+        maxWidth: '460px',
         height: 'var(--nav-height)',
         backgroundColor: 'var(--white)',
         borderRadius: '50px',
@@ -26,16 +27,15 @@ export default function BottomNav({ activeTab = 'home', onChange, onExit }) {
         boxShadow: '0 8px 30px rgba(93, 64, 55, 0.14)',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: '2px',
-        padding: '6px 8px',
+        justifyContent: 'center',
+        gap: '6px',
+        padding: '6px 10px',
         zIndex: 100,
       }}
     >
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id
         const Icon = tab.icon
-        const isHome = tab.id === 'home'
 
         return (
           <button
@@ -46,32 +46,41 @@ export default function BottomNav({ activeTab = 'home', onChange, onExit }) {
             aria-current={isActive ? 'page' : undefined}
             onClick={() => onChange?.(tab.id)}
             style={{
-              flex: isHome ? '0 0 44px' : '1 1 0',
-              width: isHome ? '44px' : 'auto',
+              height: '44px',
               minWidth: '44px',
               minHeight: '44px',
-              height: '44px',
+              padding: isActive ? '0 16px' : '0',
+              border: isActive ? '1px solid rgba(255, 77, 133, 0.25)' : 'none',
+              borderRadius: isActive ? '999px' : '50%',
+              backgroundColor: isActive ? 'rgba(255, 77, 133, 0.13)' : 'transparent',
+              color: isActive ? 'var(--btn-pink)' : 'var(--text-brown)',
               display: 'flex',
-              flexDirection: 'column',
+              flexDirection: isActive ? 'row' : 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '4px',
-              padding: isHome ? '0' : '7px 2px',
-              border: 'none',
-              borderRadius: isActive ? '40px' : '50%',
-              backgroundColor: isActive ? 'var(--btn-pink)' : 'transparent',
-              color: isActive ? 'var(--white)' : 'var(--text-brown)',
+              gap: isActive ? '8px' : '0',
               cursor: 'pointer',
-              transition: 'background-color 0.3s ease, color 0.3s ease, transform 0.3s ease',
+              transition: 'all 0.28s cubic-bezier(0.22, 1, 0.36, 1)',
+              whiteSpace: 'nowrap',
             }}
           >
             <Icon
-              size={isHome ? 20 : 18}
-              strokeWidth={isActive ? 2.5 : 2}
+              size={22}
+              strokeWidth={isActive ? 2.4 : 1.9}
               aria-hidden="true"
+              style={{ color: isActive ? 'var(--btn-pink)' : 'var(--text-brown)' }}
             />
-            {!isHome && (
-              <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', fontWeight: isActive ? 700 : 500, whiteSpace: 'nowrap' }}>
+            {isActive && (
+              <span
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  letterSpacing: '0.02em',
+                  color: 'var(--btn-pink)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
                 {tab.label}
               </span>
             )}
@@ -100,7 +109,7 @@ export default function BottomNav({ activeTab = 'home', onChange, onExit }) {
           cursor: 'pointer',
         }}
       >
-        <X size={18} aria-hidden="true" />
+        <X size={20} aria-hidden="true" />
       </button>
     </nav>
   )

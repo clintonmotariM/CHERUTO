@@ -42,6 +42,7 @@ export default function App() {
   return (
     <div style={{ height: '100dvh', backgroundColor: 'var(--bg-cream)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <main
+        className="no-scrollbar"
         style={{
           flex: 1,
           width: '100%',
@@ -49,8 +50,8 @@ export default function App() {
           margin: '0 auto',
           overflowY: 'auto',
           paddingTop: 'var(--safe-top)',
-          paddingRight: '24px',
-          paddingLeft: '24px',
+          paddingRight: '18px',
+          paddingLeft: '18px',
           paddingBottom: 'calc(var(--nav-height) + var(--safe-bottom) + 32px)',
           display: 'flex',
           flexDirection: 'column',
