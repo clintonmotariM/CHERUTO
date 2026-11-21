@@ -116,3 +116,10 @@ Awaiting UI Shell phase and Screenshot Gate.
 - Created `.env.example` with the two required Vite Supabase variables.
 - Production build completed successfully; the preview is running at `http://localhost:4175/` and the network URL is `http://192.168.1.119:4175/`.
 - Screenshot Gate: Splash, all five tabs, centered shell, and Exit button are ready for visual verification.
+- Removed the top-right Exit import and JSX from `src/App.jsx`; the screen corner is now clear.
+- Added `handleExit` to exit active browser fullscreen and return `entered` to `false`, reopening the SplashScreen.
+- Passed `onExit={handleExit}` from `src/App.jsx` to `src/components/layout/BottomNav.jsx`.
+- Rebuilt the floating pill as a six-item layout: icon-only Home, labeled Story, labeled Legacy, labeled Gathering, labeled Her Home, and icon-only Exit.
+- Locked 44px minimum widths/heights for every pill item and kept the pill at 520px maximum with 24px viewport side clearance.
+- Added Lucide `X` as the pill Exit icon and removed `src/components/ui/ExitButton.jsx` after confirming there are no live references.
+- Updated `PROJECT_CONSTITUTION.md` so the Exit control rule now requires the bottom floating pill, with no top-right control.

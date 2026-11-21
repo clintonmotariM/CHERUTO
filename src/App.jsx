@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import useImmersiveMode from './hooks/useImmersiveMode'
 import SplashScreen from './components/SplashScreen'
-import ExitButton from './components/ui/ExitButton'
 import BottomNav from './components/layout/BottomNav'
 import HomePage from './pages/HomePage'
 import StoryPage from './pages/StoryPage'
@@ -22,6 +21,13 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('home')
   const { enterFullscreen } = useImmersiveMode(true)
 
+  const handleExit = () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.().catch(() => {})
+    }
+    setEntered(false)
+  }
+
   if (!entered) {
     return (
       <SplashScreen
@@ -34,17 +40,7 @@ export default function App() {
   }
 
   return (
-    <div
-      style={{
-        height: '100dvh',
-        backgroundColor: 'var(--bg-cream)',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-      }}
-    >
-      <ExitButton />
-
+    <div style={{ height: '100dvh', backgroundColor: 'var(--bg-cream)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <main
         style={{
           flex: 1,
@@ -52,26 +48,20 @@ export default function App() {
           maxWidth: '600px',
           margin: '0 auto',
           overflowY: 'auto',
-          padding: '32px 24px calc(var(--nav-height) + var(--safe-bottom) + 72px)',
+          paddingTop: 'var(--safe-top)',
+          paddingRight: '24px',
+          paddingLeft: '24px',
+          paddingBottom: 'calc(var(--nav-height) + var(--safe-bottom) + 32px)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           textAlign: 'center',
         }}
       >
-        <header className="safe-top" style={{ marginBottom: '28px', width: '100%' }}>
-          <h1 style={{ fontFamily: 'var(--font-script)', fontSize: 'clamp(3rem, 14vw, 4.5rem)', lineHeight: 1 }}>
-            Cherono
-          </h1>
-          <p style={{ marginTop: '10px', color: 'var(--text-brown)' }}>
-            A lively celebration of life
-          </p>
-        </header>
-
         {pages[activeTab]}
       </main>
 
-      <BottomNav activeTab={activeTab} onChange={setActiveTab} />
+      <BottomNav activeTab={activeTab} onChange={setActiveTab} onExit={handleExit} />
     </div>
   )
 }

@@ -28,9 +28,10 @@ This document is the absolute law for Cherono's memorial PWA.
 
 ## 4. The Exit Code
 
-- The Exit control must always exist in the top-right corner.
-- It must be at least `44x44px`.
-- Its position must use `top: max(env(safe-area-inset-top), 16px)` and `right: 16px`.
+- The Exit control must always exist inside the bottom floating navigation pill.
+- It must remain at least `44x44px`.
+- It must appear at the far-right end beside the icon-only Home control.
+- It must exit fullscreen and return to the splash gate when tapped.
 
 ## 5. Asset and Interaction Constraint
 
