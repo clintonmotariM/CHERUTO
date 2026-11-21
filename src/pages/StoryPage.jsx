@@ -47,8 +47,8 @@ export default function StoryPage() {
     border: '1px solid rgba(157, 78, 221, 0.18)',
     boxShadow: '0 4px 14px rgba(93, 64, 55, 0.06)',
     fontFamily: 'var(--font-script)',
-    fontSize: 'clamp(1.35rem, 4.5vw, 1.6rem)',
-    lineHeight: 1.15,
+    fontSize: 'clamp(1.25rem, 4.2vw, 1.45rem)',
+    lineHeight: 1,
     color: 'var(--text-brown)',
   }
 
@@ -57,7 +57,7 @@ export default function StoryPage() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       style={{
-        paddingTop: 'max(20px, calc(var(--safe-top) + 14px))',
+        paddingTop: 'max(14px, calc(var(--safe-top) + 10px))',
         paddingBottom: '24px',
         width: '100%',
         display: 'flex',
@@ -70,8 +70,8 @@ export default function StoryPage() {
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          margin: '0 auto 16px auto',
-          padding: '8px 24px',
+          margin: '0 auto 12px auto',
+          padding: '4px 22px',
           borderRadius: '999px',
           backgroundColor: 'var(--white)',
           border: '1px solid rgba(93, 64, 55, 0.10)',
@@ -82,8 +82,8 @@ export default function StoryPage() {
           style={{
             margin: 0,
             fontFamily: 'var(--font-script)',
-            fontSize: 'clamp(1.85rem, 6vw, 2.25rem)',
-            lineHeight: 1.15,
+            fontSize: 'clamp(1.6rem, 5vw, 1.9rem)',
+            lineHeight: 1,
             color: 'var(--text-brown)',
             whiteSpace: 'nowrap',
           }}
