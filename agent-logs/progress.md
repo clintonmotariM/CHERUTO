@@ -87,5 +87,14 @@ A screenshot is required from the human before proceeding to UI styling.
 - Rebuilt preview is available at `http://localhost:4174/` while the earlier preview occupies port 4173.
 - Awaiting Screenshot Gate for centered `Cherono` script text and floating navigation proof.
 
+## 2026-11-21 09:04:17 UTC — Memorial Pages and Visible Bottom Navigation
+- Created five memorial pages: Home, Story, Legacy, Gathering, and Her Home.
+- Added Framer Motion entrance transitions to every page.
+- Wired all pages to the active bottom-navigation tab through React state.
+- Centered the floating pill horizontally with `left: 50%` and `transform: translateX(-50%)`.
+- Increased nav visibility with a white surface, subtle brown border, stronger elevation, and fixed bottom safe-area positioning.
+- Kept Lucide icons consistent: Home, BookOpen, Heart, Users, and MapPin.
+- Production build completed successfully after the page integration.
+
 ### Current Phase
 Awaiting UI Shell phase and Screenshot Gate.

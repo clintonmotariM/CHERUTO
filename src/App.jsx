@@ -1,91 +1,33 @@
 import { useState } from 'react'
-import Navigation from './components/layout/Navigation'
-import ExitButton from './components/ui/ExitButton'
-import Button from './components/ui/Button'
 import BottomNav from './components/layout/BottomNav'
-import useImmersiveMode from './hooks/useImmersiveMode'
+import HomePage from './pages/HomePage'
+import StoryPage from './pages/StoryPage'
+import LegacyPage from './pages/LegacyPage'
+import GatheringPage from './pages/GatheringPage'
+import HerHomePage from './pages/HerHomePage'
 
-const sections = {
-  Home: {
-    eyebrow: 'In loving memory',
-    title: 'A lively celebration of life',
-  },
-  Story: {
-    eyebrow: 'The life remembered',
-    title: 'Stories and shared moments',
-  },
-  Guestbook: {
-    eyebrow: 'With gratitude',
-    title: 'Leave a memory',
-  },
-  Details: {
-    eyebrow: 'Gathering together',
-    title: 'Service details',
-  },
+const pages = {
+  home: <HomePage />,
+  story: <StoryPage />,
+  legacy: <LegacyPage />,
+  gathering: <GatheringPage />,
+  residence: <HerHomePage />,
 }
 
 export default function App() {
-  const [entered, setEntered] = useState(false)
-  const [activeItem, setActiveItem] = useState('Home')
-  const { enterFullscreen } = useImmersiveMode(true)
-  const section = sections[activeItem]
-
-  const enterMemorial = async () => {
-    await enterFullscreen()
-    setEntered(true)
-  }
-
-  if (!entered) {
-    return null
-  }
+  const [activeTab, setActiveTab] = useState('home')
 
   return (
-    <div
-      style={{
-        minHeight: '100dvh',
-        backgroundColor: 'var(--bg-cream)',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-      }}
-    >
-      <ExitButton />
-
-      <main
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          width: '100%',
-          maxWidth: '600px',
-          margin: '0 auto',
-          padding: '24px',
-          paddingBottom: '120px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          textAlign: 'center',
-        }}
-      >
-        <h1
-          style={{
-            fontFamily: 'var(--font-script)',
-            fontSize: '3rem',
-            marginTop: '40px',
-          }}
-        >
-          Cherono
-        </h1>
-        <p style={{ marginTop: '16px', color: 'var(--text-brown)' }}>
-          A lively celebration of life.
-        </p>
-
-        <section className="gallery-section" aria-live="polite">
-          <p>Content will appear here.</p>
-          <Button onClick={() => setActiveItem('Guestbook')}>Share a memory</Button>
-        </section>
+    <div style={{ height: '100dvh', backgroundColor: 'var(--bg-cream)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <main style={{ flex: 1, width: '100%', maxWidth: '600px', margin: '0 auto', overflowY: 'auto', padding: '32px 24px 128px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+        <header style={{ marginBottom: '28px' }}>
+          <h1 style={{ fontFamily: 'var(--font-script)', fontSize: 'clamp(3rem, 14vw, 4.5rem)', lineHeight: 1 }}>Cherono</h1>
+          <p style={{ marginTop: '10px', color: 'var(--text-brown)' }}>A lively celebration of life</p>
+        </header>
+        {pages[activeTab]}
       </main>
 
-      <BottomNav />
+      <BottomNav activeTab={activeTab} onChange={setActiveTab} />
     </div>
   )
 }

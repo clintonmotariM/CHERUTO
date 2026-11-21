@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Home, BookOpen, Heart, Users, MapPin } from 'lucide-react'
 
 const tabs = [
@@ -9,22 +8,22 @@ const tabs = [
   { id: 'residence', label: 'Her Home', icon: MapPin },
 ]
 
-export default function BottomNav() {
-  const [activeTab, setActiveTab] = useState('home')
-
+export default function BottomNav({ activeTab = 'home', onChange }) {
   return (
     <nav
+      aria-label="Primary navigation"
       style={{
         position: 'fixed',
         bottom: 'max(var(--safe-bottom), 20px)',
         left: '50%',
         transform: 'translateX(-50%)',
-        width: 'calc(100% - 32px)',
+        width: 'calc(100% - 24px)',
         maxWidth: '500px',
         height: 'var(--nav-height)',
         backgroundColor: 'var(--white)',
         borderRadius: '50px',
-        boxShadow: '0 8px 30px rgba(93, 64, 55, 0.12)',
+        border: '1px solid rgba(93, 64, 55, 0.08)',
+        boxShadow: '0 8px 30px rgba(93, 64, 55, 0.14)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -42,32 +41,28 @@ export default function BottomNav() {
             type="button"
             aria-label={tab.label}
             aria-current={isActive ? 'page' : undefined}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => onChange?.(tab.id)}
             style={{
               flex: 1,
+              minWidth: '44px',
+              minHeight: '44px',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '4px',
-              padding: '8px 0',
+              padding: '7px 2px',
               border: 'none',
               borderRadius: '40px',
               backgroundColor: isActive ? 'var(--btn-pink)' : 'transparent',
               color: isActive ? 'var(--white)' : 'var(--text-brown)',
               cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              minHeight: '44px',
+              transition: 'background-color 0.3s ease, color 0.3s ease, transform 0.3s ease',
+              transform: isActive ? 'scale(1.02)' : 'scale(1)',
             }}
           >
             <Icon size={18} strokeWidth={isActive ? 2.5 : 2} aria-hidden="true" />
-            <span
-              style={{
-                fontSize: '10px',
-                fontWeight: isActive ? 700 : 500,
-                fontFamily: 'var(--font-sans)',
-              }}
-            >
+            <span style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', fontWeight: isActive ? 700 : 500, whiteSpace: 'nowrap' }}>
               {tab.label}
             </span>
           </button>
