@@ -10,10 +10,10 @@ const fallbackProfile = {
 }
 
 const fallbackTimeline = [
-  { id: '1', title: 'Her Beginning', event_date: null, description: 'A bright spirit from the very start.', image_url: null },
-  { id: '2', title: 'Her Passions', event_date: null, description: 'The things that brought her joy and purpose.', image_url: null },
-  { id: '3', title: 'Her People', event_date: null, description: 'A heart that gathered everyone close.', image_url: null },
-  { id: '4', title: 'Cherished Moments', event_date: null, description: 'Love and laughter held safely in memory.', image_url: null },
+  { id: '1', title: 'Her Beginning', start_date: null, end_date: null, event_date: null, description: 'A bright spirit from the very start.', image_url: null },
+  { id: '2', title: 'Her Passions', start_date: null, end_date: null, event_date: null, description: 'The things that brought her joy and purpose.', image_url: null },
+  { id: '3', title: 'Her People', start_date: null, end_date: null, event_date: null, description: 'A heart that gathered everyone close.', image_url: null },
+  { id: '4', title: 'Cherished Moments', start_date: null, end_date: null, event_date: null, description: 'Love and laughter held safely in memory.', image_url: null },
 ]
 
 const fallbackRelationships = [

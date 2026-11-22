@@ -86,6 +86,31 @@ function findEvent(stage, index, events) {
   }) || events[index]
 }
 
+function formatDateRange(start_date, end_date, fallbackYear) {
+  const start = start_date ? new Date(`${start_date}T12:00:00`).getFullYear() : null
+  const end = end_date ? new Date(`${end_date}T12:00:00`).getFullYear() : null
+
+  if (start && end) {
+    return start === end ? String(start) : `${start} → ${end}`
+  }
+  if (start) return `From ${start}`
+  if (end) return `To ${end}`
+  return fallbackYear
+}
+
+function formatYearLabel(date, fallback) {
+  return date ? new Date(`${date}T12:00:00`).getFullYear().toString() : fallback
+}
+
+const stageDefaults = {
+  birth: { from: 'Date of Birth', to: 'Early Infancy' },
+  preschool: { from: 'Start Year', to: 'End Year' },
+  primary: { from: 'Form 1', to: 'Form 4' },
+  'high-school': { from: 'Year 1', to: 'Final Year' },
+  campus: { from: 'Year 1', to: 'Final Year' },
+  'final-place': { from: 'Final Days', to: 'Date of Rest' },
+}
+
 export default function TimelinePage() {
   const { timeline = [], loading } = useMemorialData()
   const [expandedId, setExpandedId] = useState(null)
@@ -104,9 +129,13 @@ export default function TimelinePage() {
       biography: event?.description
         ? `${event.description} ${stage.biography}`
         : stage.biography,
-      year: event?.event_date
-        ? new Date(`${event.event_date}T12:00:00`).toLocaleDateString(undefined, { year: 'numeric' })
-        : stage.year,
+      dateRange: formatDateRange(event?.start_date || null, event?.end_date || null, stage.year),
+      fromLabel: event?.start_date
+        ? formatYearLabel(event.start_date, stageDefaults[item.id]?.from || 'Start Date')
+        : stageDefaults[item.id]?.from || 'Start Date',
+      toLabel: event?.end_date
+        ? formatYearLabel(event.end_date, stageDefaults[item.id]?.to || 'End Date')
+        : stageDefaults[item.id]?.to || 'End Date',
       place: event?.location_name || stage.place,
     }
   })
@@ -163,9 +192,19 @@ export default function TimelinePage() {
                   <div style={{ width: '100%', height: '240px', overflow: 'hidden', position: 'relative', borderRadius: '14px', background: item.gradient }}>
                     {item.photoUrl && <img src={item.photoUrl} alt={item.title} style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }} />}
                   </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '10px' }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '28px', padding: '4px 9px', borderRadius: '999px', background: badgeColor, color: 'var(--white)', fontSize: '12px', fontWeight: 700 }}>{item.year}</span>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '28px', padding: '4px 9px', borderRadius: '999px', background: 'rgba(255,249,242,.95)', color: 'var(--text-brown)', fontSize: '12px', fontWeight: 600 }}>{item.place}</span>
+                  <div style={{ marginTop: '10px', padding: '8px 12px', borderRadius: '12px', backgroundColor: 'rgba(255, 249, 242, 0.95)', border: '1px solid rgba(93, 64, 55, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                    <div>
+                      <span style={{ fontSize: '10px', letterSpacing: '0.06em', opacity: 0.65, textTransform: 'uppercase', display: 'block', marginBottom: '2px' }}>FROM</span>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', display: 'block' }}>{item.fromLabel}</span>
+                    </div>
+                    <div style={{ flex: 1, height: '2px', background: 'linear-gradient(90deg, var(--accent-purple), var(--btn-pink))', position: 'relative' }}>
+                      <div style={{ position: 'absolute', left: '-3.5px', top: '-2.5px', width: '7px', height: '7px', borderRadius: '50%', backgroundColor: 'var(--accent-purple)' }} />
+                      <div style={{ position: 'absolute', right: '-3.5px', top: '-2.5px', width: '7px', height: '7px', borderRadius: '50%', backgroundColor: 'var(--btn-pink)' }} />
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <span style={{ fontSize: '10px', letterSpacing: '0.06em', opacity: 0.65, textTransform: 'uppercase', display: 'block', marginBottom: '2px' }}>TO</span>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--btn-pink)', display: 'block' }}>{item.toLabel}</span>
+                    </div>
                   </div>
                   <p style={{ margin: '8px 0 0', fontSize: '14.5px', lineHeight: 1.55, color: 'var(--text-brown)', textAlign: 'left' }}>{item.biography}</p>
                   <blockquote style={{ margin: '8px 0 0', padding: '8px 12px', borderLeft: '3px solid var(--btn-pink)', borderRadius: '8px', backgroundColor: 'rgba(255,249,242,.9)', color: 'var(--text-brown)', fontSize: '13.5px', lineHeight: 1.45, fontStyle: 'italic', textAlign: 'left' }}>“{item.memory}”</blockquote>
