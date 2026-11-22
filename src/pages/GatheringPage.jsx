@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { MapPin, CalendarDays, Shirt, Award, ChevronDown } from 'lucide-react'
+import { MapPin, Award, ChevronDown, Flame, Bus, HeartHandshake, Calendar } from 'lucide-react'
 import useMemorialData from '../hooks/useMemorialData'
 import { supabase } from '../lib/supabaseClient'
 import InputField from '../components/ui/InputField'
 import Button from '../components/ui/Button'
-import OutlineButton from '../components/ui/OutlineButton'
 
 const saintJohnsSlides = [
   { caption: 'Campus First-Aid Drives', gradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' },
@@ -16,30 +15,33 @@ const saintJohnsSlides = [
 const scheduleEvents = [
   {
     id: 'vigil',
-    badge: 'Monday Night',
-    badgeColor: 'var(--accent-purple)',
+    icon: <Flame size={18} style={{ color: 'var(--accent-purple)', flexShrink: 0 }} aria-hidden="true" />,
+    iconColor: 'var(--accent-purple)',
     title: 'MKU Candle Lighting Vigil',
-    time: 'Monday • 7:00 PM – 9:00 PM',
-    location: 'Mount Kenya University (MKU) Campus',
-    notes: 'Join us in light and remembrance.',
+    timeBadge: '7:00 – 9:00 PM',
+    day: 'Monday Night',
+    location: 'MKU Campus',
+    description: 'Join us in light and remembrance as we gather around the flame to honor Cheruto’s life.',
   },
   {
     id: 'departure',
-    badge: 'Wednesday',
-    badgeColor: 'var(--btn-pink)',
-    title: 'Departure to Eldoret (School Transport)',
-    time: 'Wednesday • School Bus Departure',
-    location: 'MKU Main Gate',
-    notes: 'Complimentary MKU student bus to Eldoret (same-day return on the same bus).',
+    icon: <Bus size={18} style={{ color: 'var(--btn-pink)', flexShrink: 0 }} aria-hidden="true" />,
+    iconColor: 'var(--btn-pink)',
+    title: 'Eldoret School Transport',
+    timeBadge: 'Same-Day Return',
+    day: 'Wednesday',
+    location: 'MKU Main Gate → Eldoret',
+    description: 'Complimentary MKU student bus to Eldoret returning the same day on the same bus.',
   },
   {
     id: 'burial',
-    badge: 'Thursday',
-    badgeColor: '#5C343D',
-    title: 'Burial Service at Her Home Place',
-    time: 'Thursday • Home Service',
+    icon: <HeartHandshake size={18} style={{ color: '#5C343D', flexShrink: 0 }} aria-hidden="true" />,
+    iconColor: '#5C343D',
+    title: 'Burial Service at Home',
+    timeBadge: 'Home Service',
+    day: 'Thursday',
     location: 'Eldoret (Her Family Home)',
-    notes: 'Final farewell surrounded by family and friends.',
+    description: 'Final farewell surrounded by family and friends at her home place.',
   },
 ]
 
@@ -112,7 +114,8 @@ export default function GatheringPage() {
     setIsFormOpen(false)
   }
 
-  const allEvents = [...scheduleEvents, ...(schedule || [])]
+  const liveSchedule = (schedule || []).filter((item) => item.title && item.location)
+  const allEvents = [...scheduleEvents, ...liveSchedule]
 
   const attendeeCounts = { Family: 0, Friends: 0, Students: 0, busSeats: 0 }
 
@@ -168,17 +171,27 @@ export default function GatheringPage() {
       </div>
 
       {/* Section 2: Schedule Cards */}
-      <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {allEvents.map((item, index) => (
-          <article key={item.id || index} style={{ width: '100%', padding: '16px', background: 'var(--white)', borderRadius: '18px', boxShadow: '0 8px 24px rgba(93,64,55,.08)', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: item.badgeColor || 'var(--accent-purple)' }}><CalendarDays size={18} aria-hidden="true" /><strong style={{ fontSize: '13px', fontWeight: 700 }}>{item.badge}</strong></div>
-            <h3 style={{ margin: '4px 0 2px', color: 'var(--text-brown)', fontSize: '16px' }}>{item.title}</h3>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '15px', lineHeight: 1.55 }}><MapPin size={16} style={{ flex: '0 0 16px', marginTop: '2px' }} aria-hidden="true" /><span>{item.location}</span></div>
-            <div style={{ fontSize: '13px', color: 'rgba(93, 64, 55, 0.7)', lineHeight: 1.5 }}>{item.time}</div>
-            {item.notes && <div style={{ fontSize: '13px', color: 'rgba(93, 64, 55, 0.85)', marginTop: '4px', lineHeight: 1.5 }}>{item.notes}</div>}
-            {item.address && <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${item.location || ''} ${item.address}`)}`} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', marginTop: '10px', textDecoration: 'none' }}><OutlineButton>Open Map / Directions</OutlineButton></a>}
-          </article>
-        ))}
+      <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+        <span style={{ margin: '6px auto 4px auto', padding: '4px 20px', borderRadius: '999px', backgroundColor: 'var(--white)', border: '1px solid rgba(157, 78, 221, 0.18)', boxShadow: '0 4px 14px rgba(93, 64, 55, 0.06)', fontFamily: 'var(--font-script)', fontSize: 'clamp(1.35rem, 4.5vw, 1.6rem)', lineHeight: 1, color: 'var(--text-brown)' }}>Farewell Schedule</span>
+        {allEvents.map((item, index) => {
+          const Icon = item.icon
+          return (
+            <article key={item.id || index} style={{ width: '100%', maxWidth: '460px', backgroundColor: 'var(--white)', borderRadius: '18px', padding: '14px 16px', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.07)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '11px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(93, 64, 55, 0.05)' }}>{Icon}</div>
+                  <h3 style={{ margin: 0, fontWeight: 700, fontSize: '15.5px', color: 'var(--text-brown)' }}>{item.title}</h3>
+                </div>
+                <span style={{ fontSize: '11.5px', fontWeight: 700, padding: '3px 9px', borderRadius: '999px', backgroundColor: 'rgba(93, 64, 55, 0.06)', color: 'var(--text-brown)' }}>{item.timeBadge}</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px', padding: '6px 10px', borderRadius: '10px', backgroundColor: 'rgba(255, 249, 242, 0.9)', marginBottom: '8px', fontSize: '12.5px', fontWeight: 600 }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'rgba(93, 64, 55, 0.8)' }}><Calendar size={13} aria-hidden="true" /><strong>{item.day}</strong></span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'rgba(93, 64, 55, 0.8)' }}><MapPin size={13} aria-hidden="true" /><strong>{item.location}</strong></span>
+              </div>
+              <p style={{ margin: 0, fontSize: '13.5px', lineHeight: 1.45, color: 'rgba(93, 64, 55, 0.85)' }}>{item.description}</p>
+            </article>
+          )
+        })}
       </div>
 
       {/* Section 3: Collapsible Attendance & Student Transport Form */}
