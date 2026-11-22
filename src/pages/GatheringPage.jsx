@@ -371,7 +371,7 @@ export default function GatheringPage() {
         isOpen={isExpanded}
         variant="card"
         collapsed={
-          <div className="ch-fade-in" style={{ width: '100%', backgroundColor: 'var(--white)', borderRadius: '18px', padding: '12px 14px', border: '1px solid rgba(93, 64, 55, 0.08)', boxShadow: '0 6px 18px rgba(93, 64, 55, 0.06)', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+          <div className="ch-fade-in" onClick={() => setExpandedEventId(item.id)} style={{ width: '100%', backgroundColor: 'var(--white)', borderRadius: '18px', padding: '12px 14px', border: '1px solid rgba(93, 64, 55, 0.08)', boxShadow: '0 6px 18px rgba(93, 64, 55, 0.06)', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
             <div style={{ width: '54px', height: '54px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, background: slide.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {Icon}
             </div>
@@ -382,11 +382,11 @@ export default function GatheringPage() {
               </div>
               <p style={{ margin: 0, fontSize: '12.5px', lineHeight: 1.38, color: 'rgba(93, 64, 55, 0.80)' }}>{item.description}</p>
             </div>
-            <ChevronDown size={15} style={{ alignSelf: 'flex-start', marginTop: '4px', color: 'rgba(93, 64, 55, 0.55)', flexShrink: 0 }} />
+            <ChevronDown size={15} style={{ alignSelf: 'flex-start', marginTop: '4px', color: 'rgba(93, 64, 55, 0.55)', flexShrink: 0 }} onClick={(e) => { e.stopPropagation(); setExpandedEventId(item.id); }} />
           </div>
         }
         expanded={
-          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', onClick: () => setExpandedEventId(null) }}>
             <div style={{ width: '100%', height: '240px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: slide.gradient }}>
               <>
                 <AnimatePresence mode="wait">
@@ -460,7 +460,7 @@ export default function GatheringPage() {
           </button>
         }
         expanded={
-          <form onSubmit={submitAttendance} style={{ width: '100%', maxWidth: '440px', display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 18px 115px', backgroundColor: 'var(--white)', borderRadius: '20px', border: '1px solid rgba(157, 78, 221, 0.16)', boxShadow: '0 12px 32px rgba(157, 78, 221, 0.12)' }}>
+          <form onSubmit={submitAttendance} style={{ width: '100%', maxWidth: '440px', display: 'flex', flexDirection: 'column', gap: '10px', padding: '18px 18px 20px', backgroundColor: 'var(--white)', borderRadius: '20px', border: '1px solid rgba(157, 78, 221, 0.16)', boxShadow: '0 12px 32px rgba(157, 78, 221, 0.12)' }}>
             <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '20px', textAlign: 'center' }}>Confirm Attendance</h3>
 
             {renderInputField('Full Name', true, 'name', 'Your full name', form.name)}
@@ -480,7 +480,7 @@ export default function GatheringPage() {
 
             {renderInputField('Your Phone Number', true, 'contact', '07XX XXX XXX', form.contact)}
 
-            <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: '8px', display: 'block', marginBottom: '6px' }}>
+            <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: '8px', display: 'block', width: '100%', textAlign: 'left', marginBottom: '6px' }}>
               Note (optional)
               <textarea
                 name="note"
@@ -561,7 +561,7 @@ export default function GatheringPage() {
       style={{
         width: '100%',
         paddingTop: 'max(18px, calc(var(--safe-top) + 12px))',
-        paddingBottom: 'calc(var(--nav-height) + 48px)',
+        paddingBottom: '100px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
