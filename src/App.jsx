@@ -15,14 +15,6 @@ import {
   HerHomePageSkeleton,
 } from './components/PageSkeletons'
 
-const pageComponents = {
-  home: HomePage,
-  story: StoryPage,
-  legacy: TimelinePage,
-  gathering: GatheringPage,
-  residence: HerHomePage,
-}
-
 const pageSkeletons = {
   home: HomePageSkeleton,
   story: StoryPageSkeleton,
@@ -40,7 +32,7 @@ export default function App() {
   useEffect(() => {
     if (!entered) return
     setShowingSkeleton(true)
-    const timer = setTimeout(() => setShowingSkeleton(false), 700)
+    const timer = setTimeout(() => setShowingSkeleton(false), 240)
     return () => clearTimeout(timer)
   }, [activeTab, entered])
 
@@ -70,9 +62,7 @@ export default function App() {
     )
   }
 
-  const PageComponent = pages[activeTab]
   const SkeletonComponent = pageSkeletons[activeTab]
-
   return (
     <div style={{ height: '100dvh', backgroundColor: 'var(--bg-cream)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <main
@@ -94,7 +84,7 @@ export default function App() {
         }}
       >
         {showingSkeleton && <SkeletonComponent />}
-        {!showingSkeleton && <PageComponent />}
+        {!showingSkeleton && (pages[activeTab] || pages.home)}
       </main>
 
       <BottomNav activeTab={activeTab} onChange={setActiveTab} onExit={handleExit} />
