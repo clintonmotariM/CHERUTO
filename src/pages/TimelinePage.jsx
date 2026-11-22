@@ -140,7 +140,7 @@ export default function TimelinePage() {
       {loading && <p style={{ margin: '0 0 8px', fontSize: '14px' }}>Gathering Cheruto’s milestones…</p>}
 
       <div style={{ width: '100%', maxWidth: '460px', position: 'relative', display: 'grid', gap: '12px' }}>
-        <div aria-hidden="true" style={{ position: 'absolute', top: '34px', bottom: '34px', left: '32px', width: '2px', borderRadius: '2px', background: 'linear-gradient(180deg, rgba(157,78,221,.35), rgba(255,77,133,.34), rgba(92,52,61,.38))' }} />
+        <div aria-hidden="true" style={{ position: 'absolute', top: '34px', bottom: '34px', left: '32px', width: '2px', borderRadius: '2px', zIndex: 0, background: 'linear-gradient(180deg, rgba(157,78,221,.35), rgba(255,77,133,.34), rgba(92,52,61,.38))' }} />
 
         {items.map((item, index) => {
           const isExpanded = expandedId === item.id
@@ -175,23 +175,25 @@ export default function TimelinePage() {
                     </div>
                   }
                 >
-                  <div style={{ width: '100%', height: '240px', overflow: 'hidden', position: 'relative', borderRadius: '14px', background: item.gradient }}>
-                    {item.photoUrl && <img src={item.photoUrl} alt={item.title} style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }} />}
-                  </div>
-                  <div style={{ padding: '12px 6px 4px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <div style={{ alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', border: '1px solid rgba(157, 78, 221, 0.22)' }}>
-                      <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.07em', color: 'var(--accent-purple)' }}>FROM</span>
-                      <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-brown)' }}>{item.start_date || stageDateRanges[index]?.from || 'Start'}</span>
+                  <div style={{ width: '100%', maxWidth: '460px', backgroundColor: 'var(--white)', borderRadius: '20px', padding: '12px 12px 16px', border: '1px solid rgba(93, 64, 55, 0.08)', boxShadow: '0 12px 32px rgba(93, 64, 55, 0.10)', position: 'relative', zIndex: 2 }}>
+                    <div style={{ width: '100%', height: '240px', overflow: 'hidden', position: 'relative', borderRadius: '14px', background: item.gradient }}>
+                      {item.photoUrl && <img src={item.photoUrl} alt={item.title} style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }} />}
                     </div>
-                    <p style={{ margin: 0, fontSize: '14.5px', lineHeight: 1.6, color: 'var(--text-brown)', textAlign: 'left' }}>{item.biography}</p>
-                    <div style={{ alignSelf: 'center', margin: '2px auto 0 auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(92, 52, 61, 0.08)', border: '1px solid rgba(92, 52, 61, 0.20)' }}>
-                      <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.07em', color: '#5C343D' }}>TO</span>
-                      <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-brown)' }}>{item.end_date || 'Saturday, 14 Nov 2026'}</span>
+                    <div style={{ padding: '12px 6px 4px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div style={{ alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', border: '1px solid rgba(157, 78, 221, 0.22)' }}>
+                        <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.07em', color: 'var(--accent-purple)' }}>FROM</span>
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-brown)' }}>{item.start_date || stageDateRanges[index]?.from || 'Start'}</span>
+                      </div>
+                      <p style={{ margin: 0, fontSize: '14.5px', lineHeight: 1.6, color: 'var(--text-brown)', textAlign: 'left' }}>{item.biography}</p>
+                      <div style={{ alignSelf: 'center', margin: '2px auto 0 auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(92, 52, 61, 0.08)', border: '1px solid rgba(92, 52, 61, 0.20)' }}>
+                        <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.07em', color: '#5C343D' }}>TO</span>
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-brown)' }}>{item.end_date || 'Saturday, 14 Nov 2026'}</span>
+                      </div>
                     </div>
                   </div>
                 </ExpandableReveal>
               ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: '66px 1fr', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '16px', background: 'var(--white)', boxShadow: '0 6px 18px rgba(93,64,55,.07)', textAlign: 'left' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '66px 1fr', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '16px', backgroundColor: 'var(--white)', boxShadow: '0 6px 18px rgba(93,64,55,.07)', border: '1px solid rgba(93, 64, 55, 0.07)', textAlign: 'left', position: 'relative', zIndex: 2 }}>
                   <div style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', background: 'var(--white)', boxShadow: '0 6px 15px rgba(93,64,55,.14)', transform: 'rotate(-2deg)' }}>
                     {item.photoUrl ? <img src={item.photoUrl} alt={item.title} style={{ width: '100%', height: '64px', display: 'block', objectFit: 'cover', borderRadius: '3px' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: item.gradient }} />}
                   </div>
