@@ -31,7 +31,7 @@ const fallbackAwareness = [
 ]
 
 const fallbackMemories = [
-  { id: 'm1', author_name: 'Family', relationship: 'Family', memory: 'We carry Cheruto’s joy, strength, and laughter with us always.', is_approved: true },
+  { id: 'm1', author_name: 'Family', relationship: 'Family', memory: 'We carry Cheruto’s joy, strength, and laughter with us always.', is_approved: true, memory_tag: 'Family', photo_url: null },
 ]
 
 export default function useMemorialData() {

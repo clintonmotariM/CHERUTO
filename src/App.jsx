@@ -8,18 +8,18 @@ import GatheringPage from './pages/GatheringPage'
 import HerHomePage from './pages/HerHomePage'
 import TimelinePage from './pages/TimelinePage'
 
-const pages = {
-  home: <HomePage />,
-  story: <StoryPage />,
-  legacy: <TimelinePage />,
-  gathering: <GatheringPage />,
-  residence: <HerHomePage />,
-}
-
 export default function App() {
   const [entered, setEntered] = useState(false)
   const [activeTab, setActiveTab] = useState('home')
   const { enterFullscreen } = useImmersiveMode(true)
+
+  const pages = {
+    home: <HomePage />,
+    story: <StoryPage />,
+    legacy: <TimelinePage />,
+    gathering: <GatheringPage />,
+    residence: <HerHomePage onNavigateHome={() => setActiveTab('home')} />,
+  }
 
   const handleExit = () => {
     if (document.fullscreenElement) {

@@ -1,37 +1,54 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Images } from 'lucide-react'
+import useMemorialData from '../hooks/useMemorialData'
 
-const photos = [
+const curatedPhotos = [
   {
-    id: 'purple-pink',
-    src: '',
-    alt: 'A purple to pink memorial memory',
+    id: 'curated-purple-pink',
     caption: 'A life remembered with love, laughter, and the many moments that made her unforgettable.',
     fallbackGradient: 'linear-gradient(145deg, #9D4EDD 0%, #FF4D85 100%)',
   },
   {
-    id: 'pink-peach',
-    src: '',
-    alt: 'A pink to peach memorial memory',
+    id: 'curated-pink-peach',
     caption: 'Her warmth lives in every kindness shared and every story we carry forward.',
     fallbackGradient: 'linear-gradient(145deg, #FF4D85 0%, #F5B7A7 100%)',
   },
   {
-    id: 'purple-green',
-    src: '',
-    alt: 'A purple to green memorial memory',
+    id: 'curated-purple-green',
     caption: 'Forever held close in the hearts of all who loved her.',
     fallbackGradient: 'linear-gradient(145deg, #9D4EDD 0%, #2ECC71 100%)',
+  },
+  {
+    id: 'curated-peach-purple',
+    caption: 'Her light continues to shine through every story told in her name.',
+    fallbackGradient: 'linear-gradient(145deg, #F5B7A7 0%, #9D4EDD 100%)',
   },
 ]
 
 export default function HomePage() {
+  const { memories = [], loading } = useMemorialData()
   const [activeIndex, setActiveIndex] = useState(0)
-  const activePhoto = photos[activeIndex]
+
+  const submittedMemories = (memories || []).filter((m) => m.id && m.id.startsWith('local-'))
+  const curatedCount = curatedPhotos.length
+  const totalSlides = curatedCount + submittedMemories.length
+
+  const activeSlide = () => {
+    if (activeIndex < curatedCount) {
+      return { type: 'curated', ...curatedPhotos[activeIndex] }
+    }
+    const memory = submittedMemories[activeIndex - curatedCount]
+    return { type: 'memory', ...memory }
+  }
+
+  const slide = activeSlide()
+  const isMemorySlide = slide.type === 'memory'
+  const photoUrl = isMemorySlide && slide.photo_url ? slide.photo_url : null
+  const gradient = photoUrl ? null : slide.fallbackGradient || curatedPhotos[activeIndex % curatedCount].fallbackGradient
 
   const showNextPhoto = () => {
-    setActiveIndex((currentIndex) => (currentIndex + 1) % photos.length)
+    setActiveIndex((currentIndex) => (currentIndex + 1) % totalSlides)
   }
 
   return (
@@ -61,28 +78,28 @@ export default function HomePage() {
           overflow: 'hidden',
           borderRadius: '999px 999px 28px 28px',
           border: 'none',
-          background: activePhoto.fallbackGradient,
+          background: gradient || '#f0f0f0',
           boxShadow: '0 18px 44px rgba(93,64,55,.18)',
           cursor: 'pointer',
         }}
       >
         <AnimatePresence mode="wait">
           <motion.div
-            key={activePhoto.id}
+            key={slide.id}
             initial={{ opacity: 0, scale: 1.04 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.55, ease: 'easeOut' }}
             style={{ position: 'absolute', inset: 0 }}
           >
-            {activePhoto.src ? (
+            {photoUrl ? (
               <img
-                src={activePhoto.src}
-                alt={activePhoto.alt}
+                src={photoUrl}
+                alt={slide.alt || 'A shared memory photo'}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
               />
             ) : (
-              <div style={{ width: '100%', height: '100%', background: activePhoto.fallbackGradient }} />
+              <div style={{ width: '100%', height: '100%', background: gradient }} />
             )}
 
             <div
@@ -117,29 +134,56 @@ export default function HomePage() {
         </AnimatePresence>
       </button>
 
-      <AnimatePresence mode="wait">
-        <motion.p
-          key={activePhoto.id}
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -4 }}
-          transition={{ duration: 0.35 }}
-          style={{
-            maxWidth: '340px',
-            margin: 0,
-            color: 'var(--text-brown)',
-            fontSize: '16px',
-            lineHeight: 1.55,
-          }}
-        >
-          {activePhoto.caption || 'A life remembered with love, laughter, and the many moments that made her unforgettable.'}
-        </motion.p>
-      </AnimatePresence>
+      {isMemorySlide && (
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={slide.id}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.35 }}
+            style={{
+              maxWidth: '340px',
+              margin: 0,
+              color: 'var(--text-brown)',
+              fontSize: '14px',
+              lineHeight: 1.5,
+              textAlign: 'center',
+              padding: '0 12px',
+            }}
+          >
+            <p style={{ margin: '0 0 6px 0', fontSize: '13px', fontWeight: 700, color: 'var(--accent-purple)' }}>{slide.author_name || 'Friend'}</p>
+            <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '22px', padding: '3px 10px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', border: '1px solid rgba(157, 78, 221, 0.22)', color: 'var(--accent-purple)', fontSize: '11px', fontWeight: 700, marginBottom: '6px', display: 'block' }}>{slide.memory_tag || 'Cherished Moment'}</span>
+            <p style={{ margin: 0, fontSize: '14.5px', lineHeight: 1.55, color: 'var(--text-brown)' }}>"{slide.memory}"</p>
+          </motion.div>
+        </AnimatePresence>
+      )}
+
+      {!isMemorySlide && (
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={slide.id}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.35 }}
+            style={{
+              maxWidth: '340px',
+              margin: 0,
+              color: 'var(--text-brown)',
+              fontSize: '16px',
+              lineHeight: 1.55,
+            }}
+          >
+            {slide.caption || 'A life remembered with love, laughter, and the many moments that made her unforgettable.'}
+          </motion.p>
+        </AnimatePresence>
+      )}
 
       <button
         type="button"
         onClick={showNextPhoto}
-        aria-label={`Next memory, showing ${activeIndex + 1} of ${photos.length}`}
+        aria-label={`Next memory, showing ${activeIndex + 1} of ${totalSlides}`}
         style={{
           minHeight: '44px',
           padding: '10px 22px',
@@ -158,8 +202,10 @@ export default function HomePage() {
         }}
       >
         <Images size={18} aria-hidden="true" />
-        <span>Next Memory ({activeIndex + 1}/{photos.length})</span>
+        <span>Next Memory ({activeIndex + 1}/{totalSlides})</span>
       </button>
+
+      {loading && <p style={{ fontSize: '13px', color: 'rgba(93, 64, 55, 0.6)' }}>Loading shared memories…</p>}
     </motion.section>
   )
 }

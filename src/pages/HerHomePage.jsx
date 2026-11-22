@@ -1,15 +1,43 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Camera, ChevronDown, Check, Share2 } from 'lucide-react'
 import useMemorialData from '../hooks/useMemorialData'
 import { supabase } from '../lib/supabaseClient'
 import InputField from '../components/ui/InputField'
-import Button from '../components/ui/Button'
-import QuoteCard from '../components/ui/QuoteCard'
 
-export default function HerHomePage() {
-  const { memories, loading } = useMemorialData()
+const memoryTags = [
+  'Family',
+  'Close Friend',
+  'MKU Classmate',
+  "Saint John's Red Cross",
+  'Childhood / School',
+  'Cherished Moment',
+]
+
+const curatedFallbackPhotos = [
+  { gradient: 'linear-gradient(145deg, #9D4EDD 0%, #FF4D85 100%)' },
+  { gradient: 'linear-gradient(145deg, #FF4D85 0%, #F5B7A7 100%)' },
+  { gradient: 'linear-gradient(145deg, #9D4EDD 0%, #2ECC71 100%)' },
+  { gradient: 'linear-gradient(145deg, #F5B7A7 0%, #9D4EDD 100%)' },
+]
+
+const getFieldSurfaceStyle = (isFilled) => ({
+  backgroundColor: isFilled ? 'rgba(157, 78, 221, 0.10)' : 'rgba(255, 255, 255, 0.92)',
+  background: isFilled ? 'linear-gradient(135deg, rgba(157, 78, 221, 0.10), rgba(255, 77, 133, 0.12))' : undefined,
+  border: isFilled ? '1.5px solid rgba(255, 77, 133, 0.42)' : '1px solid rgba(157, 78, 221, 0.22)',
+  borderRadius: '12px',
+  padding: '10px 12px',
+  fontSize: '14px',
+  color: 'var(--text-brown)',
+  width: '100%',
+  boxSizing: 'border-box',
+  boxShadow: isFilled ? '0 2px 8px rgba(157, 78, 221, 0.08)' : undefined,
+})
+
+export default function HerHomePage({ onNavigateHome }) {
+  const { memories = [], loading } = useMemorialData()
   const [formOpen, setFormOpen] = useState(false)
-  const [form, setForm] = useState({ name: '', relationship: '', memory: '' })
+  const [form, setForm] = useState({ name: '', memoryTag: '', photoFile: null, photoPreview: null, memory: '' })
   const [localMemories, setLocalMemories] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem('cheruto-memories') || '[]')
@@ -18,14 +46,51 @@ export default function HerHomePage() {
     }
   })
   const [status, setStatus] = useState({ type: 'idle', message: '' })
+  const [activeDropdown, setActiveDropdown] = useState(null)
+  const [navigateHome, setNavigateHome] = useState(false)
+  const shouldReduceMotion = false
 
   const update = (field, value) => setForm((current) => ({ ...current, [field]: value }))
+
+  const handlePhotoChange = (event) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+    if (!file.type.startsWith('image/')) {
+      setStatus({ type: 'error', message: 'Please select an image file.' })
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = () => {
+      setForm((current) => ({ ...current, photoFile: file, photoPreview: reader.result }))
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const clearPhoto = () => {
+    setForm((current) => ({ ...current, photoFile: null, photoPreview: null }))
+  }
+
+  const openDropdown = (field) => setActiveDropdown(field)
+  const closeDropdown = () => setActiveDropdown(null)
+
+  const selectDropdownOption = (field, value) => {
+    if (field === 'memoryTag') setForm((current) => ({ ...current, memoryTag: value }))
+    closeDropdown()
+  }
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Escape') closeDropdown()
+  }
 
   const submitMemory = async (event) => {
     event.preventDefault()
 
     if (!form.name.trim()) {
       setStatus({ type: 'error', message: 'Please enter your name.' })
+      return
+    }
+    if (!form.memoryTag) {
+      setStatus({ type: 'error', message: 'Please select a memory tag.' })
       return
     }
     if (!form.memory.trim()) {
@@ -42,16 +107,30 @@ export default function HerHomePage() {
     const record = {
       id: `local-${Date.now()}`,
       author_name: form.name.trim(),
-      relationship: form.relationship.trim() || 'Friend',
+      memory_tag: form.memoryTag,
       memory: form.memory.trim(),
+      photo_url: form.photoPreview || null,
       is_approved: false,
     }
 
     if (supabase) {
+      let photoUrl = form.photoPreview
+      if (form.photoFile) {
+        try {
+          const fileName = `memories/${Date.now()}-${form.photoFile.name.replace(/\s+/g, '_')}`
+          const { error: uploadError } = await supabase.storage.from('guestbook-photos').upload(fileName, form.photoFile)
+          if (!uploadError) {
+            const { data: urlData } = supabase.storage.from('guestbook-photos').getPublicUrl(fileName)
+            photoUrl = urlData.publicUrl
+          }
+        } catch {}
+      }
+
       const { error } = await supabase.from('guestbook_memories').insert({
         author_name: record.author_name,
-        relationship: record.relationship,
+        memory_tag: record.memory_tag,
         memory: record.memory,
+        photo_url: photoUrl,
         is_approved: false,
       })
       if (error) {
@@ -66,51 +145,315 @@ export default function HerHomePage() {
     }
 
     setLocalMemories((current) => [record, ...current])
-    setForm({ name: '', relationship: '', memory: '' })
-    setStatus({ type: 'success', message: 'Shared — pending family blessing' })
+    setForm({ name: '', memoryTag: '', photoFile: null, photoPreview: null, memory: '' })
+    setStatus({ type: 'success', message: 'Memory shared to Cheruto’s Home' })
+    setFormOpen(false)
+    setNavigateHome(true)
   }
 
-  const visibleMemories = [...localMemories, ...(memories || [])]
+  useEffect(() => {
+    if (navigateHome && onNavigateHome) {
+      const timer = setTimeout(() => {
+        onNavigateHome()
+        setNavigateHome(false)
+      }, 800)
+      return () => clearTimeout(timer)
+    }
+  }, [navigateHome, onNavigateHome])
+
+  const visibleMemories = [...localMemories, ...memories]
+
+  const renderSelectorInput = (field, label, placeholder, value) => {
+    const options = memoryTags
+    const isOpen = activeDropdown === field
+    const isFilled = Boolean(value && String(value).trim())
+    const selectedValue = value
+
+    return (
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }} onKeyDown={handleKeyDown}>
+        <label style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--text-brown)', display: 'block', width: '100%', textAlign: 'left' }}>{label}</label>
+        <button
+          role="button"
+          tabIndex={0}
+          type="button"
+          onClick={() => { if (!isOpen) openDropdown(field) }}
+          onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openDropdown(field) } }}
+          style={{
+            ...getFieldSurfaceStyle(isFilled),
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '10px 12px',
+            minHeight: '44px',
+            cursor: 'pointer',
+          }}
+        >
+          <span>{value || placeholder}</span>
+          <ChevronDown size={14} style={{ color: isFilled ? 'var(--accent-purple)' : 'rgba(157, 78, 221, 0.5)', flexShrink: 0 }} aria-hidden="true" />
+        </button>
+
+        {isOpen && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 'calc(100% + 6px)',
+              left: 0,
+              right: 0,
+              zIndex: 30,
+              backgroundColor: 'var(--white)',
+              borderRadius: '14px',
+              border: '1.5px solid rgba(157, 78, 221, 0.28)',
+              boxShadow: '0 12px 28px rgba(157, 78, 221, 0.16)',
+              overflow: 'hidden',
+              padding: '4px',
+            }}
+            onClick={(event) => { if (event.target === event.currentTarget) closeDropdown() }}
+          >
+            {options.map((opt) => {
+              const isSelected = selectedValue === opt
+              return (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => selectDropdownOption(field, opt)}
+                  style={{
+                    width: '100%',
+                    minHeight: '44px',
+                    borderBottom: isSelected ? 'none' : '1px solid rgba(157, 78, 221, 0.08)',
+                    padding: '10px 12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '10px',
+                    background: isSelected ? 'linear-gradient(135deg, rgba(157, 78, 221, 0.14), rgba(255, 77, 133, 0.14))' : 'transparent',
+                    border: 'none',
+                    color: isSelected ? 'var(--btn-pink)' : 'var(--text-brown)',
+                    fontSize: '14px',
+                    fontWeight: isSelected ? 700 : 600,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                    <span>{opt}</span>
+                  </div>
+                  {isSelected && <Check size={14} style={{ color: 'var(--accent-purple)', flexShrink: 0 }} aria-hidden="true" />}
+                </button>
+              )
+            })}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  const renderInputField = (label, required, name, placeholder, value, extraStyle) => {
+    const isFilled = Boolean(value && String(value).trim())
+    return (
+      <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: required ? 0 : '8px', display: 'block', width: '100%', textAlign: 'left', marginBottom: '6px' }}>
+        {label} {required && <span style={{ color: '#C58B2A', fontWeight: 700 }}>*</span>}
+        <InputField
+          required={required}
+          name={name}
+          value={value}
+          onChange={(event) => update(name, event.target.value)}
+          placeholder={placeholder}
+          style={{ ...getFieldSurfaceStyle(isFilled), ...extraStyle }}
+        />
+      </label>
+    )
+  }
 
   return (
-    <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '18px' }}>
-      <h2 style={{ fontFamily: 'var(--font-script)', fontSize: '42px', color: 'var(--text-brown)' }}>Her Home</h2>
+    <motion.section
+      className="no-scrollbar"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      style={{
+        width: '100%',
+        paddingTop: 'max(18px, calc(var(--safe-top) + 12px))',
+        paddingBottom: 'calc(var(--nav-height) + 48px)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '14px',
+        boxSizing: 'border-box',
+      }}
+    >
+      <header style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 4px auto', padding: '4px 22px', borderRadius: '999px', backgroundColor: 'var(--white)', border: '1px solid rgba(93, 64, 55, 0.10)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.08)' }}>
+        <h2 style={{ margin: 0, fontFamily: 'var(--font-script)', fontSize: 'clamp(1.6rem, 5vw, 1.9rem)', lineHeight: 1, color: 'var(--text-brown)', whiteSpace: 'nowrap' }}>Her Home</h2>
+      </header>
 
-      <div style={{ width: '100%', maxWidth: '460px', padding: '20px', background: 'var(--white)', borderRadius: '22px', boxShadow: '0 8px 24px rgba(93,64,55,.08)' }}>
-        <p style={{ fontSize: '16px', lineHeight: 1.65 }}>Leave a remembrance, share a photo, or carry a message of love for Cheruto and her family.</p>
-        <Button type="button" onClick={() => setFormOpen((open) => !open)} aria-expanded={formOpen} style={{ width: '100%', marginTop: '14px', borderRadius: '999px' }}>{formOpen ? 'Close Tribute Form' : 'Leave a Memory'}</Button>
+      {loading && <p style={{ fontSize: '15px', color: 'var(--text-brown)' }}>Loading shared memories…</p>}
+
+      <div style={{ width: '100%', maxWidth: '440px', padding: '14px 16px', borderRadius: '18px', backgroundColor: 'var(--white)', border: '1px solid rgba(93, 64, 55, 0.10)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.08)', textAlign: 'center' }}>
+        <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: 'var(--text-brown)' }}>Leave a remembrance, share a photo, or carry a message of love for Cheruto and her family.</p>
       </div>
 
-      <AnimatePresence initial={false}>
-        {formOpen && (
-          <motion.form
-            initial={{ opacity: 0, height: 0, y: -8 }}
-            animate={{ opacity: 1, height: 'auto', y: 0 }}
-            exit={{ opacity: 0, height: 0, y: -8 }}
-            onSubmit={submitMemory}
-            style={{ width: '100%', maxWidth: '460px', overflow: 'hidden', display: 'grid', gap: '12px', padding: '20px', background: 'var(--white)', borderRadius: '22px', boxShadow: '0 10px 28px rgba(93,64,55,.10)', textAlign: 'left' }}
+      <button
+        role="button"
+        tabIndex={0}
+        onClick={() => setFormOpen((open) => !open)}
+        onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setFormOpen((open) => !open) } }}
+        style={{
+          width: 'fit-content',
+          margin: '8px auto 0 auto',
+          padding: '10px 24px',
+          minHeight: '44px',
+          borderRadius: '999px',
+          background: 'linear-gradient(135deg, var(--accent-purple), var(--btn-pink))',
+          color: 'var(--white)',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '8px',
+          fontSize: '14px',
+          fontWeight: 700,
+        }}
+      >
+        {formOpen ? 'Close Tribute Form' : <><Share2 size={16} style={{ flexShrink: 0 }} aria-hidden="true" /><span>Leave a Memory</span></>}
+      </button>
+
+      {formOpen && (
+        <motion.div
+          layout
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.96 }}
+          style={{
+            width: '100%',
+            maxWidth: '440px',
+            backgroundColor: 'var(--white)',
+            borderRadius: '20px',
+            padding: '16px 18px',
+            border: '1px solid rgba(157, 78, 221, 0.16)',
+            boxShadow: '0 12px 32px rgba(157, 78, 221, 0.12)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+          }}
+          onKeyDown={handleKeyDown}
+        >
+          <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '20px', textAlign: 'center' }}>Share a Memory</h3>
+
+          {renderInputField('Your Name', true, 'name', 'Your name', form.name)}
+
+          {renderSelectorInput('memoryTag', 'Memory Tag / Relationship *', 'Select memory tag', form.memoryTag)}
+
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
+            <label style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--text-brown)', display: 'block', width: '100%', textAlign: 'left' }}>Photo with Cheruto (Optional)</label>
+            <button
+              type="button"
+              onClick={document.getElementById('memory-photo-upload')?.click}
+              style={{
+                ...getFieldSurfaceStyle(Boolean(form.photoPreview)),
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                padding: '10px 12px',
+                minHeight: '46px',
+                borderRadius: '12px',
+                border: '1.5px dashed rgba(157, 78, 221, 0.42)',
+                cursor: 'pointer',
+                width: '100',
+                boxSizing: 'border-box',
+              }}
+            >
+              <Camera size={14} style={{ flexShrink: 0 }} aria-hidden="true" />
+              <span style={{ fontSize: '13px', color: form.photoPreview ? 'var(--text-brown)' : 'rgba(93, 64, 55, 0.7)' }}>
+                {form.photoPreview ? 'Photo attached' : 'Add a photo of you & Cheruto (optional)'}
+              </span>
+            </button>
+            <input
+              id="memory-photo-upload"
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoChange}
+              style={{ display: 'none' }}
+            />
+            {form.photoPreview && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 0', borderRadius: '8px', backgroundColor: 'rgba(255, 249, 242, 0.9)', border: '1px solid rgba(157, 78, 221, 0.16)' }}>
+                <img src={form.photoPreview} alt="Preview" style={{ width: '48px', height: '48px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }} />
+                <span style={{ fontSize: '12px', color: 'var(--text-brown)', flex: 1 }}>{form.photoFile?.name || 'photo'}</span>
+                <button type="button" onClick={clearPhoto} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(93, 64, 55, 0.6)', padding: '2px' }}>&times;</button>
+              </div>
+            )}
+          </div>
+
+          <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: '8px', display: 'block', width: '100%', textAlign: 'left', marginBottom: '6px' }}>
+            Your Memory <span aria-hidden="true">*</span>
+            <textarea
+              name="memory"
+              required
+              value={form.memory}
+              maxLength={5000}
+              onChange={(event) => update('memory', event.target.value)}
+              rows={3}
+              placeholder="Write a favorite memory, story, or prayer for Cheruto…"
+              style={{
+                ...getFieldSurfaceStyle(Boolean(form.memory && String(form.memory).trim())),
+                width: '100%',
+                minHeight: '88px',
+                marginTop: '4px',
+                color: 'var(--text-brown)',
+                padding: '8px',
+                fontSize: '15px',
+                resize: 'vertical',
+              }}
+            />
+            <span style={{ fontSize: '12px', color: 'rgba(93, 64, 55, 0.7)', display: 'block', marginTop: '4px', textAlign: 'right' }}>{form.memory.length}/5000</span>
+          </label>
+
+          {status.message && <p role="status" style={{ minHeight: '20px', color: status.type === 'error' ? '#9C2F46' : 'var(--accent-purple)', fontSize: '14px', fontWeight: 700 }}>{status.message}</p>}
+
+          <button
+            type="button"
+            onClick={submitMemory}
+            disabled={status.type === 'loading'}
+            style={{
+              width: 'fit-content',
+              minWidth: '185px',
+              margin: '4px auto 0 auto',
+              padding: '11px 28px',
+              borderRadius: '999px',
+              background: status.type === 'loading' ? 'rgba(157, 78, 221, 0.5)' : 'linear-gradient(135deg, var(--btn-pink), var(--accent-purple))',
+              color: 'var(--white)',
+              border: 'none',
+              cursor: status.type === 'loading' ? 'default' : 'pointer',
+              fontSize: '14px',
+              fontWeight: 700,
+            }}
           >
-            <label style={{ fontSize: '15px', fontWeight: 700 }}>Your Name <span aria-hidden="true">*</span><InputField required name="name" value={form.name} onChange={(event) => update('name', event.target.value)} placeholder="Your name" /></label>
-            <label style={{ fontSize: '15px', fontWeight: 700 }}>Relationship <span style={{ fontWeight: 400 }}>(optional)</span><InputField name="relationship" value={form.relationship} onChange={(event) => update('relationship', event.target.value)} placeholder="Family, Friend, Classmate…" /></label>
-            <label style={{ fontSize: '15px', fontWeight: 700 }}>Your Memory <span aria-hidden="true">*</span><textarea name="memory" required value={form.memory} maxLength={5000} onChange={(event) => update('memory', event.target.value)} rows={5} placeholder="Share a memory" style={{ width: '100%', minHeight: '44px', marginTop: '8px', border: '1px solid var(--text-brown)', borderRadius: '10px', background: 'var(--bg-cream)', color: 'var(--text-brown)', padding: '10px', fontSize: '16px', resize: 'vertical' }} /></label>
-            <p style={{ color: 'var(--text-brown)', fontSize: '12px', textAlign: 'right' }}>{form.memory.length}/5000</p>
-            {status.message && <p role="status" style={{ color: status.type === 'error' ? '#9C2F46' : 'var(--accent-purple)', fontSize: '15px', fontWeight: 700 }}>{status.message}</p>}
-            <Button type="submit" disabled={status.type === 'loading'} style={{ width: '100%', borderRadius: '999px' }}>{status.type === 'loading' ? 'Sharing…' : 'Share Memory'}</Button>
-          </motion.form>
-        )}
-      </AnimatePresence>
+            {status.type === 'loading' ? 'Sharing…' : 'Share Memory'}
+          </button>
+        </motion.div>
+      )}
 
-      {loading && <p style={{ fontSize: '15px' }}>Loading shared memories…</p>}
-
-      <div style={{ width: '100%', maxWidth: '460px', display: 'grid', gap: '12px' }}>
-        {visibleMemories.map((memory) => (
-          <QuoteCard key={memory.id} style={{ width: '100%', borderRadius: '16px', textAlign: 'left', fontSize: '16px', lineHeight: 1.55 }}>
-            “{memory.memory}”
-            {!memory.is_approved && <span style={{ display: 'inline-block', marginTop: '10px', padding: '5px 9px', borderRadius: '999px', background: 'var(--accent-purple)', color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>Shared — pending family blessing</span>}
-            <strong style={{ display: 'block', marginTop: '8px', color: 'var(--accent-purple)', fontSize: '15px' }}>— {memory.author_name || 'Friend'}{memory.relationship ? ` · ${memory.relationship}` : ''}</strong>
-          </QuoteCard>
-        ))}
+      <div style={{ width: '100%', maxWidth: '440px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {visibleMemories.map((memory, index) => {
+          const photoUrl = memory.photo_url || curatedFallbackPhotos[index % curatedFallbackPhotos.length].gradient
+          const isUploadedPhoto = Boolean(memory.photo_url)
+          return (
+            <article key={memory.id} style={{ width: '100%', padding: '12px 14px', borderRadius: '16px', backgroundColor: 'var(--white)', border: '1px solid rgba(93, 64, 55, 0.08)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.07)', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ width: '100%', height: '160px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: isUploadedPhoto ? '#f0f0f0' : photoUrl }}>
+                {isUploadedPhoto && memory.photo_url ? (
+                  <img src={memory.photo_url} alt="Memory photo" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                ) : null}
+              </div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)' }}>{memory.author_name || 'Friend'}</div>
+              <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '22px', padding: '3px 10px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', border: '1px solid rgba(157, 78, 221, 0.22)', color: 'var(--accent-purple)', fontSize: '11px', fontWeight: 700 }}>{memory.memory_tag || 'Cherished Moment'}</span>
+              <p style={{ margin: 0, fontSize: '13.5px', lineHeight: 1.5, color: 'var(--text-brown)' }}>"{memory.memory}"</p>
+              {!memory.is_approved && <span style={{ display: 'inline-block', marginTop: '6px', padding: '4px 8px', borderRadius: '999px', background: 'var(--accent-purple)', color: 'var(--white)', fontSize: '10px', fontWeight: 700 }}>Shared — pending family blessing</span>}
+            </article>
+          )
+        })}
       </div>
+
+      {visibleMemories.length === 0 && !loading && (
+        <p style={{ fontSize: '14px', color: 'rgba(93, 64, 55, 0.7)', textAlign: 'center', padding: '20px' }}>No memories shared yet. Be the first to leave one.</p>
+      )}
     </motion.section>
   )
 }
