@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Camera, ChevronDown, Check, Share2 } from 'lucide-react'
+import { Camera, ChevronDown, Check, Share2, X } from 'lucide-react'
 import useMemorialData from '../hooks/useMemorialData'
 import { supabase } from '../lib/supabaseClient'
 import InputField from '../components/ui/InputField'
@@ -37,7 +37,7 @@ const getFieldSurfaceStyle = (isFilled) => ({
 export default function HerHomePage({ onNavigateHome }) {
   const { memories = [], loading } = useMemorialData()
   const [formOpen, setFormOpen] = useState(false)
-  const [form, setForm] = useState({ name: '', memoryTag: '', photoFile: null, photoPreview: null, memory: '' })
+  const [form, setForm] = useState({ name: '', memoryTag: '', selectedPhotos: [], memory: '' })
   const [localMemories, setLocalMemories] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem('cheruto-memories') || '[]')
@@ -48,26 +48,49 @@ export default function HerHomePage({ onNavigateHome }) {
   const [status, setStatus] = useState({ type: 'idle', message: '' })
   const [activeDropdown, setActiveDropdown] = useState(null)
   const [navigateHome, setNavigateHome] = useState(false)
-  const shouldReduceMotion = false
 
   const update = (field, value) => setForm((current) => ({ ...current, [field]: value }))
 
-  const handlePhotoChange = (event) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-    if (!file.type.startsWith('image/')) {
-      setStatus({ type: 'error', message: 'Please select an image file.' })
+  const handlePhotoChange = async (event) => {
+    const files = Array.from(event.target.files || [])
+    if (!files.length) return
+
+    const nonImage = files.find((f) => !f.type.startsWith('image/'))
+    if (nonImage) {
+      setStatus({ type: 'error', message: 'Please select image files only.' })
       return
     }
-    const reader = new FileReader()
-    reader.onload = () => {
-      setForm((current) => ({ ...current, photoFile: file, photoPreview: reader.result }))
+
+    const maxAdditional = 3 - form.selectedPhotos.length
+    const toAdd = files.slice(0, maxAdditional)
+    if (toAdd.length === 0) {
+      setStatus({ type: 'error', message: 'You can add up to 3 photos per memory.' })
+      return
     }
-    reader.readAsDataURL(file)
+
+    const previews = await Promise.all(
+      toAdd.map((file) => new Promise((resolve) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve({ file, preview: reader.result })
+        reader.readAsDataURL(file)
+      }))
+    )
+
+    setForm((current) => ({
+      ...current,
+      selectedPhotos: [...current.selectedPhotos, ...previews].slice(0, 3),
+    }))
   }
 
-  const clearPhoto = () => {
-    setForm((current) => ({ ...current, photoFile: null, photoPreview: null }))
+  const removePhoto = (index) => {
+    setForm((current) => ({
+      ...current,
+      selectedPhotos: current.selectedPhotos.filter((_, i) => i !== index),
+    }))
+  }
+
+  const clearPhotos = () => {
+    setForm((current) => ({ ...current, selectedPhotos: [] }))
   }
 
   const openDropdown = (field) => setActiveDropdown(field)
@@ -104,33 +127,43 @@ export default function HerHomePage({ onNavigateHome }) {
 
     setStatus({ type: 'loading', message: 'Sharing your memory…' })
 
+    const photoUrls = []
+    if (supabase) {
+      for (const photo of form.selectedPhotos) {
+        try {
+          const fileName = `memories/${Date.now()}-${photo.file.name.replace(/\s+/g, '_')}`
+          const { error: uploadError } = await supabase.storage.from('guestbook-photos').upload(fileName, photo.file)
+          if (!uploadError) {
+            const { data: urlData } = supabase.storage.from('guestbook-photos').getPublicUrl(fileName)
+            photoUrls.push(urlData.publicUrl)
+          } else {
+            photoUrls.push(photo.preview)
+          }
+        } catch {
+          photoUrls.push(photo.preview)
+        }
+      }
+    } else {
+      form.selectedPhotos.forEach((photo) => photoUrls.push(photo.preview))
+    }
+
     const record = {
       id: `local-${Date.now()}`,
       author_name: form.name.trim(),
       memory_tag: form.memoryTag,
       memory: form.memory.trim(),
-      photo_url: form.photoPreview || null,
+      photo_url: photoUrls[0] || null,
+      photo_urls: photoUrls,
       is_approved: false,
     }
 
     if (supabase) {
-      let photoUrl = form.photoPreview
-      if (form.photoFile) {
-        try {
-          const fileName = `memories/${Date.now()}-${form.photoFile.name.replace(/\s+/g, '_')}`
-          const { error: uploadError } = await supabase.storage.from('guestbook-photos').upload(fileName, form.photoFile)
-          if (!uploadError) {
-            const { data: urlData } = supabase.storage.from('guestbook-photos').getPublicUrl(fileName)
-            photoUrl = urlData.publicUrl
-          }
-        } catch {}
-      }
-
       const { error } = await supabase.from('guestbook_memories').insert({
         author_name: record.author_name,
         memory_tag: record.memory_tag,
         memory: record.memory,
-        photo_url: photoUrl,
+        photo_url: record.photo_url,
+        photo_urls: record.photo_urls,
         is_approved: false,
       })
       if (error) {
@@ -145,7 +178,7 @@ export default function HerHomePage({ onNavigateHome }) {
     }
 
     setLocalMemories((current) => [record, ...current])
-    setForm({ name: '', memoryTag: '', photoFile: null, photoPreview: null, memory: '' })
+    setForm({ name: '', memoryTag: '', selectedPhotos: [], memory: '' })
     setStatus({ type: 'success', message: 'Memory shared to Cheruto’s Home' })
     setFormOpen(false)
     setNavigateHome(true)
@@ -347,7 +380,7 @@ export default function HerHomePage({ onNavigateHome }) {
               type="button"
               onClick={document.getElementById('memory-photo-upload')?.click}
               style={{
-                ...getFieldSurfaceStyle(Boolean(form.photoPreview)),
+                ...getFieldSurfaceStyle(Boolean(form.selectedPhotos.length)),
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -357,27 +390,38 @@ export default function HerHomePage({ onNavigateHome }) {
                 borderRadius: '12px',
                 border: '1.5px dashed rgba(157, 78, 221, 0.42)',
                 cursor: 'pointer',
-                width: '100',
+                width: '100%',
                 boxSizing: 'border-box',
               }}
             >
               <Camera size={14} style={{ flexShrink: 0 }} aria-hidden="true" />
-              <span style={{ fontSize: '13px', color: form.photoPreview ? 'var(--text-brown)' : 'rgba(93, 64, 55, 0.7)' }}>
-                {form.photoPreview ? 'Photo attached' : 'Add a photo of you & Cheruto (optional)'}
+              <span style={{ fontSize: '13px', color: form.selectedPhotos.length ? 'var(--text-brown)' : 'rgba(93, 64, 55, 0.7)' }}>
+                {form.selectedPhotos.length ? `Photos: ${form.selectedPhotos.length}/3` : 'Add up to 3 photos of you & Cheruto (optional)'}
               </span>
             </button>
             <input
               id="memory-photo-upload"
               type="file"
               accept="image/*"
+              multiple
               onChange={handlePhotoChange}
               style={{ display: 'none' }}
             />
-            {form.photoPreview && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 0', borderRadius: '8px', backgroundColor: 'rgba(255, 249, 242, 0.9)', border: '1px solid rgba(157, 78, 221, 0.16)' }}>
-                <img src={form.photoPreview} alt="Preview" style={{ width: '48px', height: '48px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }} />
-                <span style={{ fontSize: '12px', color: 'var(--text-brown)', flex: 1 }}>{form.photoFile?.name || 'photo'}</span>
-                <button type="button" onClick={clearPhoto} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(93, 64, 55, 0.6)', padding: '2px' }}>&times;</button>
+            {form.selectedPhotos.length > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginTop: '6px' }}>
+                {form.selectedPhotos.map((photo, i) => (
+                  <div key={i} style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <img src={photo.preview} alt={`Photo ${i + 1}`} style={{ width: '52px', height: '52px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }} />
+                    <button type="button" onClick={() => removePhoto(i)} style={{ position: 'absolute', top: '-2px', right: '-2px', background: 'rgba(0,0,0,0.55)', border: 'none', borderRadius: '50%', width: '18px', height: '18px', color: 'var(--white)', fontSize: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <X size={10} style={{ flexShrink: 0 }} aria-hidden="true" />
+                    </button>
+                  </div>
+                ))}
+                {form.selectedPhotos.length < 3 && (
+                  <button type="button" onClick={document.getElementById('memory-photo-upload')?.click} style={{ width: '52px', height: '52px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px dashed rgba(157, 78, 221, 0.42)', color: 'rgba(157, 78, 221, 0.6)', fontSize: '10px', cursor: 'pointer', backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
+                    <span>+ {3 - form.selectedPhotos.length}</span>
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -433,17 +477,18 @@ export default function HerHomePage({ onNavigateHome }) {
 
       <div style={{ width: '100%', maxWidth: '440px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {visibleMemories.map((memory, index) => {
-          const photoUrl = memory.photo_url || curatedFallbackPhotos[index % curatedFallbackPhotos.length].gradient
-          const isUploadedPhoto = Boolean(memory.photo_url)
+          const photoUrls = Array.isArray(memory.photo_urls) && memory.photo_urls.length > 0 ? memory.photo_urls : (memory.photo_url ? [memory.photo_url] : [])
+          const hasUploadedPhotos = photoUrls.length > 0
+          const fallbackGradient = curatedFallbackPhotos[index % curatedFallbackPhotos.length].gradient
           return (
             <article key={memory.id} style={{ width: '100%', padding: '12px 14px', borderRadius: '16px', backgroundColor: 'var(--white)', border: '1px solid rgba(93, 64, 55, 0.08)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.07)', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <div style={{ width: '100%', height: '160px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: isUploadedPhoto ? '#f0f0f0' : photoUrl }}>
-                {isUploadedPhoto && memory.photo_url ? (
-                  <img src={memory.photo_url} alt="Memory photo" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              <div style={{ width: '100%', height: '160px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: hasUploadedPhotos ? '#f0f0f0' : fallbackGradient }}>
+                {hasUploadedPhotos && photoUrls[0] ? (
+                  <img src={photoUrls[0]} alt="Memory photo" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 ) : null}
               </div>
               <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)' }}>{memory.author_name || 'Friend'}</div>
-              <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '22px', padding: '3px 10px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', border: '1px solid rgba(157, 78, 221, 0.22)', color: 'var(--accent-purple)', fontSize: '11px', fontWeight: 700 }}>{memory.memory_tag || 'Cherished Moment'}</span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', width: 'fit-content', alignSelf: 'flex-start', marginLeft: '4px', padding: '4px 12px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', border: '1px solid rgba(157, 78, 221, 0.22)', color: 'var(--accent-purple)', fontSize: '12px', fontWeight: 700 }}>{memory.memory_tag || 'Cherished Moment'}</span>
               <p style={{ margin: 0, fontSize: '13.5px', lineHeight: 1.5, color: 'var(--text-brown)' }}>"{memory.memory}"</p>
               {!memory.is_approved && <span style={{ display: 'inline-block', marginTop: '6px', padding: '4px 8px', borderRadius: '999px', background: 'var(--accent-purple)', color: 'var(--white)', fontSize: '10px', fontWeight: 700 }}>Shared — pending family blessing</span>}
             </article>

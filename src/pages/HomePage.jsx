@@ -44,7 +44,12 @@ export default function HomePage() {
 
   const slide = activeSlide()
   const isMemorySlide = slide.type === 'memory'
-  const photoUrl = isMemorySlide && slide.photo_url ? slide.photo_url : null
+
+  const photoUrls = isMemorySlide && Array.isArray(slide.photo_urls) && slide.photo_urls.length > 0
+    ? slide.photo_urls
+    : (isMemorySlide && slide.photo_url ? [slide.photo_url] : [])
+
+  const activePhotoUrl = photoUrls.length > 0 ? photoUrls[0] : null
   const gradient = photoUrl ? null : slide.fallbackGradient || curatedPhotos[activeIndex % curatedCount].fallbackGradient
 
   const showNextPhoto = () => {
@@ -92,9 +97,9 @@ export default function HomePage() {
             transition={{ duration: 0.55, ease: 'easeOut' }}
             style={{ position: 'absolute', inset: 0 }}
           >
-            {photoUrl ? (
+            {activePhotoUrl ? (
               <img
-                src={photoUrl}
+                src={activePhotoUrl}
                 alt={slide.alt || 'A shared memory photo'}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
               />
