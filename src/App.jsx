@@ -4,14 +4,14 @@ import SplashScreen from './components/SplashScreen'
 import BottomNav from './components/layout/BottomNav'
 import HomePage from './pages/HomePage'
 import StoryPage from './pages/StoryPage'
-import LegacyPage from './pages/LegacyPage'
 import GatheringPage from './pages/GatheringPage'
 import HerHomePage from './pages/HerHomePage'
+import TimelinePage from './pages/TimelinePage'
 
 const pages = {
   home: <HomePage />,
   story: <StoryPage />,
-  legacy: <LegacyPage />,
+  legacy: <TimelinePage />,
   gathering: <GatheringPage />,
   residence: <HerHomePage />,
 }

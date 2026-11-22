@@ -1,9 +1,9 @@
-import { Home, BookOpen, Heart, Users, MapPin, X } from 'lucide-react'
+import { Home, BookOpen, Clock, Users, MapPin, X } from 'lucide-react'
 
 const tabs = [
   { id: 'home', label: 'Home', icon: Home },
   { id: 'story', label: 'Story', icon: BookOpen },
-  { id: 'legacy', label: 'Legacy', icon: Heart },
+  { id: 'legacy', label: 'Timeline', icon: Clock },
   { id: 'gathering', label: 'Gathering', icon: Users },
   { id: 'residence', label: 'Her Home', icon: MapPin },
 ]
