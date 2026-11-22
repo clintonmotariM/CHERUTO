@@ -51,21 +51,43 @@
 }
 
 /* --- Mobile tap highlight suppression --- */
-* {
-  -webkit-tap-highlight-color: transparent;
-  tap-highlight-color: transparent;
-}
+*,
+*::before,
+*::after,
+html,
+body,
 button,
 a,
 div,
-[role="button"],
-input,
-textarea,
-select {
-  -webkit-tap-highlight-color: transparent;
-  tap-highlight-color: transparent;
+span,
+svg,
+path,
+[role="button"] {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+  tap-highlight-color: rgba(0, 0, 0, 0) !important;
+  -webkit-touch-callout: none;
+}
+
+button,
+a,
+[role="button"] {
   touch-action: manipulation;
 }
+
+button:active,
+a:active,
+[role="button"]:active,
+button:focus,
+a:focus,
+[role="button"]:focus {
+  outline: none !important;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+}
+
+button::-moz-focus-inner {
+  border: 0;
+}
+
 button,
 a,
 [role="button"],
@@ -75,13 +97,8 @@ input[type="submit"],
 .exit-button {
   user-select: none;
   -webkit-user-select: none;
-  outline: none;
 }
-button:focus:not(:focus-visible),
-a:focus:not(:focus-visible),
-[role="button"]:focus:not(:focus-visible) {
-  outline: none;
-}
+
 input,
 textarea {
   user-select: auto;
