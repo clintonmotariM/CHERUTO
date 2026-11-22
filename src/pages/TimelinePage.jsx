@@ -78,37 +78,21 @@ const stages = [
   },
 ]
 
+const stageDateRanges = {
+  0: { from: 'Date of Birth', to: 'Early Infancy' },
+  1: { from: 'Start Year', to: 'End Year' },
+  2: { from: 'Start Year', to: 'End Year' },
+  3: { from: 'Form 1', to: 'Form 4' },
+  4: { from: 'Year 1', to: 'Final Year' },
+  5: { from: 'Final Days', to: 'Date of Rest' },
+}
+
 function findEvent(stage, index, events) {
   const terms = stage.match.map((term) => term.toLowerCase())
   return events.find((event) => {
     const title = (event.title || '').toLowerCase()
     return terms.some((term) => title.includes(term))
   }) || events[index]
-}
-
-function formatDateRange(start_date, end_date, fallbackYear) {
-  const start = start_date ? new Date(`${start_date}T12:00:00`).getFullYear() : null
-  const end = end_date ? new Date(`${end_date}T12:00:00`).getFullYear() : null
-
-  if (start && end) {
-    return start === end ? String(start) : `${start} → ${end}`
-  }
-  if (start) return `From ${start}`
-  if (end) return `To ${end}`
-  return fallbackYear
-}
-
-function formatYearLabel(date, fallback) {
-  return date ? new Date(`${date}T12:00:00`).getFullYear().toString() : fallback
-}
-
-const stageDefaults = {
-  birth: { from: 'Date of Birth', to: 'Early Infancy' },
-  preschool: { from: 'Start Year', to: 'End Year' },
-  primary: { from: 'Form 1', to: 'Form 4' },
-  'high-school': { from: 'Year 1', to: 'Final Year' },
-  campus: { from: 'Year 1', to: 'Final Year' },
-  'final-place': { from: 'Final Days', to: 'Date of Rest' },
 }
 
 export default function TimelinePage() {
@@ -129,13 +113,9 @@ export default function TimelinePage() {
       biography: event?.description
         ? `${event.description} ${stage.biography}`
         : stage.biography,
-      dateRange: formatDateRange(event?.start_date || null, event?.end_date || null, stage.year),
-      fromLabel: event?.start_date
-        ? formatYearLabel(event.start_date, stageDefaults[item.id]?.from || 'Start Date')
-        : stageDefaults[item.id]?.from || 'Start Date',
-      toLabel: event?.end_date
-        ? formatYearLabel(event.end_date, stageDefaults[item.id]?.to || 'End Date')
-        : stageDefaults[item.id]?.to || 'End Date',
+      year: event?.event_date
+        ? new Date(`${event.event_date}T12:00:00`).toLocaleDateString(undefined, { year: 'numeric' })
+        : stage.year,
       place: event?.location_name || stage.place,
     }
   })
@@ -193,17 +173,18 @@ export default function TimelinePage() {
                     {item.photoUrl && <img src={item.photoUrl} alt={item.title} style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }} />}
                   </div>
                   <div style={{ marginTop: '10px', padding: '8px 12px', borderRadius: '12px', backgroundColor: 'rgba(255, 249, 242, 0.95)', border: '1px solid rgba(93, 64, 55, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-                    <div>
-                      <span style={{ fontSize: '10px', letterSpacing: '0.06em', opacity: 0.65, textTransform: 'uppercase', display: 'block', marginBottom: '2px' }}>FROM</span>
-                      <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', display: 'block' }}>{item.fromLabel}</span>
+                    <div style={{ textAlign: 'left' }}>
+                      <span style={{ display: 'block', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em', opacity: 0.65 }}>FROM</span>
+                      <strong style={{ fontSize: '13px', color: 'var(--text-brown)' }}>{item.start_date || stageDateRanges[index]?.from || 'Start'}</strong>
                     </div>
-                    <div style={{ flex: 1, height: '2px', background: 'linear-gradient(90deg, var(--accent-purple), var(--btn-pink))', position: 'relative' }}>
-                      <div style={{ position: 'absolute', left: '-3.5px', top: '-2.5px', width: '7px', height: '7px', borderRadius: '50%', backgroundColor: 'var(--accent-purple)' }} />
-                      <div style={{ position: 'absolute', right: '-3.5px', top: '-2.5px', width: '7px', height: '7px', borderRadius: '50%', backgroundColor: 'var(--btn-pink)' }} />
+                    <div style={{ flex: 1, display: 'flex', alignItems: 'center' }} aria-hidden="true">
+                      <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: 'var(--accent-purple)', flexShrink: 0 }} />
+                      <span style={{ flex: 1, height: '2px', background: 'linear-gradient(90deg, var(--accent-purple), var(--btn-pink))' }} />
+                      <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: 'var(--btn-pink)', flexShrink: 0 }} />
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <span style={{ fontSize: '10px', letterSpacing: '0.06em', opacity: 0.65, textTransform: 'uppercase', display: 'block', marginBottom: '2px' }}>TO</span>
-                      <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--btn-pink)', display: 'block' }}>{item.toLabel}</span>
+                      <span style={{ display: 'block', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em', opacity: 0.65 }}>TO</span>
+                      <strong style={{ fontSize: '13px', color: 'var(--btn-pink)' }}>{item.end_date || stageDateRanges[index]?.to || 'Present'}</strong>
                     </div>
                   </div>
                   <p style={{ margin: '8px 0 0', fontSize: '14.5px', lineHeight: 1.55, color: 'var(--text-brown)', textAlign: 'left' }}>{item.biography}</p>
