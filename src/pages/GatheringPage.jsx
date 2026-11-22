@@ -407,7 +407,7 @@ export default function GatheringPage() {
               </>
             </div>
             <span style={{ alignSelf: 'flex-start', marginTop: '10px', display: 'inline-flex', alignItems: 'center', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', color: 'var(--accent-purple)', fontSize: '12px', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{item.dayTime}</span>
-            <p style={{ margin: '10px 4px 0', fontSize: '14.5px', lineHeight: 1.6, color: 'var(--text-brown)', textAlign: 'left' }}>{item.expandedDescription}</p>
+            <div style={{ margin: '10px 4px 0', fontSize: '14.5px', lineHeight: 1.6, color: 'var(--text-brown)', textAlign: 'left', fontWeight: 600 }}>{item.expandedDescription}</div>
             <div style={{ alignSelf: 'center', margin: '4px auto 0 auto', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', borderRadius: '999px', backgroundColor: 'rgba(92, 52, 61, 0.08)', border: '1px solid rgba(92, 52, 61, 0.20)' }}>
               <MapPin size={13} style={{ color: '#5C343D', flexShrink: 0 }} aria-hidden="true" />
               <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-brown)' }}>{item.location}</span>
