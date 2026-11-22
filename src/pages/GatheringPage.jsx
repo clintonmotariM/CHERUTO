@@ -1,18 +1,68 @@
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { MapPin, CalendarDays, Shirt } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { MapPin, CalendarDays, Shirt, Award, ChevronDown } from 'lucide-react'
 import useMemorialData from '../hooks/useMemorialData'
 import { supabase } from '../lib/supabaseClient'
 import InputField from '../components/ui/InputField'
 import Button from '../components/ui/Button'
 import OutlineButton from '../components/ui/OutlineButton'
 
+const saintJohnsSlides = [
+  { caption: 'Campus First-Aid Drives', gradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' },
+  { caption: 'Community Outreach', gradient: 'linear-gradient(145deg, var(--btn-pink), #F5B7A7)' },
+  { caption: "Saint John's Humanitarian Service", gradient: 'linear-gradient(145deg, #F5B7A7, var(--accent-purple))' },
+]
+
+const scheduleEvents = [
+  {
+    id: 'vigil',
+    badge: 'Monday Night',
+    badgeColor: 'var(--accent-purple)',
+    title: 'MKU Candle Lighting Vigil',
+    time: 'Monday • 7:00 PM – 9:00 PM',
+    location: 'Mount Kenya University (MKU) Campus',
+    notes: 'Join us in light and remembrance.',
+  },
+  {
+    id: 'departure',
+    badge: 'Wednesday',
+    badgeColor: 'var(--btn-pink)',
+    title: 'Departure to Eldoret (School Transport)',
+    time: 'Wednesday • School Bus Departure',
+    location: 'MKU Main Gate',
+    notes: 'Complimentary MKU student bus to Eldoret (same-day return on the same bus).',
+  },
+  {
+    id: 'burial',
+    badge: 'Thursday',
+    badgeColor: '#5C343D',
+    title: 'Burial Service at Her Home Place',
+    time: 'Thursday • Home Service',
+    location: 'Eldoret (Her Family Home)',
+    notes: 'Final farewell surrounded by family and friends.',
+  },
+]
+
 export default function GatheringPage() {
-  const { schedule, loading } = useMemorialData()
+  const { schedule = [], loading } = useMemorialData()
   const [form, setForm] = useState({ name: '', contact: '', partySize: 1, note: '' })
+  const [memberRole, setMemberRole] = useState('Student')
+  const [needsBusTransport, setNeedsBusTransport] = useState(false)
+  const [studentRegPhone, setStudentRegPhone] = useState('')
   const [status, setStatus] = useState({ type: 'idle', message: '' })
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [photoIndex, setPhotoIndex] = useState(0)
+  const shouldReduceMotion = useReducedMotion()
 
   const update = (field, value) => setForm((current) => ({ ...current, [field]: value }))
+
+  useEffect(() => {
+    if (shouldReduceMotion) return undefined
+    const timer = window.setInterval(() => {
+      setPhotoIndex((current) => (current + 1) % saintJohnsSlides.length)
+    }, 4200)
+    return () => window.clearInterval(timer)
+  }, [shouldReduceMotion])
 
   const submitAttendance = async (event) => {
     event.preventDefault()
@@ -34,6 +84,9 @@ export default function GatheringPage() {
       attendee_email: form.contact.trim() || null,
       party_size: partySize,
       attendance_status: 'attending',
+      member_role: memberRole,
+      needs_school_transport: needsBusTransport,
+      student_reg_phone: needsBusTransport ? studentRegPhone.trim() || null : null,
       note: form.note.trim() || null,
     }
 
@@ -42,8 +95,9 @@ export default function GatheringPage() {
         const existing = JSON.parse(localStorage.getItem('cheruto-rsvp') || '[]')
         localStorage.setItem('cheruto-rsvp', JSON.stringify([...existing, record]))
       } catch {}
-      setStatus({ type: 'success', message: 'We look forward to celebrating with you' })
+      setStatus({ type: 'success', message: needsBusTransport ? 'Eldoret Wednesday School Bus seat reserved.' : 'We look forward to celebrating with you' })
       setForm({ name: '', contact: '', partySize: 1, note: '' })
+      setIsFormOpen(false)
       return
     }
 
@@ -53,41 +107,205 @@ export default function GatheringPage() {
       return
     }
 
-    setStatus({ type: 'success', message: 'We look forward to celebrating with you' })
+    setStatus({ type: 'success', message: needsBusTransport ? 'Eldoret Wednesday School Bus seat reserved.' : 'We look forward to celebrating with you' })
     setForm({ name: '', contact: '', partySize: 1, note: '' })
+    setIsFormOpen(false)
   }
 
-  const formatSchedule = (item) => {
-    if (!item.starts_at) return 'Time to be confirmed'
-    return new Date(item.starts_at).toLocaleString(undefined, { weekday: 'short', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' })
-  }
+  const allEvents = [...scheduleEvents, ...(schedule || [])]
+
+  const attendeeCounts = { Family: 0, Friends: 0, Students: 0, busSeats: 0 }
 
   return (
-    <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '18px' }}>
-      <h2 style={{ fontFamily: 'var(--font-script)', fontSize: '42px', color: 'var(--text-brown)' }}>The Gathering</h2>
-      {loading && <p style={{ fontSize: '15px' }}>Loading gathering details…</p>}
+    <motion.section
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      style={{
+        width: '100%',
+        paddingTop: 'max(14px, calc(var(--safe-top) + 10px))',
+        paddingBottom: 'calc(var(--nav-height) + 48px)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '14px',
+        overflowY: 'auto',
+        minHeight: '100vh',
+        boxSizing: 'border-box',
+      }}
+    >
+      <header style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 4px auto', padding: '4px 22px', borderRadius: '999px', backgroundColor: 'var(--white)', border: '1px solid rgba(93, 64, 55, 0.10)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.08)' }}>
+        <h2 style={{ margin: 0, fontFamily: 'var(--font-script)', fontSize: 'clamp(1.6rem, 5vw, 1.9rem)', lineHeight: 1, color: 'var(--text-brown)', whiteSpace: 'nowrap' }}>The Gathering</h2>
+      </header>
+      {loading && <p style={{ fontSize: '15px', color: 'var(--text-brown)' }}>Gathering details…</p>}
 
-      <div style={{ width: '100%', maxWidth: '460px', display: 'grid', gap: '12px' }}>
-        {schedule.map((item, index) => (
-          <article key={item.id || index} style={{ width: '100%', padding: '18px', background: 'var(--white)', borderRadius: '18px', boxShadow: '0 8px 24px rgba(93,64,55,.08)', textAlign: 'left' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--accent-purple)' }}><CalendarDays size={18} aria-hidden="true" /><strong>{formatSchedule(item)}</strong></div>
-            <h3 style={{ margin: '12px 0 6px', color: 'var(--text-brown)', fontSize: '18px' }}>{item.event_name}</h3>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '16px', lineHeight: 1.55 }}><MapPin size={18} style={{ flex: '0 0 18px', marginTop: '3px' }} aria-hidden="true" /><span>{item.location_name || 'Venue details to be confirmed'}{item.address ? ` — ${item.address}` : ''}</span></div>
-            {item.notes && <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginTop: '10px', fontSize: '16px', lineHeight: 1.55 }}><Shirt size={18} style={{ flex: '0 0 18px', marginTop: '3px' }} aria-hidden="true" /><span>{item.notes}</span></div>}
-            {item.address && <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${item.location_name || ''} ${item.address}`)}`} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', marginTop: '12px', textDecoration: 'none' }}><OutlineButton>Open Map / Directions</OutlineButton></a>}
+      {/* Section 1: Saint John's / Red Cross Community */}
+      <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ width: '100%', padding: '18px', background: 'var(--white)', borderRadius: '18px', boxShadow: '0 8px 24px rgba(93,64,55,.08)', textAlign: 'left' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '22px', padding: '3px 10px', borderRadius: '999px', background: 'var(--btn-pink)', color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>Saint John's • Red Cross Community</span>
+          </div>
+          <h3 style={{ margin: '0 0 10px 0', color: 'var(--text-brown)', fontSize: '18px', fontFamily: 'var(--font-script)', lineHeight: 1.2 }}>Service & Compassion She Cherished</h3>
+
+          <div style={{ width: '100%', height: '210px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: saintJohnsSlides[photoIndex].gradient, marginBottom: '10px' }}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={photoIndex}
+                initial={{ opacity: 0, scale: 1.03 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.75, ease: 'easeInOut' }}
+                style={{ width: '100%', height: '100%', background: saintJohnsSlides[photoIndex].gradient }}
+              >
+                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--white)', fontSize: '14px', fontWeight: 600, opacity: 0.9 }}>
+                  {saintJohnsSlides[photoIndex].caption}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          <div style={{ backgroundColor: 'rgba(255, 249, 242, 0.95)', border: '1px solid rgba(212, 163, 67, 0.35)', borderRadius: '14px', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Award size={20} style={{ color: '#C58B2A', flexShrink: 0 }} aria-hidden="true" />
+            <div>
+              <div style={{ fontWeight: 700, color: 'var(--text-brown)', fontSize: '13px' }}>Community Service Award Recipient</div>
+              <div style={{ fontSize: '12px', color: 'rgba(93, 64, 55, 0.75)', lineHeight: 1.4 }}>Honored for her dedicated leadership and active service in Saint John's Red Cross activities.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Section 2: Schedule Cards */}
+      <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {allEvents.map((item, index) => (
+          <article key={item.id || index} style={{ width: '100%', padding: '16px', background: 'var(--white)', borderRadius: '18px', boxShadow: '0 8px 24px rgba(93,64,55,.08)', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: item.badgeColor || 'var(--accent-purple)' }}><CalendarDays size={18} aria-hidden="true" /><strong style={{ fontSize: '13px', fontWeight: 700 }}>{item.badge}</strong></div>
+            <h3 style={{ margin: '4px 0 2px', color: 'var(--text-brown)', fontSize: '16px' }}>{item.title}</h3>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '15px', lineHeight: 1.55 }}><MapPin size={16} style={{ flex: '0 0 16px', marginTop: '2px' }} aria-hidden="true" /><span>{item.location}</span></div>
+            <div style={{ fontSize: '13px', color: 'rgba(93, 64, 55, 0.7)', lineHeight: 1.5 }}>{item.time}</div>
+            {item.notes && <div style={{ fontSize: '13px', color: 'rgba(93, 64, 55, 0.85)', marginTop: '4px', lineHeight: 1.5 }}>{item.notes}</div>}
+            {item.address && <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${item.location || ''} ${item.address}`)}`} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', marginTop: '10px', textDecoration: 'none' }}><OutlineButton>Open Map / Directions</OutlineButton></a>}
           </article>
         ))}
       </div>
 
-      <form onSubmit={submitAttendance} style={{ width: '100%', maxWidth: '460px', display: 'grid', gap: '12px', padding: '20px', background: 'var(--white)', borderRadius: '22px', boxShadow: '0 10px 28px rgba(93,64,55,.10)', textAlign: 'left' }}>
-        <h3 style={{ textAlign: 'center', color: 'var(--text-brown)', fontSize: '20px' }}>Confirm Attendance</h3>
-        <label style={{ fontSize: '15px', fontWeight: 700 }}>Guest Full Name <span aria-hidden="true">*</span><InputField required name="name" value={form.name} onChange={(event) => update('name', event.target.value)} placeholder="Your full name" /></label>
-        <label style={{ fontSize: '15px', fontWeight: 700 }}>Phone / Email <span style={{ fontWeight: 400 }}>(optional)</span><InputField name="contact" value={form.contact} onChange={(event) => update('contact', event.target.value)} placeholder="Phone or email" /></label>
-        <label style={{ fontSize: '15px', fontWeight: 700 }}>Party Size<select name="partySize" value={form.partySize} onChange={(event) => update('partySize', event.target.value)} style={{ width: '100%', minHeight: '44px', marginTop: '8px', border: '1px solid var(--text-brown)', borderRadius: '10px', background: 'var(--bg-cream)', color: 'var(--text-brown)', padding: '8px', fontSize: '16px' }}>{Array.from({ length: 20 }, (_, index) => index + 1).map((size) => <option key={size} value={size}>{size}</option>)}</select></label>
-        <label style={{ fontSize: '15px', fontWeight: 700 }}>Attendance Note<textarea name="note" value={form.note} onChange={(event) => update('note', event.target.value)} rows={3} placeholder="Anything you would like to add" style={{ width: '100%', minHeight: '44px', marginTop: '8px', border: '1px solid var(--text-brown)', borderRadius: '10px', background: 'var(--bg-cream)', color: 'var(--text-brown)', padding: '10px', fontSize: '16px', resize: 'vertical' }} /></label>
-        {status.message && <p role="status" style={{ minHeight: '20px', color: status.type === 'error' ? '#9C2F46' : 'var(--accent-purple)', fontSize: '15px', fontWeight: 700 }}>{status.message}</p>}
-        <Button type="submit" disabled={status.type === 'loading'} style={{ width: '100%', borderRadius: '999px' }}>{status.type === 'loading' ? 'Saving…' : 'Confirm Attendance'}</Button>
-      </form>
+      {/* Section 3: Collapsible Attendance & Student Transport Form */}
+      <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <motion.article
+          layout
+          key="attendance-trigger"
+          role="button"
+          tabIndex={0}
+          style={{
+            width: '100%',
+            minHeight: '54px',
+            background: 'var(--white)',
+            borderRadius: '16px',
+            padding: '12px 16px',
+            boxShadow: '0 6px 18px rgba(93,64,55,.07)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+          onClick={() => setIsFormOpen((open) => !open)}
+          onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setIsFormOpen((open) => !open) } }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '22px', padding: '3px 10px', borderRadius: '999px', background: 'var(--btn-pink)', color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>Sign In</span>
+            <div>
+              <div style={{ fontWeight: 700, color: 'var(--text-brown)', fontSize: '15px' }}>Record Attendance & Eldoret Bus Seat</div>
+              <div style={{ fontSize: '12.5px', color: 'rgba(93, 64, 55, 0.7)' }}>Tap to sign in for MKU Vigil & reserve student transport</div>
+            </div>
+          </div>
+          <ChevronDown size={16} style={{ transition: 'transform 0.3s ease', transform: isFormOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+        </motion.article>
+
+        {isFormOpen && (
+          <AnimatePresence initial={false}>
+            <motion.form
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              onSubmit={submitAttendance}
+              style={{
+                width: '100%',
+                maxWidth: '460px',
+                display: 'grid',
+                gap: '12px',
+                padding: '20px',
+                background: 'var(--white)',
+                borderRadius: '22px',
+                boxShadow: '0 10px 28px rgba(93,64,55,.10)',
+                textAlign: 'left',
+              }}
+            >
+              <h3 style={{ textAlign: 'center', color: 'var(--text-brown)', fontSize: '20px' }}>Confirm Attendance</h3>
+
+              <label style={{ fontSize: '15px', fontWeight: 700 }}>Guest Full Name <span aria-hidden="true">*</span><InputField required name="name" value={form.name} onChange={(event) => update('name', event.target.value)} placeholder="Your full name" /></label>
+
+              <label style={{ fontSize: '15px', fontWeight: 700, marginTop: '4px' }}>Member Relationship</label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                {['Student', 'Friend', 'Family'].map((role) => (
+                  <button
+                    key={role}
+                    type="button"
+                    onClick={() => { setMemberRole(role); setNeedsBusTransport(role === 'Student' ? false : false) }}
+                    style={{
+                      minHeight: '44px',
+                      border: `1px solid ${memberRole === role ? 'var(--btn-pink)' : 'rgba(93, 64, 55, 0.25)'}`,
+                      borderRadius: '12px',
+                      background: memberRole === role ? 'var(--btn-pink)' : 'transparent',
+                      color: memberRole === role ? 'var(--white)' : 'var(--text-brown)',
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {role}
+                  </button>
+                ))}
+              </div>
+
+              {memberRole === 'Student' && (
+                <div style={{ backgroundColor: 'rgba(255, 249, 242, 0.9)', border: '1px solid rgba(212, 163, 67, 0.25)', borderRadius: '14px', padding: '12px 16px', marginTop: '4px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)' }}>MKU School Transport to Eldoret</div>
+                  <div style={{ fontSize: '12.5px', color: 'rgba(93, 64, 55, 0.8)', lineHeight: 1.5 }}>School-sponsored transport departs Wednesday to Eldoret and returns the same day on the same bus.</div>
+                  <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-brown)', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={needsBusTransport}
+                      onChange={(event) => setNeedsBusTransport(event.target.checked)}
+                      style={{ width: '20px', height: '20px', accentColor: 'var(--btn-pink)' }}
+                    />
+                    Yes, assign me a seat on the MKU school bus to Eldoret (Wednesday — same-day return)
+                  </label>
+                  {needsBusTransport && (
+                    <label style={{ fontSize: '15px', fontWeight: 700 }}>Student Reg / Phone Number <span style={{ fontWeight: 400 }}>(optional)</span><InputField name="studentRegPhone" value={studentRegPhone} onChange={(event) => setStudentRegPhone(event.target.value)} placeholder="Reg number or phone" /></label>
+                  )}
+                </div>
+              )}
+
+              <label style={{ fontSize: '15px', fontWeight: 700 }}>Phone / Email <span style={{ fontWeight: 400 }}>(optional)</span><InputField name="contact" value={form.contact} onChange={(event) => update('contact', event.target.value)} placeholder="Phone or email" /></label>
+
+              <label style={{ fontSize: '15px', fontWeight: 700 }}>Party Size<select name="partySize" value={form.partySize} onChange={(event) => update('partySize', event.target.value)} style={{ width: '100%', minHeight: '44px', marginTop: '8px', border: '1px solid var(--text-brown)', borderRadius: '10px', background: 'var(--bg-cream)', color: 'var(--text-brown)', padding: '8px', fontSize: '16px' }}>{Array.from({ length: 20 }, (_, index) => index + 1).map((size) => <option key={size} value={size}>{size}</option>)}</select></label>
+
+              <label style={{ fontSize: '15px', fontWeight: 700 }}>Attendance Note<textarea name="note" value={form.note} onChange={(event) => update('note', event.target.value)} rows={3} placeholder="Anything you would like to add" style={{ width: '100%', minHeight: '44px', marginTop: '8px', border: '1px solid var(--text-brown)', borderRadius: '10px', background: 'var(--bg-cream)', color: 'var(--text-brown)', padding: '10px', fontSize: '16px', resize: 'vertical' }} /></label>
+
+              {status.message && <p role="status" style={{ minHeight: '20px', color: status.type === 'error' ? '#9C2F46' : 'var(--accent-purple)', fontSize: '15px', fontWeight: 700 }}>{status.message}</p>}
+
+              <Button type="submit" disabled={status.type === 'loading'} style={{ width: '100%', borderRadius: '999px', minHeight: '48px' }}>{status.type === 'loading' ? 'Saving…' : needsBusTransport ? 'Reserve Bus Seat' : 'Confirm Attendance'}</Button>
+            </motion.form>
+          </AnimatePresence>
+        )}
+      </div>
+
+      <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', paddingBottom: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: 'rgba(93, 64, 55, 0.75)' }}>
+          <span style={{ fontWeight: 700, color: 'var(--accent-purple)' }}>{attendeeCounts.Family}</span> Family ·
+          <span style={{ fontWeight: 700, color: 'var(--btn-pink)' }}>{attendeeCounts.Friends}</span> Friends ·
+          <span style={{ fontWeight: 700, color: 'var(--accent-green)' }}>{attendeeCounts.Students}</span> Students ·
+          <span style={{ fontWeight: 700, color: '#5C343D' }}>{attendeeCounts.busSeats}</span> Bus Seats Reserved
+        </div>
+      </div>
     </motion.section>
   )
 }
