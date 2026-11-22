@@ -44,7 +44,7 @@ const scheduleEvents = [
 ]
 
 export default function GatheringPage() {
-  const { schedule = [], loading } = useMemorialData()
+  const { schedule = [] } = useMemorialData()
   const [form, setForm] = useState({ name: '', contact: '', partySize: 1, note: '' })
   const [memberRole, setMemberRole] = useState('Student')
   const [needsBusTransport, setNeedsBusTransport] = useState(false)
@@ -123,7 +123,7 @@ export default function GatheringPage() {
       animate={{ opacity: 1, y: 0 }}
       style={{
         width: '100%',
-        paddingTop: 'max(14px, calc(var(--safe-top) + 10px))',
+        paddingTop: 'max(18px, calc(var(--safe-top) + 12px))',
         paddingBottom: 'calc(var(--nav-height) + 48px)',
         display: 'flex',
         flexDirection: 'column',
@@ -132,11 +132,6 @@ export default function GatheringPage() {
         boxSizing: 'border-box',
       }}
     >
-      <header style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 4px auto', padding: '4px 22px', borderRadius: '999px', backgroundColor: 'var(--white)', border: '1px solid rgba(93, 64, 55, 0.10)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.08)' }}>
-        <h2 style={{ margin: 0, fontFamily: 'var(--font-script)', fontSize: 'clamp(1.6rem, 5vw, 1.9rem)', lineHeight: 1, color: 'var(--text-brown)', whiteSpace: 'nowrap' }}>The Gathering</h2>
-      </header>
-      {loading && <p style={{ fontSize: '15px', color: 'var(--text-brown)' }}>Gathering details…</p>}
-
       {/* Section 1: Saint John's Hero */}
       <div style={{ width: '100%', maxWidth: '430px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
         <span style={{ alignSelf: 'center', margin: '0 auto 12px auto', display: 'inline-flex', alignItems: 'center', padding: '6px 22px', borderRadius: '999px', backgroundColor: 'rgba(139, 26, 43, 0.12)', border: '1px solid rgba(139, 26, 43, 0.24)', color: '#8B1A2B', fontSize: '13.5px', fontWeight: 700, letterSpacing: '0.03em' }}>Saint John's</span>
