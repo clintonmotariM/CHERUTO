@@ -50,7 +50,7 @@ export default function HomePage() {
     : (isMemorySlide && slide.photo_url ? [slide.photo_url] : [])
 
   const activePhotoUrl = photoUrls.length > 0 ? photoUrls[0] : null
-  const gradient = photoUrl ? null : slide.fallbackGradient || curatedPhotos[activeIndex % curatedCount].fallbackGradient
+  const gradient = activePhotoUrl ? null : slide.fallbackGradient || curatedPhotos[activeIndex % curatedCount].fallbackGradient
 
   const showNextPhoto = () => {
     setActiveIndex((currentIndex) => (currentIndex + 1) % totalSlides)
