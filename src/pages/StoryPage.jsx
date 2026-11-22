@@ -120,10 +120,12 @@ export default function StoryPage() {
   const getPhotoIndex = (id, count) => ((photoIndexById[id] || 0) < count ? (photoIndexById[id] || 0) : 0)
 
   const sectionHeaderStyle = {
-    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', margin: '12px auto 6px auto',
-    padding: '3px 18px', borderRadius: '999px', backgroundColor: 'var(--white)',
-    border: '1px solid rgba(157, 78, 221, 0.18)', boxShadow: '0 4px 14px rgba(93, 64, 55, 0.06)',
-    fontFamily: 'var(--font-script)', fontSize: 'clamp(1.25rem, 4.2vw, 1.45rem)', lineHeight: 1, color: 'var(--text-brown)',
+    position: 'sticky', top: '12px', zIndex: 25, width: 'fit-content',
+    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px auto',
+    padding: '6px 22px', borderRadius: '999px', backgroundColor: 'rgba(255, 255, 255, 0.92)',
+    border: '1px solid rgba(157, 78, 221, 0.16)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.10)',
+    fontFamily: 'var(--font-header)', fontStyle: 'italic', fontWeight: 700,
+    fontSize: 'clamp(1.25rem, 4.2vw, 1.48rem)', lineHeight: 1.15, color: 'var(--text-brown)',
   }
 
   const expandedCard = (item) => {
@@ -178,8 +180,8 @@ export default function StoryPage() {
         .story-card:focus-visible { outline: 3px solid var(--accent-green); outline-offset: 3px; }
       `}</style>
     <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} style={{ paddingTop: 'max(14px, calc(var(--safe-top) + 10px))', paddingBottom: '24px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <header style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px auto', padding: '4px 22px', borderRadius: '999px', backgroundColor: 'var(--white)', border: '1px solid rgba(93,64,55,.10)', boxShadow: '0 6px 20px rgba(93,64,55,.08)' }}>
-        <h2 style={{ margin: 0, fontFamily: 'var(--font-script)', fontSize: 'clamp(1.6rem, 5vw, 1.9rem)', lineHeight: 1, color: 'var(--text-brown)', whiteSpace: 'nowrap' }}>Her Story</h2>
+      <header style={{ position: 'sticky', top: '12px', zIndex: 25, width: 'fit-content', margin: '0 auto 12px auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '6px 22px', borderRadius: '999px', backgroundColor: 'rgba(255, 255, 255, 0.92)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', border: '1px solid rgba(157, 78, 221, 0.16)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.10)' }}>
+        <h2 style={{ margin: 0, fontFamily: 'var(--font-header)', fontStyle: 'italic', fontWeight: 700, letterSpacing: '0.01em', fontSize: 'clamp(1.6rem, 5vw, 1.9rem)', lineHeight: 1, color: 'var(--text-brown)', whiteSpace: 'nowrap' }}>Her Story</h2>
       </header>
 
       {loading && <p style={{ fontSize: '14px', margin: '-6px 0 6px' }}>Gathering memories…</p>}
