@@ -253,7 +253,7 @@ export default function GatheringPage() {
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}
         onKeyDown={handleKeyDown}
       >
-        <label style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--text-brown)' }}>{label}</label>
+        <label style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--text-brown)', display: 'block', width: '100%', textAlign: 'left' }}>{label}</label>
         <button
           role="button"
           tabIndex={0}
@@ -337,7 +337,7 @@ export default function GatheringPage() {
   const renderInputField = (label, required, name, placeholder, value, extraStyle) => {
     const isFilled = Boolean(value && String(value).trim())
     return (
-      <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: required ? 0 : '8px', display: 'block', marginBottom: '6px' }}>
+      <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: required ? 0 : '8px', display: 'block', width: '100%', textAlign: 'left', marginBottom: '6px' }}>
         {label} {required && <span style={{ color: '#C58B2A', fontWeight: 700 }}>*</span>}
         <InputField
           required={required}
@@ -565,7 +565,7 @@ export default function GatheringPage() {
           {memberRole === 'Student' && (
             <div style={{ padding: '12px', borderRadius: '14px', backgroundColor: 'rgba(255, 77, 133, 0.05)', border: '1px solid rgba(255, 77, 133, 0.22)', display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
               {renderSelectorInput('transport', 'School Bus Transport (Eldoret — Wed)', 'Select transport option', needsSchoolTransport)}
-              <span style={{ fontSize: '12px', color: '#C58B2A', fontWeight: 600, marginTop: '2px' }}>🪪 All MKU students must carry their Student ID card.</span>
+              <span style={{ fontSize: '12px', color: '#C58B2A', fontWeight: 600, marginTop: '2px', textAlign: 'left', alignSelf: 'flex-start' }}>All MKU students must carry their Student ID card.</span>
               {renderInputField('MKU Student ID Number', true, 'studentId', 'BCOM/2023/12345', form.studentId)}
               {renderInputField('Parent / Next-of-Kin Phone', true, 'emergencyContact', 'Emergency backup phone number', form.emergencyContact)}
             </div>
