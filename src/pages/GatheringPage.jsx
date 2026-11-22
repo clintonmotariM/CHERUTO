@@ -352,6 +352,201 @@ export default function GatheringPage() {
     )
   }
 
+  const renderScheduleCard = (item, index) => {
+    const isExpanded = expandedEventId === item.id
+    const Icon = item.icon
+    const slideIndex = getSlideIndex(item.id, item.locationSlides?.length || 1)
+    const slide = item.locationSlides?.[slideIndex] || { caption: '', gradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' }
+
+    return (
+      <div key={item.id || index} style={{ width: '100%' }}>
+        <div style={{ margin: '0 auto 7px auto', display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '6px' }}>
+        <span style={{ padding: '4px 13px', borderRadius: '999px', fontSize: '11.5px', fontWeight: 700, color: 'var(--white)', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.10)', backgroundColor: item.iconColor || 'var(--accent-purple)' }}>{item.day}</span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '4px 12px', borderRadius: '999px', backgroundColor: 'var(--white)', border: '1px solid rgba(157, 78, 221, 0.24)', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.06)', fontSize: '11.5px', fontWeight: 700, color: 'var(--text-brown)' }}>
+          <MapPin size={11} style={{ color: item.iconColor || 'var(--accent-purple)', flexShrink: 0 }} aria-hidden="true" />
+          <span>{item.location}</span>
+        </span>
+      </div>
+      <ExpandableReveal
+        isOpen={isExpanded}
+        variant="card"
+        collapsed={
+          <div className="ch-fade-in" style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
+            <div style={{ width: '54px', height: '54px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, background: slide.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {Icon}
+            </div>
+            <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', flexWrap: 'wrap', marginBottom: '3px' }}>
+                <h3 style={{ margin: 0, fontWeight: 700, fontSize: '15px', color: 'var(--text-brown)' }}>{item.title}</h3>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: item.iconColor || 'var(--accent-purple)' }}>{item.timeBadge}</span>
+              </div>
+              <p style={{ margin: 0, fontSize: '12.5px', lineHeight: 1.38, color: 'rgba(93, 64, 55, 0.80)' }}>{item.description}</p>
+            </div>
+            <ChevronDown size={15} style={{ alignSelf: 'flex-start', marginTop: '4px', color: 'rgba(93, 64, 55, 0.55)', flexShrink: 0 }} />
+          </div>
+        }
+        expanded={
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ width: '100%', height: '240px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: slide.gradient }}>
+              <>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={`${item.id}-${slideIndex}`}
+                    initial={{ opacity: 0, scale: 1.04 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1.15, ease: 'easeInOut' }}
+                    style={{ width: '100%', height: '100%', background: slide.gradient }}
+                  >
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--white)', fontSize: '13px', fontWeight: 600, opacity: 0.85, padding: '10px', textAlign: 'center', boxSizing: 'border-box' }}>
+                      {slide.caption}
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+                <div style={{ position: 'absolute', bottom: '10px', left: '10px', fontSize: '11px', fontWeight: 700, color: 'var(--white)', backgroundColor: 'rgba(0,0,0,0.35)', padding: '4px 8px', borderRadius: '999px', backdropFilter: 'blur(4px)' }}>{item.day}</div>
+              </>
+            </div>
+            <span style={{ alignSelf: 'flex-start', marginTop: '10px', display: 'inline-flex', alignItems: 'center', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', color: 'var(--accent-purple)', fontSize: '12px', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{item.dayTime}</span>
+            <p style={{ margin: '10px 4px 0', fontSize: '14.5px', lineHeight: 1.6, color: 'var(--text-brown)', textAlign: 'left' }}>{item.expandedDescription}</p>
+            <div style={{ alignSelf: 'center', margin: '4px auto 0 auto', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', borderRadius: '999px', backgroundColor: 'rgba(92, 52, 61, 0.08)', border: '1px solid rgba(92, 52, 61, 0.20)' }}>
+              <MapPin size={13} style={{ color: '#5C343D', flexShrink: 0 }} aria-hidden="true" />
+              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-brown)' }}>{item.location}</span>
+            </div>
+          </div>
+        }
+      />
+      </div>
+    )
+  }
+
+  const renderWalkWithUsButton = () => {
+    const isExpanded = isFormOpen
+
+    return (
+      <ExpandableReveal
+        isOpen={isExpanded}
+        variant="form"
+        collapsed={
+          <button
+            role="button"
+            tabIndex={0}
+            onClick={() => setIsFormOpen((open) => !open)}
+            onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setIsFormOpen((open) => !open) } }}
+            style={{
+              margin: '6px auto 0 auto',
+              alignSelf: 'center',
+              width: 'fit-content',
+              minHeight: '48px',
+              padding: '12px 26px',
+              borderRadius: '999px',
+              background: 'linear-gradient(135deg, var(--accent-purple), var(--btn-pink))',
+              color: 'var(--white)',
+              boxShadow: '0 8px 22px rgba(157, 78, 221, 0.26)',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '14.5px',
+              fontWeight: 700,
+            }}
+          >
+            <HeartHandshake size={17} style={{ flexShrink: 0 }} aria-hidden="true" />
+            <span>Walk With Us</span>
+            <ChevronDown size={15} style={{ transition: 'transform 0.3s ease', transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+          </button>
+        }
+        expanded={
+          <form onSubmit={submitAttendance} style={{ width: '100%', maxWidth: '440px', display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 18px', backgroundColor: 'var(--white)', borderRadius: '20px', border: '1px solid rgba(157, 78, 221, 0.16)', boxShadow: '0 12px 32px rgba(157, 78, 221, 0.12)' }}>
+            <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '20px', textAlign: 'center' }}>Confirm Attendance</h3>
+
+            {renderInputField('Full Name', true, 'name', 'Your full name', form.name)}
+
+            {renderSelectorInput('gender', 'Gender *', 'Select gender', gender)}
+
+            {renderSelectorInput('relationship', 'Relationship *', 'Select relationship', memberRole)}
+
+            {memberRole === 'Student' && (
+              <div style={{ padding: '12px', borderRadius: '14px', backgroundColor: 'rgba(255, 77, 133, 0.05)', border: '1px solid rgba(255, 77, 133, 0.22)', display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
+                {renderSelectorInput('transport', 'School Bus Transport (Eldoret — Wed)', 'Select transport option', needsSchoolTransport)}
+                <span style={{ fontSize: '12px', color: '#C58B2A', fontWeight: 600, marginTop: '2px', textAlign: 'left', alignSelf: 'flex-start' }}>All MKU students must carry their Student ID card.</span>
+                {renderInputField('MKU Student ID Number', true, 'studentId', 'BCOM/2023/12345', form.studentId)}
+                {renderInputField('Parent / Next-of-Kin Phone', true, 'emergencyContact', 'Emergency backup phone number', form.emergencyContact)}
+              </div>
+            )}
+
+            {renderInputField('Your Phone Number', true, 'contact', '07XX XXX XXX', form.contact)}
+
+            <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: '8px', display: 'block', marginBottom: '6px' }}>
+              Note (optional)
+              <textarea
+                name="note"
+                value={form.note}
+                onChange={(event) => update('note', event.target.value)}
+                rows={2}
+                placeholder="Optional note or message"
+                style={{
+                  ...getFieldSurfaceStyle(Boolean(form.note && String(form.note).trim())),
+                  width: '100%',
+                  minHeight: '70px',
+                  marginTop: '4px',
+                  color: 'var(--text-brown)',
+                  padding: '8px',
+                  fontSize: '15px',
+                  resize: 'vertical',
+                }}
+              />
+              <span style={{ fontSize: '12px', color: 'rgba(93, 64, 55, 0.7)', display: 'block', marginTop: '4px', textAlign: 'right' }}>{form.note.length}/5000</span>
+            </label>
+
+            {status.message && <p role="status" style={{ minHeight: '20px', color: status.type === 'error' ? '#9C2F46' : 'var(--accent-purple)', fontSize: '14px', fontWeight: 700 }}>{status.message}</p>}
+
+            <button
+              type="submit"
+              disabled={status.type === 'loading'}
+              style={{
+                width: '100%',
+                borderRadius: '999px',
+                minHeight: '46px',
+                background: status.type === 'loading' ? 'rgba(157, 78, 221, 0.5)' : 'linear-gradient(135deg, var(--btn-pink), var(--accent-purple))',
+                color: 'var(--white)',
+                border: 'none',
+                cursor: status.type === 'loading' ? 'default' : 'pointer',
+                fontSize: '14px',
+                fontWeight: 700,
+              }}
+            >
+              {status.type === 'loading' ? 'Saving…' : 'Confirm Attendance'}
+            </button>
+            <button
+              type="button"
+              onClick={handleInvite}
+              style={{
+                width: '100%',
+                minHeight: '42px',
+                borderRadius: '999px',
+                backgroundColor: 'rgba(157, 78, 221, 0.08)',
+                border: '1px solid rgba(157, 78, 221, 0.24)',
+                color: 'var(--accent-purple)',
+                fontSize: '13px',
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+                marginTop: '8px',
+              }}
+            >
+              <Share2 size={15} style={{ flexShrink: 0 }} aria-hidden="true" />
+              <span>Invite Someone to Farewell</span>
+            </button>
+          </form>
+        }
+      />
+    )
+  }
+
   const liveSchedule = (schedule || []).filter((item) => item.title && item.location)
   const allEvents = [...scheduleEvents, ...liveSchedule]
 
@@ -409,194 +604,14 @@ export default function GatheringPage() {
       {/* Section 2: Schedule Cards */}
       <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
         <span style={{ position: 'sticky', top: '12px', zIndex: 25, width: 'fit-content', margin: '0 auto 12px auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '6px 22px', borderRadius: '999px', backgroundColor: 'rgba(255, 255, 255, 0.92)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', border: '1px solid rgba(157, 78, 221, 0.16)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.10)', fontFamily: 'var(--font-header)', fontStyle: 'italic', fontWeight: 700, fontSize: 'clamp(1.25rem, 4.2vw, 1.48rem)', lineHeight: 1.15, color: 'var(--text-brown)' }}>Farewell Schedule</span>
-        {allEvents.map((item, index) => {
-          const isExpanded = expandedEventId === item.id
-          const Icon = item.icon
-          const slideIndex = getSlideIndex(item.id, item.locationSlides?.length || 1)
-          const slide = item.locationSlides?.[slideIndex] || { caption: '', gradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' }
-
-          return (
-            <div key={item.id || index} style={{ width: '100%' }}>
-              <div style={{ margin: '0 auto 7px auto', display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '6px' }}>
-              <span style={{ padding: '4px 13px', borderRadius: '999px', fontSize: '11.5px', fontWeight: 700, color: 'var(--white)', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.10)', backgroundColor: item.iconColor || 'var(--accent-purple)' }}>{item.day}</span>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '4px 12px', borderRadius: '999px', backgroundColor: 'var(--white)', border: '1px solid rgba(157, 78, 221, 0.24)', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.06)', fontSize: '11.5px', fontWeight: 700, color: 'var(--text-brown)' }}>
-                <MapPin size={11} style={{ color: item.iconColor || 'var(--accent-purple)', flexShrink: 0 }} aria-hidden="true" />
-                <span>{item.location}</span>
-              </span>
-            </div>
-              <motion.article
-                key={`card-${item.id || index}`}
-                layout
-                role="button"
-                tabIndex={0}
-                aria-expanded={isExpanded}
-                onClick={() => setExpandedEventId((current) => (current === item.id ? null : item.id))}
-                onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setExpandedEventId((current) => (current === item.id ? null : item.id)) } }}
-                style={{
-                  width: '100%',
-                  maxWidth: '460px',
-                  background: 'var(--white)',
-                  borderRadius: '18px',
-                  padding: '12px 14px',
-                  boxShadow: '0 6px 18px rgba(93, 64, 55, 0.06)',
-                  border: '1px solid rgba(93, 64, 55, 0.07)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  cursor: 'pointer',
-                  outline: 'none',
-                  position: 'relative',
-                }}
-              >
-                {isExpanded ? (
-                  <ExpandableReveal
-                    isOpen={isExpanded}
-                    delay={400}
-                    skeleton={
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '12px 12px 16px' }}>
-                        <div style={{ width: '100%', height: '240px', borderRadius: '14px', className: 'cheruto-skeleton' }} />
-                        <div style={{ width: '35%', height: '20px', borderRadius: '999px', className: 'cheruto-skeleton' }} />
-                        <div style={{ width: '65%', height: '55px', borderRadius: '8px', className: 'cheruto-skeleton' }} />
-                        <div style={{ width: '50%', height: '20px', borderRadius: '999px', className: 'cheruto-skeleton' }} />
-                      </div>
-                    }
-                    collapsedSkeleton={
-                      <div style={{ width: '100%', height: '68px', borderRadius: '18px', className: 'cheruto-skeleton' }} />
-                    }
-                    collapsedChildren={
-                      <div className="ch-fade-in" style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
-                        <div style={{ width: '54px', height: '54px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, background: slide.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          {Icon}
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '7px', flexWrap: 'wrap', marginBottom: '3px' }}>
-                            <h3 style={{ margin: 0, fontWeight: 700, fontSize: '15px', color: 'var(--text-brown)' }}>{item.title}</h3>
-                            <span style={{ fontSize: '11px', fontWeight: 700, color: item.iconColor || 'var(--accent-purple)' }}>{item.timeBadge}</span>
-                          </div>
-                          <p style={{ margin: 0, fontSize: '12.5px', lineHeight: 1.38, color: 'rgba(93, 64, 55, 0.80)' }}>{item.description}</p>
-                        </div>
-                        <ChevronDown size={15} style={{ alignSelf: 'flex-start', marginTop: '4px', color: 'rgba(93, 64, 55, 0.55)', flexShrink: 0 }} />
-                      </div>
-                    }
-                  />
-                ) : null}
-              </motion.article>
-              {index < allEvents.length - 1 && (
-                <div style={{ width: '2px', height: '20px', backgroundColor: 'rgba(157, 78, 221, 0.22)', marginLeft: '23px', alignSelf: 'flex-start' }} />
-              )}
-            </div>
-          )
-        })}
+        {allEvents.map((item, index) => renderScheduleCard(item, index))}
+        {allEvents.length > 1 && (
+          <div style={{ width: '2px', height: '20px', backgroundColor: 'rgba(157, 78, 221, 0.22)', marginLeft: '23px', alignSelf: 'flex-start' }} />
+        )}
       </div>
 
       {/* Section 3: Walk With Us — Attendance & Transport */}
-      <button
-        role="button"
-        tabIndex={0}
-        onClick={() => setIsFormOpen((open) => !open)}
-        onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setIsFormOpen((open) => !open) } }}
-        style={{
-          margin: '6px auto 0 auto',
-          alignSelf: 'center',
-          width: 'fit-content',
-          minHeight: '48px',
-          padding: '12px 26px',
-          borderRadius: '999px',
-          background: 'linear-gradient(135deg, var(--accent-purple), var(--btn-pink))',
-          color: 'var(--white)',
-          boxShadow: '0 8px 22px rgba(157, 78, 221, 0.26)',
-          border: 'none',
-          cursor: 'pointer',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '8px',
-          fontSize: '14.5px',
-          fontWeight: 700,
-        }}
-      >
-        <HeartHandshake size={17} style={{ flexShrink: 0 }} aria-hidden="true" />
-        <span>Walk With Us</span>
-        <ChevronDown size={15} style={{ transition: 'transform 0.3s ease', transform: isFormOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
-      </button>
-
-      {isFormOpen ? (
-        <ExpandableReveal
-          isOpen={isFormOpen}
-          delay={400}
-          skeleton={
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 18px' }}>
-              <div style={{ width: '30%', height: '24px', borderRadius: '12px', className: 'cheruto-skeleton' }} />
-              <div style={{ width: '100%', height: '40px', borderRadius: '12px', className: 'cheruto-skeleton' }} />
-              <div style={{ width: '30%', height: '40px', borderRadius: '12px', className: 'cheruto-skeleton' }} />
-              <div style={{ width: '60%', height: '40px', borderRadius: '12px', className: 'cheruto-skeleton' }} />
-              <div style={{ width: '100%', height: '40px', borderRadius: '12px', className: 'cheruto-skeleton' }} />
-              <div style={{ width: '80%', height: '44px', borderRadius: '999px', className: 'cheruto-skeleton' }} />
-            </div>
-          }
-          collapsedSkeleton={
-            <div style={{ width: '180px', height: '44px', borderRadius: '999px', margin: '0 auto', className: 'cheruto-skeleton' }} />
-          }
-          collapsedChildren={
-            <button
-              role="button"
-              tabIndex={0}
-              onClick={() => setIsFormOpen((open) => !open)}
-              onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setIsFormOpen((open) => !open) } }}
-              style={{
-                margin: '6px auto 0 auto',
-                alignSelf: 'center',
-                width: 'fit-content',
-                minHeight: '48px',
-                padding: '12px 26px',
-                borderRadius: '999px',
-                background: 'linear-gradient(135deg, var(--accent-purple), var(--btn-pink))',
-                color: 'var(--white)',
-                boxShadow: '0 8px 22px rgba(157, 78, 221, 0.26)',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontSize: '14.5px',
-                fontWeight: 700,
-              }}
-            >
-              <HeartHandshake size={17} style={{ flexShrink: 0 }} aria-hidden="true" />
-              <span>Walk With Us</span>
-              <ChevronDown size={15} style={{ transition: 'transform 0.3s ease', transform: 'rotate(0deg)' }} />
-            </button>
-          }
-        />
-      ) : (
-        <button
-          role="button"
-          tabIndex={0}
-          onClick={() => setIsFormOpen((open) => !open)}
-          onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setIsFormOpen((open) => !open) } }}
-          style={{
-            margin: '6px auto 0 auto',
-            alignSelf: 'center',
-            width: 'fit-content',
-            minHeight: '48px',
-            padding: '12px 26px',
-            borderRadius: '999px',
-            background: 'linear-gradient(135deg, var(--accent-purple), var(--btn-pink))',
-            color: 'var(--white)',
-            boxShadow: '0 8px 22px rgba(157, 78, 221, 0.26)',
-            border: 'none',
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            fontSize: '14.5px',
-            fontWeight: 700,
-          }}
-        >
-          <HeartHandshake size={17} style={{ flexShrink: 0 }} aria-hidden="true" />
-          <span>Walk With Us</span>
-          <ChevronDown size={15} style={{ transition: 'transform 0.3s ease', transform: 'rotate(0deg)' }} />
-        </button>
-      )}
+      {renderWalkWithUsButton()}
     </motion.section>
   )
 }

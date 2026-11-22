@@ -164,7 +164,6 @@ export default function StoryPage() {
     )
   }
 
-
   const collapsedInlineHeader = (item, era, badgeColor, isRightAligned) => (
     <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '4px', justifyContent: isRightAligned ? 'flex-end' : 'flex-start' }}>
       <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '20px', padding: '3px 8px', borderRadius: '999px', background: badgeColor, color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>{era}</span>
@@ -172,6 +171,57 @@ export default function StoryPage() {
       <ChevronDown size={15} aria-hidden="true" />
     </div>
   )
+
+  const renderChapterCard = (chapter, index) => {
+    const isExpanded = expandedId === chapter.id
+    const polaroidLeft = index % 2 === 0
+
+    return (
+      <motion.article className="story-card" layout key={chapter.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(chapter.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(chapter.id) } }} style={{ width: '100%', minHeight: '44px', cursor: 'pointer' }}>
+        <ExpandableReveal
+          isOpen={isExpanded}
+          variant="card"
+          collapsed={
+            <div className="ch-fade-in" style={{ display: 'grid', gridTemplateColumns: polaroidLeft ? '66px 1fr' : '1fr 66px', alignItems: 'center', gap: '8px', textAlign: polaroidLeft ? 'left' : 'right', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
+              {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{chapter.image_url ? <img src={chapter.image_url} alt={chapter.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}</PolaroidFrame>}
+              <div>
+                {collapsedInlineHeader(chapter, chapter.era, 'var(--accent-purple)', !polaroidLeft)}
+                <p style={{ fontSize: '13.5px', lineHeight: 1.38, color: 'var(--text-brown)', margin: 0 }}>{chapter.description}</p>
+              </div>
+              {!polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(2deg)' }}>{chapter.image_url ? <img src={chapter.image_url} alt={chapter.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}</PolaroidFrame>}
+            </div>
+          }
+          expanded={expandedCard(chapter)}
+        />
+      </motion.article>
+    )
+  }
+
+  const renderRelationshipCard = (relationship, sectionIndex, cardIndex) => {
+    const isExpanded = expandedId === relationship.id
+    const polaroidLeft = (sectionIndex * 2 + cardIndex) % 2 === 0
+    const badgeColor = sectionIndex === 0 ? 'var(--accent-purple)' : sectionIndex === 1 ? 'var(--btn-pink)' : 'var(--accent-green)'
+
+    return (
+      <motion.article className="story-card" layout key={relationship.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(relationship.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(relationship.id) } }} style={{ width: '100%', minHeight: '44px', cursor: 'pointer' }}>
+        <ExpandableReveal
+          isOpen={isExpanded}
+          variant="card"
+          collapsed={
+            <div className="ch-fade-in" style={{ display: 'grid', gridTemplateColumns: polaroidLeft ? '66px 1fr' : '1fr 66px', alignItems: 'center', gap: '8px', textAlign: polaroidLeft ? 'left' : 'right', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
+              {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{relationship.photos[0].src ? <img src={relationship.photos[0].src} alt={relationship.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}</PolaroidFrame>}
+              <div>
+                {collapsedInlineHeader(relationship, relationship.badge, badgeColor, !polaroidLeft)}
+                <p style={{ fontSize: '13.5px', lineHeight: 1.38, color: 'var(--text-brown)', margin: 0 }}>{relationship.relationship_type}</p>
+              </div>
+              {!polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(2deg)' }}>{relationship.photos[0].src ? <img src={relationship.photos[0].src} alt={relationship.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}</PolaroidFrame>}
+            </div>
+          }
+          expanded={expandedCard(relationship)}
+        />
+      </motion.article>
+    )
+  }
 
   return (
     <>
@@ -187,80 +237,13 @@ export default function StoryPage() {
       {loading && <p style={{ fontSize: '14px', margin: '-6px 0 6px' }}>Gathering memories…</p>}
 
       <div style={{ width: '100%', maxWidth: '460px', display: 'grid', gap: '12px', position: 'relative' }}>
-        {chapters.slice(0, 4).map((chapter, index) => {
-          const isExpanded = expandedId === chapter.id
-          const polaroidLeft = index % 2 === 0
-          return (
-            <motion.article className="story-card" layout key={chapter.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(chapter.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(chapter.id) } }} style={{ width: '100%', minHeight: '44px', cursor: 'pointer' }}>
-              {isExpanded ? (
-                <ExpandableReveal
-                  isOpen={isExpanded}
-                  delay={400}
-                  skeleton={
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '12px' }}>
-                      <div style={{ width: '100%', height: '285px', borderRadius: '14px', className: 'cheruto-skeleton' }} />
-                      <div style={{ width: '50%', height: '20px', borderRadius: '999px', className: 'cheruto-skeleton' }} />
-                      <div style={{ width: '80%', height: '55px', borderRadius: '8px', className: 'cheruto-skeleton' }} />
-                    </div>
-                  }
-                  collapsedSkeleton={
-                    <div style={{ width: '100%', height: '68px', borderRadius: '18px', className: 'cheruto-skeleton' }} />
-                  }
-                  collapsedChildren={
-                    <div className="ch-fade-in" style={{ display: 'grid', gridTemplateColumns: polaroidLeft ? '66px 1fr' : '1fr 66px', alignItems: 'center', gap: '8px', textAlign: polaroidLeft ? 'left' : 'right', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
-                      {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{chapter.image_url ? <img src={chapter.image_url} alt={chapter.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}</PolaroidFrame>}
-                      <div>
-                        {collapsedInlineHeader(chapter, chapter.era, 'var(--accent-purple)', !polaroidLeft)}
-                        <p style={{ fontSize: '13.5px', lineHeight: 1.38, color: 'var(--text-brown)', margin: 0 }}>{chapter.description}</p>
-                      </div>
-                      {!polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(2deg)' }}>{chapter.image_url ? <img src={chapter.image_url} alt={chapter.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}</PolaroidFrame>}
-                    </div>
-                  }
-                />
-              ) : null}
-            </motion.article>
-          )
-        })}
+        {chapters.slice(0, 4).map((chapter, index) => renderChapterCard(chapter, index))}
       </div>
 
       {relationshipSections.map((section, sectionIndex) => (
         <div key={section.name} style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
           <h3 style={sectionHeaderStyle}>{section.name}</h3>
-          {section.cards.map((relationship, cardIndex) => {
-            const isExpanded = expandedId === relationship.id
-            const polaroidLeft = (sectionIndex * 2 + cardIndex) % 2 === 0
-            const badgeColor = sectionIndex === 0 ? 'var(--accent-purple)' : sectionIndex === 1 ? 'var(--btn-pink)' : 'var(--accent-green)'
-            return (
-              <motion.article className="story-card" layout key={relationship.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(relationship.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(relationship.id) } }} style={{ width: '100%', minHeight: '44px', cursor: 'pointer' }}>
-                {isExpanded ? (
-                  <ExpandableReveal
-                    isOpen={isExpanded}
-                    delay={400}
-                    skeleton={
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '12px' }}>
-                        <div style={{ width: '100%', height: '285px', borderRadius: '14px', className: 'cheruto-skeleton' }} />
-                        <div style={{ width: '50%', height: '20px', borderRadius: '999px', className: 'cheruto-skeleton' }} />
-                        <div style={{ width: '80%', height: '55px', borderRadius: '8px', className: 'cheruto-skeleton' }} />
-                      </div>
-                    }
-                    collapsedSkeleton={
-                      <div style={{ width: '100%', height: '68px', borderRadius: '18px', className: 'cheruto-skeleton' }} />
-                    }
-                    collapsedChildren={
-                      <div className="ch-fade-in" style={{ display: 'grid', gridTemplateColumns: polaroidLeft ? '66px 1fr' : '1fr 66px', alignItems: 'center', gap: '8px', textAlign: polaroidLeft ? 'left' : 'right', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
-                        {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{relationship.photos[0].src ? <img src={relationship.photos[0].src} alt={relationship.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}</PolaroidFrame>}
-                        <div>
-                          {collapsedInlineHeader(relationship, relationship.badge, badgeColor, !polaroidLeft)}
-                          <p style={{ fontSize: '13.5px', lineHeight: 1.38, color: 'var(--text-brown)', margin: 0 }}>{relationship.relationship_type}</p>
-                        </div>
-                        {!polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(2deg)' }}>{relationship.photos[0].src ? <img src={relationship.photos[0].src} alt={relationship.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}</PolaroidFrame>}
-                      </div>
-                    }
-                  />
-                ) : null}
-              </motion.article>
-            )
-          })}
+          {section.cards.map((relationship, cardIndex) => renderRelationshipCard(relationship, sectionIndex, cardIndex))}
         </div>
       ))}
     </motion.section>

@@ -1,11 +1,20 @@
 import { useEffect, useRef, useState } from 'react'
 import { useReducedMotion } from 'framer-motion'
 
-export default function ExpandableReveal({ isOpen, children, collapsedChildren, skeleton, collapsedSkeleton, delay = 500 }) {
+const CARD_SKELETON = (
+  <div style={{ width: '100%', height: '68px', borderRadius: '18px', className: 'cheruto-skeleton' }} />
+)
+
+const FORM_SKELETON = (
+  <div style={{ width: '180px', height: '44px', borderRadius: '999px', margin: '0 auto', className: 'cheruto-skeleton' }} />
+)
+
+export default function ExpandableReveal({ isOpen, collapsed, expanded, variant = 'card' }) {
   const wasOpenRef = useRef(false)
-  const [phase, setPhase] = useState(isOpen ? 'revealed' : 'closed')
+  const [phase, setPhase] = useState(isOpen ? 'revealed' : 'collapsed')
   const shouldReduceMotion = useReducedMotion()
   const skeletonDuration = shouldReduceMotion ? 0 : 180
+  const rowSkeleton = variant === 'form' ? FORM_SKELETON : CARD_SKELETON
 
   useEffect(() => {
     wasOpenRef.current = wasOpenRef.current || isOpen
@@ -30,25 +39,19 @@ export default function ExpandableReveal({ isOpen, children, collapsedChildren, 
 
   const isExpanding = phase === 'expanding'
   const isContracting = phase === 'contracting'
-  const showSkeleton = (isExpanding || isContracting) && skeleton
-  const showCollapsedSkeleton = isContracting && collapsedSkeleton
-  const showChildren = phase === 'revealed' && children
-  const showCollapsed = phase === 'collapsed' && collapsedChildren
+  const showSkeleton = (isExpanding || isContracting) && rowSkeleton
+  const showExpanded = phase === 'revealed' && expanded
+  const showCollapsed = phase === 'collapsed' && collapsed
+
+  const fadeStyle = { opacity: 1, transition: 'opacity 0.22s ease', width: '100%', animation: 'cherutoFadeIn 0.22s ease' }
 
   return (
     <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      {showSkeleton && skeleton && (
-        <div style={{ opacity: 1, transition: 'opacity 0.18s ease', width: '100%' }}>{skeleton}</div>
+      {showSkeleton && (
+        <div style={{ opacity: 1, transition: 'opacity 0.18s ease', width: '100%' }}>{rowSkeleton}</div>
       )}
-      {showCollapsedSkeleton && collapsedSkeleton && (
-        <div style={{ opacity: 1, transition: 'opacity 0.18s ease', width: '100%' }}>{collapsedSkeleton}</div>
-      )}
-      {showChildren && (
-        <div style={{ opacity: 1, transition: 'opacity 0.22s ease', width: '100%' }}>{children}</div>
-      )}
-      {showCollapsed && (
-        <div style={{ opacity: 1, transition: 'opacity 0.22s ease', width: '100%', animation: 'cherutoFadeIn 0.22s ease' }}>{collapsedChildren}</div>
-      )}
+      {showExpanded && <div style={{ ...fadeStyle }}>{expanded}</div>}
+      {showCollapsed && <div style={{ ...fadeStyle, width: '100%' }}>{collapsed}</div>}
     </div>
   )
 }
