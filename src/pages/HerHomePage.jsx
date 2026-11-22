@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Camera, ChevronDown, Check, Share2, X } from 'lucide-react'
 import useMemorialData from '../hooks/useMemorialData'
@@ -48,10 +48,11 @@ export default function HerHomePage({ onNavigateHome }) {
   const [status, setStatus] = useState({ type: 'idle', message: '' })
   const [activeDropdown, setActiveDropdown] = useState(null)
   const [navigateHome, setNavigateHome] = useState(false)
+  const fileInputRef = useRef(null)
 
   const update = (field, value) => setForm((current) => ({ ...current, [field]: value }))
 
-  const handlePhotoChange = async (event) => {
+  const handlePhotoSelect = async (event) => {
     const files = Array.from(event.target.files || [])
     if (!files.length) return
 
@@ -378,7 +379,7 @@ export default function HerHomePage({ onNavigateHome }) {
             <label style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--text-brown)', display: 'block', width: '100%', textAlign: 'left' }}>Photo with Cheruto (Optional)</label>
             <button
               type="button"
-              onClick={document.getElementById('memory-photo-upload')?.click}
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (fileInputRef.current) { fileInputRef.current.value = ''; fileInputRef.current.click() } }}
               style={{
                 ...getFieldSurfaceStyle(Boolean(form.selectedPhotos.length)),
                 display: 'flex',
@@ -400,12 +401,13 @@ export default function HerHomePage({ onNavigateHome }) {
               </span>
             </button>
             <input
-              id="memory-photo-upload"
+              ref={fileInputRef}
+              id="cheruto-memory-photos"
               type="file"
               accept="image/*"
               multiple
-              onChange={handlePhotoChange}
-              style={{ display: 'none' }}
+              onChange={handlePhotoSelect}
+              style={{ position: 'absolute', width: '1px', height: '1px', opacity: 0, overflow: 'hidden', zIndex: -1 }}
             />
             {form.selectedPhotos.length > 0 && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginTop: '6px' }}>
@@ -418,7 +420,7 @@ export default function HerHomePage({ onNavigateHome }) {
                   </div>
                 ))}
                 {form.selectedPhotos.length < 3 && (
-                  <button type="button" onClick={document.getElementById('memory-photo-upload')?.click} style={{ width: '52px', height: '52px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px dashed rgba(157, 78, 221, 0.42)', color: 'rgba(157, 78, 221, 0.6)', fontSize: '10px', cursor: 'pointer', backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
+                  <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (fileInputRef.current) { fileInputRef.current.value = ''; fileInputRef.current.click() } }} style={{ width: '52px', height: '52px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px dashed rgba(157, 78, 221, 0.42)', color: 'rgba(157, 78, 221, 0.6)', fontSize: '10px', cursor: 'pointer', backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
                     <span>+ {3 - form.selectedPhotos.length}</span>
                   </button>
                 )}
@@ -487,7 +489,9 @@ export default function HerHomePage({ onNavigateHome }) {
                   <img src={photoUrls[0]} alt="Memory photo" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 ) : null}
               </div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)' }}>{memory.author_name || 'Friend'}</div>
+              {memory.author_name && memory.memory_tag && memory.author_name.trim().toLowerCase() === memory.memory_tag.trim().toLowerCase() ? null : (
+                <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)' }}>{memory.author_name || 'Friend'}</div>
+              )}
               <span style={{ display: 'inline-flex', alignItems: 'center', width: 'fit-content', alignSelf: 'flex-start', marginLeft: '4px', padding: '4px 12px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', border: '1px solid rgba(157, 78, 221, 0.22)', color: 'var(--accent-purple)', fontSize: '12px', fontWeight: 700 }}>{memory.memory_tag || 'Cherished Moment'}</span>
               <p style={{ margin: 0, fontSize: '13.5px', lineHeight: 1.5, color: 'var(--text-brown)' }}>"{memory.memory}"</p>
               {!memory.is_approved && <span style={{ display: 'inline-block', marginTop: '6px', padding: '4px 8px', borderRadius: '999px', background: 'var(--accent-purple)', color: 'var(--white)', fontSize: '10px', fontWeight: 700 }}>Shared — pending family blessing</span>}
