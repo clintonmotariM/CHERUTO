@@ -371,7 +371,7 @@ export default function GatheringPage() {
         isOpen={isExpanded}
         variant="card"
         collapsed={
-          <div className="ch-fade-in" style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
+          <div className="ch-fade-in" style={{ width: '100%', backgroundColor: 'var(--white)', borderRadius: '18px', padding: '12px 14px', border: '1px solid rgba(93, 64, 55, 0.08)', boxShadow: '0 6px 18px rgba(93, 64, 55, 0.06)', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
             <div style={{ width: '54px', height: '54px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, background: slide.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {Icon}
             </div>
@@ -415,7 +415,10 @@ export default function GatheringPage() {
           </div>
         }
       />
-      </div>
+      {index < allEvents.length - 1 && (
+        <div style={{ width: '2px', height: '20px', backgroundColor: 'rgba(157, 78, 221, 0.22)', marginLeft: '23px', alignSelf: 'flex-start' }} />
+      )}
+    </div>
     )
   }
 
@@ -457,7 +460,7 @@ export default function GatheringPage() {
           </button>
         }
         expanded={
-          <form onSubmit={submitAttendance} style={{ width: '100%', maxWidth: '440px', display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 18px', backgroundColor: 'var(--white)', borderRadius: '20px', border: '1px solid rgba(157, 78, 221, 0.16)', boxShadow: '0 12px 32px rgba(157, 78, 221, 0.12)' }}>
+          <form onSubmit={submitAttendance} style={{ width: '100%', maxWidth: '440px', display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 18px 115px', backgroundColor: 'var(--white)', borderRadius: '20px', border: '1px solid rgba(157, 78, 221, 0.16)', boxShadow: '0 12px 32px rgba(157, 78, 221, 0.12)' }}>
             <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '20px', textAlign: 'center' }}>Confirm Attendance</h3>
 
             {renderInputField('Full Name', true, 'name', 'Your full name', form.name)}
@@ -568,7 +571,7 @@ export default function GatheringPage() {
     >
       {/* Section 1: Saint John's Hero */}
       <div style={{ width: '100%', maxWidth: '430px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-        <span style={{ position: 'sticky', top: '12px', zIndex: 25, width: 'fit-content', alignSelf: 'center', margin: '0 auto 12px auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '6px 22px', borderRadius: '999px', backgroundColor: 'rgba(255, 255, 255, 0.92)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', border: '1px solid rgba(157, 78, 221, 0.16)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.10)', fontFamily: 'var(--font-header)', fontStyle: 'italic', fontWeight: 700, fontSize: 'clamp(1.25rem, 4.2vw, 1.48rem)', lineHeight: 1.15, color: 'var(--text-brown)' }}>Saint John's</span>
+        <span style={{ position: 'sticky', top: '12px', zIndex: 24, width: 'fit-content', alignSelf: 'center', margin: '0 auto 12px auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '6px 22px', borderRadius: '999px', backgroundColor: 'rgba(255, 255, 255, 0.92)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', border: '1px solid rgba(157, 78, 221, 0.16)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.10)', fontFamily: 'var(--font-header)', fontStyle: 'italic', fontWeight: 700, fontSize: 'clamp(1.25rem, 4.2vw, 1.48rem)', lineHeight: 1.15, color: 'var(--text-brown)' }}>Saint John's</span>
 
         <div style={{ width: '100%', height: '68vh', minHeight: '380px', maxHeight: '620px', borderRadius: '20px', overflow: 'hidden', position: 'relative', boxShadow: '0 12px 32px rgba(157, 78, 221, 0.12)', background: saintJohnsSlides[photoIndex].gradient }}>
           <AnimatePresence mode="wait">
@@ -605,9 +608,6 @@ export default function GatheringPage() {
       <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
         <span style={{ position: 'sticky', top: '12px', zIndex: 25, width: 'fit-content', margin: '0 auto 12px auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '6px 22px', borderRadius: '999px', backgroundColor: 'rgba(255, 255, 255, 0.92)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', border: '1px solid rgba(157, 78, 221, 0.16)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.10)', fontFamily: 'var(--font-header)', fontStyle: 'italic', fontWeight: 700, fontSize: 'clamp(1.25rem, 4.2vw, 1.48rem)', lineHeight: 1.15, color: 'var(--text-brown)' }}>Farewell Schedule</span>
         {allEvents.map((item, index) => renderScheduleCard(item, index))}
-        {allEvents.length > 1 && (
-          <div style={{ width: '2px', height: '20px', backgroundColor: 'rgba(157, 78, 221, 0.22)', marginLeft: '23px', alignSelf: 'flex-start' }} />
-        )}
       </div>
 
       {/* Section 3: Walk With Us — Attendance & Transport */}
