@@ -49,3 +49,41 @@
   background: var(--btn-pink);
   color: var(--white);
 }
+
+/* --- Mobile tap highlight suppression --- */
+* {
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+}
+button,
+a,
+div,
+[role="button"],
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+button,
+a,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+.lively-button,
+.exit-button {
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+}
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible),
+[role="button"]:focus:not(:focus-visible) {
+  outline: none;
+}
+input,
+textarea {
+  user-select: auto;
+  -webkit-user-select: auto;
+}
