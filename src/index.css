@@ -104,3 +104,21 @@ textarea {
   user-select: auto;
   -webkit-user-select: auto;
 }
+
+/* --- Cheruto shimmer skeleton --- */
+@keyframes cherutoShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.cheruto-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(157, 78, 221, 0.08) 25%,
+    rgba(255, 77, 133, 0.16) 50%,
+    rgba(157, 78, 221, 0.08) 75%
+  );
+  background-size: 200% 100%;
+  animation: cherutoShimmer 1.3s ease-in-out infinite;
+  border-radius: 12px;
+}

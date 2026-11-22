@@ -3,6 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import useMemorialData from '../hooks/useMemorialData'
 import PolaroidFrame from '../components/ui/PolaroidFrame'
+import ExpandableReveal from '../components/ExpandableReveal'
 
 const chapterDefaults = [
   { id: 'chapter-beginning', title: 'Her Beginning', era: 'Roots', description: 'A bright spirit from the very start.', fullStory: 'Cheruto began a life marked by warmth, curiosity, and an open heart. Her beginning was shaped by the people and places that taught her to notice beauty, care deeply, and make others feel at home.', photos: [
@@ -189,7 +190,21 @@ export default function StoryPage() {
           const polaroidLeft = index % 2 === 0
           return (
             <motion.article className="story-card" layout key={chapter.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(chapter.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(chapter.id) } }} style={{ width: '100%', minHeight: '44px', cursor: 'pointer' }}>
-              {isExpanded ? <AnimatePresence initial={false}>{expandedCard(chapter)}</AnimatePresence> : (
+              {isExpanded ? (
+                <ExpandableReveal
+                  isOpen={isExpanded}
+                  delay={400}
+                  skeleton={
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '12px' }}>
+                      <div style={{ width: '100%', height: '285px', borderRadius: '14px', className: 'cheruto-skeleton' }} />
+                      <div style={{ width: '50%', height: '20px', borderRadius: '999px', className: 'cheruto-skeleton' }} />
+                      <div style={{ width: '80%', height: '55px', borderRadius: '8px', className: 'cheruto-skeleton' }} />
+                    </div>
+                  }
+                >
+                  {expandedCard(chapter)}
+                </ExpandableReveal>
+              ) : (
                 <div style={{ display: 'grid', gridTemplateColumns: polaroidLeft ? '66px 1fr' : '1fr 66px', alignItems: 'center', gap: '8px', textAlign: polaroidLeft ? 'left' : 'right', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
                   {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{chapter.image_url ? <img src={chapter.image_url} alt={chapter.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}</PolaroidFrame>}
                   <div>
@@ -213,7 +228,21 @@ export default function StoryPage() {
             const badgeColor = sectionIndex === 0 ? 'var(--accent-purple)' : sectionIndex === 1 ? 'var(--btn-pink)' : 'var(--accent-green)'
             return (
               <motion.article className="story-card" layout key={relationship.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(relationship.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(relationship.id) } }} style={{ width: '100%', minHeight: '44px', cursor: 'pointer' }}>
-                {isExpanded ? <AnimatePresence initial={false}>{expandedCard(relationship)}</AnimatePresence> : (
+                {isExpanded ? (
+                  <ExpandableReveal
+                    isOpen={isExpanded}
+                    delay={400}
+                    skeleton={
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '12px' }}>
+                        <div style={{ width: '100%', height: '285px', borderRadius: '14px', className: 'cheruto-skeleton' }} />
+                        <div style={{ width: '50%', height: '20px', borderRadius: '999px', className: 'cheruto-skeleton' }} />
+                        <div style={{ width: '80%', height: '55px', borderRadius: '8px', className: 'cheruto-skeleton' }} />
+                      </div>
+                    }
+                  >
+                    {expandedCard(relationship)}
+                  </ExpandableReveal>
+                ) : (
                   <div style={{ display: 'grid', gridTemplateColumns: polaroidLeft ? '66px 1fr' : '1fr 66px', alignItems: 'center', gap: '8px', textAlign: polaroidLeft ? 'left' : 'right', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
                     {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{relationship.photos[0].src ? <img src={relationship.photos[0].src} alt={relationship.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}</PolaroidFrame>}
                     <div>

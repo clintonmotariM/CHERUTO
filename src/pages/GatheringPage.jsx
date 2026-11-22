@@ -4,6 +4,7 @@ import { MapPin, Award, ChevronDown, Check, Flame, Bus, HeartHandshake, Share2 }
 import useMemorialData from '../hooks/useMemorialData'
 import { supabase } from '../lib/supabaseClient'
 import InputField from '../components/ui/InputField'
+import ExpandableReveal from '../components/ExpandableReveal'
 
 const saintJohnsSlides = [
   { caption: 'Campus First-Aid Drives', gradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' },
@@ -448,44 +449,44 @@ export default function GatheringPage() {
                 }}
               >
                 {isExpanded ? (
-                  <AnimatePresence initial={false}>
-                    <motion.div
-                      key={`expanded-${item.id}`}
-                      initial={{ opacity: 0, height: 0, y: -6 }}
-                      animate={{ opacity: 1, height: 'auto', y: 0 }}
-                      exit={{ opacity: 0, height: 0, y: -6 }}
-                      transition={{ duration: 0.3, ease: 'easeOut' }}
-                      style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px' }}
-                    >
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <div style={{ width: '100%', height: '240px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: slide.gradient }}>
-                          <>
-                            <AnimatePresence mode="wait">
-                              <motion.div
-                                key={`${item.id}-${slideIndex}`}
-                                initial={{ opacity: 0, scale: 1.04 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 1.15, ease: 'easeInOut' }}
-                                style={{ width: '100%', height: '100%', background: slide.gradient }}
-                              >
-                                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--white)', fontSize: '13px', fontWeight: 600, opacity: 0.85, padding: '10px', textAlign: 'center', boxSizing: 'border-box' }}>
-                                  {slide.caption}
-                                </div>
-                              </motion.div>
-                            </AnimatePresence>
-                            <div style={{ position: 'absolute', bottom: '10px', left: '10px', fontSize: '11px', fontWeight: 700, color: 'var(--white)', backgroundColor: 'rgba(0,0,0,0.35)', padding: '4px 8px', borderRadius: '999px', backdropFilter: 'blur(4px)' }}>{item.day}</div>
-                          </>
-                        </div>
-                        <span style={{ alignSelf: 'flex-start', marginTop: '10px', display: 'inline-flex', alignItems: 'center', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', color: 'var(--accent-purple)', fontSize: '12px', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{item.dayTime}</span>
-                        <p style={{ margin: '10px 4px 0', fontSize: '14.5px', lineHeight: 1.6, color: 'var(--text-brown)', textAlign: 'left' }}>{item.expandedDescription}</p>
-                        <div style={{ alignSelf: 'center', margin: '4px auto 0 auto', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', borderRadius: '999px', backgroundColor: 'rgba(92, 52, 61, 0.08)', border: '1px solid rgba(92, 52, 61, 0.20)' }}>
-                          <MapPin size={13} style={{ color: '#5C343D', flexShrink: 0 }} aria-hidden="true" />
-                          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-brown)' }}>{item.location}</span>
-                        </div>
+                  <ExpandableReveal
+                    isOpen={isExpanded}
+                    delay={400}
+                    skeleton={
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '12px 12px 16px' }}>
+                        <div style={{ width: '100%', height: '240px', borderRadius: '14px', className: 'cheruto-skeleton' }} />
+                        <div style={{ width: '35%', height: '20px', borderRadius: '999px', className: 'cheruto-skeleton' }} />
+                        <div style={{ width: '65%', height: '55px', borderRadius: '8px', className: 'cheruto-skeleton' }} />
+                        <div style={{ width: '50%', height: '20px', borderRadius: '999px', className: 'cheruto-skeleton' }} />
                       </div>
-                    </motion.div>
-                  </AnimatePresence>
+                    }
+                  >
+                    <div style={{ width: '100%', height: '240px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: slide.gradient }}>
+                      <>
+                        <AnimatePresence mode="wait">
+                          <motion.div
+                            key={`${item.id}-${slideIndex}`}
+                            initial={{ opacity: 0, scale: 1.04 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 1.15, ease: 'easeInOut' }}
+                            style={{ width: '100%', height: '100%', background: slide.gradient }}
+                          >
+                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--white)', fontSize: '13px', fontWeight: 600, opacity: 0.85, padding: '10px', textAlign: 'center', boxSizing: 'border-box' }}>
+                              {slide.caption}
+                            </div>
+                          </motion.div>
+                        </AnimatePresence>
+                        <div style={{ position: 'absolute', bottom: '10px', left: '10px', fontSize: '11px', fontWeight: 700, color: 'var(--white)', backgroundColor: 'rgba(0,0,0,0.35)', padding: '4px 8px', borderRadius: '999px', backdropFilter: 'blur(4px)' }}>{item.day}</div>
+                      </>
+                    </div>
+                    <span style={{ alignSelf: 'flex-start', marginTop: '10px', display: 'inline-flex', alignItems: 'center', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', color: 'var(--accent-purple)', fontSize: '12px', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{item.dayTime}</span>
+                    <p style={{ margin: '10px 4px 0', fontSize: '14.5px', lineHeight: 1.6, color: 'var(--text-brown)', textAlign: 'left' }}>{item.expandedDescription}</p>
+                    <div style={{ alignSelf: 'center', margin: '4px auto 0 auto', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', borderRadius: '999px', backgroundColor: 'rgba(92, 52, 61, 0.08)', border: '1px solid rgba(92, 52, 61, 0.20)' }}>
+                      <MapPin size={13} style={{ color: '#5C343D', flexShrink: 0 }} aria-hidden="true" />
+                      <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-brown)' }}>{item.location}</span>
+                    </div>
+                  </ExpandableReveal>
                 ) : (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
                     <div style={{ width: '54px', height: '54px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, background: slide.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -541,24 +542,19 @@ export default function GatheringPage() {
       </button>
 
       {isFormOpen && (
-        <motion.div
-          layout
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.96 }}
-          style={{
-            width: '100%',
-            maxWidth: '440px',
-            backgroundColor: 'var(--white)',
-            borderRadius: '20px',
-            padding: '16px 18px',
-            border: '1px solid rgba(157, 78, 221, 0.16)',
-            boxShadow: '0 12px 32px rgba(157, 78, 221, 0.12)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-          }}
-          onKeyDown={handleKeyDown}
+        <ExpandableReveal
+          isOpen={isFormOpen}
+          delay={400}
+          skeleton={
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 18px' }}>
+              <div style={{ width: '30%', height: '24px', borderRadius: '12px', className: 'cheruto-skeleton' }} />
+              <div style={{ width: '100%', height: '40px', borderRadius: '12px', className: 'cheruto-skeleton' }} />
+              <div style={{ width: '30%', height: '40px', borderRadius: '12px', className: 'cheruto-skeleton' }} />
+              <div style={{ width: '60%', height: '40px', borderRadius: '12px', className: 'cheruto-skeleton' }} />
+              <div style={{ width: '100%', height: '40px', borderRadius: '12px', className: 'cheruto-skeleton' }} />
+              <div style={{ width: '80%', height: '44px', borderRadius: '999px', className: 'cheruto-skeleton' }} />
+            </div>
+          }
         >
           <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '20px', textAlign: 'center' }}>Confirm Attendance</h3>
 
@@ -649,7 +645,7 @@ export default function GatheringPage() {
             <Share2 size={15} style={{ flexShrink: 0 }} aria-hidden="true" />
             <span>Invite Someone to Farewell</span>
           </button>
-        </motion.div>
+        </ExpandableReveal>
       )}
     </motion.section>
   )

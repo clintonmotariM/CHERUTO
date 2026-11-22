@@ -4,6 +4,7 @@ import { Camera, ChevronDown, Check, Share2, X } from 'lucide-react'
 import useMemorialData from '../hooks/useMemorialData'
 import { supabase } from '../lib/supabaseClient'
 import InputField from '../components/ui/InputField'
+import ExpandableReveal from '../components/ExpandableReveal'
 
 const memoryTags = [
   'Family',
@@ -350,24 +351,20 @@ export default function HerHomePage({ onNavigateHome }) {
       </button>
 
       {formOpen && (
-        <motion.div
-          layout
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.96 }}
-          style={{
-            width: '100%',
-            maxWidth: '440px',
-            backgroundColor: 'var(--white)',
-            borderRadius: '20px',
-            padding: '16px 18px',
-            border: '1px solid rgba(157, 78, 221, 0.16)',
-            boxShadow: '0 12px 32px rgba(157, 78, 221, 0.12)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-          }}
-          onKeyDown={handleKeyDown}
+        <ExpandableReveal
+          isOpen={formOpen}
+          delay={400}
+          skeleton={
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 18px' }}>
+              <div style={{ width: '30%', height: '24px', borderRadius: '12px', className: 'cheruto-skeleton' }} />
+              <div style={{ width: '100%', height: '40px', borderRadius: '12px', className: 'cheruto-skeleton' }} />
+              <div style={{ width: '100%', height: '46px', borderRadius: '999px', className: 'cheruto-skeleton' }} />
+              <div style={{ width: '100%', height: '40px', borderRadius: '12px', className: 'cheruto-skeleton' }} />
+              <div style={{ width: '30%', height: '40px', borderRadius: '12px', className: 'cheruto-skeleton' }} />
+              <div style={{ width: '70%', height: '40px', borderRadius: '12px', className: 'cheruto-skeleton' }} />
+              <div style={{ width: '100%', height: '80px', borderRadius: '12px', className: 'cheruto-skeleton' }} />
+            </div>
+          }
         >
           <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '20px', textAlign: 'center' }}>Share a Memory</h3>
 
@@ -474,7 +471,7 @@ export default function HerHomePage({ onNavigateHome }) {
           >
             {status.type === 'loading' ? 'Sharing…' : 'Share Memory'}
           </button>
-        </motion.div>
+        </ExpandableReveal>
       )}
 
       <div style={{ width: '100%', maxWidth: '440px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
