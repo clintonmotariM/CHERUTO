@@ -415,9 +415,12 @@ export default function GatheringPage() {
           const slide = item.locationSlides?.[slideIndex] || { caption: '', gradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' }
 
           return (
-            <>
+            <div key={item.id || index} style={{ width: '100%' }}>
+              <div style={{ margin: '0 auto 6px auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '4px 16px', borderRadius: '999px', fontSize: '11.5px', fontWeight: 700, letterSpacing: '0.03em', color: 'var(--white)', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.10)', backgroundColor: item.iconColor || 'var(--accent-purple)' }}>
+                {item.day}
+              </div>
               <motion.article
-                key={item.id || index}
+                key={`card-${item.id || index}`}
                 layout
                 role="button"
                 tabIndex={0}
@@ -429,7 +432,7 @@ export default function GatheringPage() {
                   maxWidth: '460px',
                   background: 'var(--white)',
                   borderRadius: '18px',
-                  padding: '10px 14px',
+                  padding: '12px 14px',
                   boxShadow: '0 6px 18px rgba(93, 64, 55, 0.06)',
                   border: '1px solid rgba(93, 64, 55, 0.07)',
                   display: 'flex',
@@ -480,18 +483,17 @@ export default function GatheringPage() {
                     </motion.div>
                   </AnimatePresence>
                 ) : (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
                     <div style={{ width: '54px', height: '54px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, background: slide.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {Icon}
                     </div>
                     <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '7px', flexWrap: 'wrap', marginBottom: '4px' }}>
-                        <span style={{ fontSize: '10.5px', fontWeight: 700, padding: '2px 9px', borderRadius: '999px', color: 'var(--white)', backgroundColor: item.iconColor || 'var(--accent-purple)' }}>{item.day}</span>
-                        <h3 style={{ margin: 0, fontWeight: 700, fontSize: '14.5px', color: 'var(--text-brown)' }}>{item.title}</h3>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 700, color: item.iconColor || '#8B1A2B', marginBottom: '3px' }}>
+                        <MapPin size={12} style={{ flexShrink: 0 }} aria-hidden="true" />
+                        <span>{item.location} • {item.timeBadge}</span>
                       </div>
-                      <p style={{ margin: 0, fontSize: '12.5px', lineHeight: 1.35, color: 'rgba(93, 64, 55, 0.80)' }}>
-                        {item.location} • {item.timeBadge} — {item.description}
-                      </p>
+                      <h3 style={{ margin: 0, fontWeight: 700, fontSize: '15px', color: 'var(--text-brown)', lineHeight: 1.25, marginBottom: '3px' }}>{item.title}</h3>
+                      <p style={{ margin: 0, fontSize: '12.5px', color: 'rgba(93, 64, 55, 0.78)', lineHeight: 1.35 }}>{item.description}</p>
                     </div>
                     <ChevronDown size={15} style={{ alignSelf: 'flex-start', marginTop: '4px', color: 'rgba(93, 64, 55, 0.55)', flexShrink: 0 }} />
                   </div>
@@ -500,7 +502,7 @@ export default function GatheringPage() {
               {index < allEvents.length - 1 && (
                 <div style={{ width: '2px', height: '20px', backgroundColor: 'rgba(157, 78, 221, 0.22)', marginLeft: '23px', alignSelf: 'flex-start' }} />
               )}
-            </>
+            </div>
           )
         })}
       </div>
