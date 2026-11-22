@@ -167,28 +167,22 @@ export default function TimelinePage() {
                   animate={{ opacity: 1, height: 'auto', y: 0 }}
                   exit={{ opacity: 0, height: 0, y: -5 }}
                   transition={{ duration: 0.3, ease: 'easeOut' }}
-                  style={{ width: '100%', padding: '12px', background: 'var(--white)', borderRadius: '18px', boxShadow: '0 10px 28px rgba(93,64,55,.12)' }}
+                  style={{ width: '100%', padding: '12px 12px 16px', background: 'var(--white)', borderRadius: '20px', border: '1px solid rgba(93, 64, 55, 0.08)', boxShadow: '0 12px 32px rgba(93, 64, 55, 0.11)', outline: 'none' }}
                 >
                   <div style={{ width: '100%', height: '240px', overflow: 'hidden', position: 'relative', borderRadius: '14px', background: item.gradient }}>
                     {item.photoUrl && <img src={item.photoUrl} alt={item.title} style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }} />}
                   </div>
-                  <div style={{ marginTop: '10px', padding: '8px 12px', borderRadius: '12px', backgroundColor: 'rgba(255, 249, 242, 0.95)', border: '1px solid rgba(93, 64, 55, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-                    <div style={{ textAlign: 'left' }}>
-                      <span style={{ display: 'block', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em', opacity: 0.65 }}>FROM</span>
-                      <strong style={{ fontSize: '13px', color: 'var(--text-brown)' }}>{item.start_date || stageDateRanges[index]?.from || 'Start'}</strong>
+                  <div style={{ padding: '12px 6px 4px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div style={{ alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', border: '1px solid rgba(157, 78, 221, 0.22)' }}>
+                      <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.07em', color: 'var(--accent-purple)' }}>FROM</span>
+                      <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-brown)' }}>{item.start_date || stageDateRanges[index]?.from || 'Start'}</span>
                     </div>
-                    <div style={{ flex: 1, display: 'flex', alignItems: 'center' }} aria-hidden="true">
-                      <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: 'var(--accent-purple)', flexShrink: 0 }} />
-                      <span style={{ flex: 1, height: '2px', background: 'linear-gradient(90deg, var(--accent-purple), var(--btn-pink))' }} />
-                      <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: 'var(--btn-pink)', flexShrink: 0 }} />
-                    </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <span style={{ display: 'block', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em', opacity: 0.65 }}>TO</span>
-                      <strong style={{ fontSize: '13px', color: 'var(--btn-pink)' }}>{item.end_date || stageDateRanges[index]?.to || 'Present'}</strong>
+                    <p style={{ margin: 0, fontSize: '14.5px', lineHeight: 1.6, color: 'var(--text-brown)', textAlign: 'left' }}>{item.biography}</p>
+                    <div style={{ alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(92, 52, 61, 0.08)', border: '1px solid rgba(92, 52, 61, 0.20)' }}>
+                      <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.07em', color: '#5C343D' }}>TO</span>
+                      <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-brown)' }}>{item.end_date || 'Saturday, 14 Nov 2026'}</span>
                     </div>
                   </div>
-                  <p style={{ margin: '8px 0 0', fontSize: '14.5px', lineHeight: 1.55, color: 'var(--text-brown)', textAlign: 'left' }}>{item.biography}</p>
-                  <blockquote style={{ margin: '8px 0 0', padding: '8px 12px', borderLeft: '3px solid var(--btn-pink)', borderRadius: '8px', backgroundColor: 'rgba(255,249,242,.9)', color: 'var(--text-brown)', fontSize: '13.5px', lineHeight: 1.45, fontStyle: 'italic', textAlign: 'left' }}>“{item.memory}”</blockquote>
                 </motion.div>
               ) : (
                 <div style={{ display: 'grid', gridTemplateColumns: '66px 1fr', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '16px', background: 'var(--white)', boxShadow: '0 6px 18px rgba(93,64,55,.07)', textAlign: 'left' }}>
