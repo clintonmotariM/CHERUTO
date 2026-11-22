@@ -1,38 +1,51 @@
 import { useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { useReducedMotion } from 'framer-motion'
 
 export default function ExpandableReveal({ isOpen, children, skeleton, delay = 500 }) {
-  const [revealed, setRevealed] = useState(false)
+  const [phase, setPhase] = useState(isOpen ? 'revealed' : 'closed')
+  const [openReady, setOpenReady] = useState(false)
+  const shouldReduceMotion = useReducedMotion()
 
   useEffect(() => {
     if (!isOpen) {
-      setRevealed(false)
+      setPhase('closed')
+      setOpenReady(false)
       return
     }
-    const timer = setTimeout(() => setRevealed(true), delay)
-    return () => clearTimeout(timer)
-  }, [isOpen, delay])
+    setPhase('skeleton')
+    const skeletonTimer = setTimeout(() => {
+      setOpenReady(true)
+      const contentTimer = setTimeout(() => setPhase('revealed'), shouldReduceMotion ? 0 : 260)
+      return () => clearTimeout(contentTimer)
+    }, shouldReduceMotion ? 0 : 260)
+    return () => clearTimeout(skeletonTimer)
+  }, [isOpen, delay, shouldReduceMotion])
 
   return (
-    <motion.div
-      initial={{ opacity: 0, height: 0 }}
-      animate={isOpen ? { opacity: 1, height: 'auto' } : { opacity: 0, height: 0 }}
-      exit={{ opacity: 0, height: 0 }}
-      style={{ width: '100%' }}
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateRows: isOpen ? '1fr' : '0fr',
+        transition: 'grid-template-rows 0.42s cubic-bezier(0.25, 0.1, 0.25, 1)',
+        width: '100%',
+        overflow: 'hidden',
+      }}
     >
-      {isOpen && (
-        <AnimatePresence mode="wait">
-          {revealed ? (
-            <motion.div key="content" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              {children}
-            </motion.div>
-          ) : (
-            <motion.div key="skeleton" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              {skeleton}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      )}
-    </motion.div>
+      <div
+        style={{
+          overflow: 'hidden',
+          opacity: isOpen ? 1 : 0,
+          transition: 'opacity 0.34s ease',
+          width: '100%',
+        }}
+      >
+        {isOpen && phase === 'skeleton' && skeleton && (
+          <div style={{ padding: '10px 4px', display: 'flex', flexDirection: 'column', gap: '10px' }}>{skeleton}</div>
+        )}
+        {openReady && phase === 'revealed' && children && (
+          <div style={{ opacity: isOpen ? 1 : 0, transition: 'opacity 0.26s ease', width: '100%' }}>{children}</div>
+        )}
+      </div>
+    </div>
   )
 }

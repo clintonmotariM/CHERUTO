@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import useImmersiveMode from './hooks/useImmersiveMode'
 import SplashScreen from './components/SplashScreen'
 import BottomNav from './components/layout/BottomNav'
@@ -7,11 +7,42 @@ import StoryPage from './pages/StoryPage'
 import GatheringPage from './pages/GatheringPage'
 import HerHomePage from './pages/HerHomePage'
 import TimelinePage from './pages/TimelinePage'
+import {
+  HomePageSkeleton,
+  StoryPageSkeleton,
+  TimelinePageSkeleton,
+  GatheringPageSkeleton,
+  HerHomePageSkeleton,
+} from './components/PageSkeletons'
+
+const pageComponents = {
+  home: HomePage,
+  story: StoryPage,
+  legacy: TimelinePage,
+  gathering: GatheringPage,
+  residence: HerHomePage,
+}
+
+const pageSkeletons = {
+  home: HomePageSkeleton,
+  story: StoryPageSkeleton,
+  legacy: TimelinePageSkeleton,
+  gathering: GatheringPageSkeleton,
+  residence: HerHomePageSkeleton,
+}
 
 export default function App() {
   const [entered, setEntered] = useState(false)
   const [activeTab, setActiveTab] = useState('home')
+  const [showingSkeleton, setShowingSkeleton] = useState(true)
   const { enterFullscreen } = useImmersiveMode(true)
+
+  useEffect(() => {
+    if (!entered) return
+    setShowingSkeleton(true)
+    const timer = setTimeout(() => setShowingSkeleton(false), 700)
+    return () => clearTimeout(timer)
+  }, [activeTab, entered])
 
   const pages = {
     home: <HomePage />,
@@ -39,6 +70,9 @@ export default function App() {
     )
   }
 
+  const PageComponent = pages[activeTab]
+  const SkeletonComponent = pageSkeletons[activeTab]
+
   return (
     <div style={{ height: '100dvh', backgroundColor: 'var(--bg-cream)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <main
@@ -59,7 +93,8 @@ export default function App() {
           textAlign: 'center',
         }}
       >
-        {pages[activeTab]}
+        {showingSkeleton && <SkeletonComponent />}
+        {!showingSkeleton && <PageComponent />}
       </main>
 
       <BottomNav activeTab={activeTab} onChange={setActiveTab} onExit={handleExit} />
