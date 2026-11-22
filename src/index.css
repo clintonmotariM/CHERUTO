@@ -123,6 +123,16 @@ textarea {
   border-radius: 12px;
 }
 
+/* --- Cheruto fade-in for collapsed row return --- */
+@keyframes cherutoFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.ch-fade-in {
+  animation: cherutoFadeIn 0.22s ease;
+}
+
 /* --- Sticky pill section headers --- */
 .sticky-pill {
   position: sticky;

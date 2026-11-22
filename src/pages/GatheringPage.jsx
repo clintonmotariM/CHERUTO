@@ -488,7 +488,7 @@ export default function GatheringPage() {
                     </div>
                   </ExpandableReveal>
                 ) : (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
+                  <div className="ch-fade-in" style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
                     <div style={{ width: '54px', height: '54px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, background: slide.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {Icon}
                     </div>
