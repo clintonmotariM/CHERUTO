@@ -178,7 +178,7 @@ export default function TimelinePage() {
                       <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-brown)' }}>{item.start_date || stageDateRanges[index]?.from || 'Start'}</span>
                     </div>
                     <p style={{ margin: 0, fontSize: '14.5px', lineHeight: 1.6, color: 'var(--text-brown)', textAlign: 'left' }}>{item.biography}</p>
-                    <div style={{ alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(92, 52, 61, 0.08)', border: '1px solid rgba(92, 52, 61, 0.20)' }}>
+                    <div style={{ alignSelf: 'center', margin: '2px auto 0 auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(92, 52, 61, 0.08)', border: '1px solid rgba(92, 52, 61, 0.20)' }}>
                       <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.07em', color: '#5C343D' }}>TO</span>
                       <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-brown)' }}>{item.end_date || 'Saturday, 14 Nov 2026'}</span>
                     </div>
