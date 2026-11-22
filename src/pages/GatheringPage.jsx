@@ -416,9 +416,13 @@ export default function GatheringPage() {
 
           return (
             <div key={item.id || index} style={{ width: '100%' }}>
-              <div style={{ margin: '0 auto 6px auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '4px 16px', borderRadius: '999px', fontSize: '11.5px', fontWeight: 700, letterSpacing: '0.03em', color: 'var(--white)', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.10)', backgroundColor: item.iconColor || 'var(--accent-purple)' }}>
-                {item.day}
-              </div>
+              <div style={{ margin: '0 auto 7px auto', display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '6px' }}>
+              <span style={{ padding: '4px 13px', borderRadius: '999px', fontSize: '11.5px', fontWeight: 700, color: 'var(--white)', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.10)', backgroundColor: item.iconColor || 'var(--accent-purple)' }}>{item.day}</span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '4px 12px', borderRadius: '999px', backgroundColor: 'var(--white)', border: '1px solid rgba(157, 78, 221, 0.24)', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.06)', fontSize: '11.5px', fontWeight: 700, color: 'var(--text-brown)' }}>
+                <MapPin size={11} style={{ color: item.iconColor || 'var(--accent-purple)', flexShrink: 0 }} aria-hidden="true" />
+                <span>{item.location}</span>
+              </span>
+            </div>
               <motion.article
                 key={`card-${item.id || index}`}
                 layout
@@ -488,12 +492,11 @@ export default function GatheringPage() {
                       {Icon}
                     </div>
                     <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 700, color: item.iconColor || '#8B1A2B', marginBottom: '3px' }}>
-                        <MapPin size={12} style={{ flexShrink: 0 }} aria-hidden="true" />
-                        <span>{item.location} • {item.timeBadge}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '7px', flexWrap: 'wrap', marginBottom: '3px' }}>
+                        <h3 style={{ margin: 0, fontWeight: 700, fontSize: '15px', color: 'var(--text-brown)' }}>{item.title}</h3>
+                        <span style={{ fontSize: '11px', fontWeight: 700, color: item.iconColor || 'var(--accent-purple)' }}>{item.timeBadge}</span>
                       </div>
-                      <h3 style={{ margin: 0, fontWeight: 700, fontSize: '15px', color: 'var(--text-brown)', lineHeight: 1.25, marginBottom: '3px' }}>{item.title}</h3>
-                      <p style={{ margin: 0, fontSize: '12.5px', color: 'rgba(93, 64, 55, 0.78)', lineHeight: 1.35 }}>{item.description}</p>
+                      <p style={{ margin: 0, fontSize: '12.5px', lineHeight: 1.38, color: 'rgba(93, 64, 55, 0.80)' }}>{item.description}</p>
                     </div>
                     <ChevronDown size={15} style={{ alignSelf: 'flex-start', marginTop: '4px', color: 'rgba(93, 64, 55, 0.55)', flexShrink: 0 }} />
                   </div>
