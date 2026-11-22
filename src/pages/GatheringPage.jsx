@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { MapPin, Award, ChevronDown, Flame, Bus, HeartHandshake, Calendar } from 'lucide-react'
+import { MapPin, Award, ChevronDown, ChevronUp, Flame, Bus, HeartHandshake, Calendar, Share2 } from 'lucide-react'
 import useMemorialData from '../hooks/useMemorialData'
 import { supabase } from '../lib/supabaseClient'
 import InputField from '../components/ui/InputField'
-import Button from '../components/ui/Button'
 
 const saintJohnsSlides = [
   { caption: 'Campus First-Aid Drives', gradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' },
@@ -152,10 +151,21 @@ export default function GatheringPage() {
     setIsFormOpen(false)
   }
 
+  const handleInvite = () => {
+    const text = `You're invited to celebrate Cheruto's life.\n\n🕯️ MKU Candle Lighting Vigil\nMonday Night • 7:00 – 9:00 PM\nMount Kenya University (MKU) Campus\n\n🚌 Eldoret School Transport\nWednesday • Same-Day Return\nMKU Main Gate → Eldoret\n\n⚰️ Burial Service at Home\nThursday • Home Service\nEldoret — Her Family Home\n\nWalk with us.`
+    if (navigator.share) {
+      navigator.share({ title: 'Celebrate Cheruto’s Life', text })
+        .then(() => setStatus({ type: 'success', message: 'Invitation shared' }))
+        .catch(() => {})
+    } else {
+      navigator.clipboard.writeText(text)
+        .then(() => setStatus({ type: 'success', message: 'Invitation copied to clipboard' }))
+        .catch(() => {})
+    }
+  }
+
   const liveSchedule = (schedule || []).filter((item) => item.title && item.location)
   const allEvents = [...scheduleEvents, ...liveSchedule]
-
-  const attendeeCounts = { Family: 0, Friends: 0, Students: 0, busSeats: 0 }
 
   return (
     <motion.section
@@ -303,46 +313,78 @@ export default function GatheringPage() {
         })}
       </div>
 
-      {/* Section 3: Collapsible Attendance & Student Transport Form */}
-      <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <motion.article
+      {/* Section 3: Walk With Us — Attendance & Transport */}
+      <button
+        role="button"
+        tabIndex={0}
+        onClick={() => setIsFormOpen((open) => !open)}
+        onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setIsFormOpen((open) => !open) } }}
+        style={{
+          margin: '6px auto 0 auto',
+          alignSelf: 'center',
+          width: 'fit-content',
+          minHeight: '48px',
+          padding: '12px 26px',
+          borderRadius: '999px',
+          background: 'linear-gradient(135deg, var(--btn-pink), #8B1A2B)',
+          color: 'var(--white)',
+          boxShadow: '0 8px 22px rgba(255, 77, 133, 0.28)',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '8px',
+          fontSize: '14.5px',
+          fontWeight: 700,
+        }}
+      >
+        <HeartHandshake size={17} style={{ flexShrink: 0 }} aria-hidden="true" />
+        <span>Walk With Us</span>
+        <ChevronDown size={15} style={{ transition: 'transform 0.3s ease', transform: isFormOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+      </button>
+
+      {isFormOpen && (
+        <motion.div
           layout
-          key="attendance-trigger"
-          role="button"
-          tabIndex={0}
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.96 }}
           style={{
             width: '100%',
-            minHeight: '54px',
-            background: 'var(--white)',
-            borderRadius: '16px',
-            padding: '12px 16px',
-            boxShadow: '0 6px 18px rgba(93,64,55,.07)',
-            cursor: 'pointer',
+            maxWidth: '460px',
+            backgroundColor: 'var(--white)',
+            borderRadius: '20px',
+            padding: '16px',
+            boxShadow: '0 12px 32px rgba(93, 64, 55, 0.11)',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+            flexDirection: 'column',
+            gap: '14px',
           }}
-          onClick={() => setIsFormOpen((open) => !open)}
-          onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setIsFormOpen((open) => !open) } }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '22px', padding: '3px 10px', borderRadius: '999px', background: 'var(--btn-pink)', color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>Sign In</span>
-            <div>
-              <div style={{ fontWeight: 700, color: 'var(--text-brown)', fontSize: '15px' }}>Record Attendance & Eldoret Bus Seat</div>
-              <div style={{ fontSize: '12.5px', color: 'rgba(93, 64, 55, 0.7)' }}>Tap to sign in for MKU Vigil & reserve student transport</div>
-            </div>
-          </div>
-          <ChevronDown size={16} style={{ transition: 'transform 0.3s ease', transform: isFormOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
-        </motion.article>
-
-        {isFormOpen && (
-          <AnimatePresence initial={false}>
-            <motion.form
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              onSubmit={submitAttendance}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '4px' }}>
+            <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '18px', fontWeight: 700 }}>Walk With Us — Attendance & Transport</h3>
+            <button
+              type="button"
+              onClick={() => setIsFormOpen(false)}
               style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                padding: '4px 12px',
+                borderRadius: '999px',
+                backgroundColor: 'rgba(93, 64, 55, 0.06)',
+                border: '1px solid rgba(93, 64, 55, 0.12)',
+                color: 'var(--text-brown)',
+                fontSize: '12px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              <ChevronUp size={13} style={{ flexShrink: 0 }} aria-hidden="true" />
+              Close
+            </button>
+          </div>
+          <div style={{
                 width: '100%',
                 maxWidth: '460px',
                 display: 'grid',
@@ -408,20 +450,50 @@ export default function GatheringPage() {
 
               {status.message && <p role="status" style={{ minHeight: '20px', color: status.type === 'error' ? '#9C2F46' : 'var(--accent-purple)', fontSize: '15px', fontWeight: 700 }}>{status.message}</p>}
 
-              <Button type="submit" disabled={status.type === 'loading'} style={{ width: '100%', borderRadius: '999px', minHeight: '48px' }}>{status.type === 'loading' ? 'Saving…' : needsBusTransport ? 'Reserve Bus Seat' : 'Confirm Attendance'}</Button>
-            </motion.form>
-          </AnimatePresence>
-        )}
-      </div>
-
-      <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', paddingBottom: '12px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: 'rgba(93, 64, 55, 0.75)' }}>
-          <span style={{ fontWeight: 700, color: 'var(--accent-purple)' }}>{attendeeCounts.Family}</span> Family ·
-          <span style={{ fontWeight: 700, color: 'var(--btn-pink)' }}>{attendeeCounts.Friends}</span> Friends ·
-          <span style={{ fontWeight: 700, color: 'var(--accent-green)' }}>{attendeeCounts.Students}</span> Students ·
-          <span style={{ fontWeight: 700, color: '#5C343D' }}>{attendeeCounts.busSeats}</span> Bus Seats Reserved
-        </div>
-      </div>
+              <button
+                type="button"
+                onClick={submitAttendance}
+                disabled={status.type === 'loading'}
+                style={{
+                  width: '100%',
+                  borderRadius: '999px',
+                  minHeight: '48px',
+                  background: status.type === 'loading' ? 'rgba(255, 77, 133, 0.5)' : 'linear-gradient(135deg, var(--btn-pink), #8B1A2B)',
+                  color: 'var(--white)',
+                  border: 'none',
+                  cursor: status.type === 'loading' ? 'default' : 'pointer',
+                  fontSize: '14.5px',
+                  fontWeight: 700,
+                }}
+              >
+                {status.type === 'loading' ? 'Saving…' : needsBusTransport ? 'Reserve Bus Seat' : 'Confirm Attendance'}
+              </button>
+              <button
+                type="button"
+                onClick={handleInvite}
+                style={{
+                  width: '100%',
+                  minHeight: '44px',
+                  borderRadius: '999px',
+                  backgroundColor: 'rgba(139, 26, 43, 0.08)',
+                  border: '1px solid rgba(139, 26, 43, 0.20)',
+                  color: '#8B1A2B',
+                  fontSize: '13.5px',
+                  fontWeight: 600,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  cursor: 'pointer',
+                  marginTop: '8px',
+                }}
+              >
+                <Share2 size={15} style={{ flexShrink: 0 }} aria-hidden="true" />
+                <span>Invite Someone to Farewell</span>
+              </button>
+            </div>
+          </motion.div>
+          )}
     </motion.section>
   )
 }
