@@ -118,6 +118,7 @@ export default function GatheringPage() {
 
   return (
     <motion.section
+      className="no-scrollbar"
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       style={{
@@ -128,8 +129,6 @@ export default function GatheringPage() {
         flexDirection: 'column',
         alignItems: 'center',
         gap: '14px',
-        overflowY: 'auto',
-        minHeight: '100vh',
         boxSizing: 'border-box',
       }}
     >
@@ -138,31 +137,31 @@ export default function GatheringPage() {
       </header>
       {loading && <p style={{ fontSize: '15px', color: 'var(--text-brown)' }}>Gathering details…</p>}
 
-      {/* Section 1: Saint John's / Red Cross Community */}
-      <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        <div style={{ width: '100%', padding: '18px', background: 'var(--white)', borderRadius: '18px', boxShadow: '0 8px 24px rgba(93,64,55,.08)', textAlign: 'left' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '22px', padding: '3px 10px', borderRadius: '999px', background: 'var(--btn-pink)', color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>Saint John's • Red Cross Community</span>
-          </div>
-          <h3 style={{ margin: '0 0 10px 0', color: 'var(--text-brown)', fontSize: '18px', fontFamily: 'var(--font-script)', lineHeight: 1.2 }}>Service & Compassion She Cherished</h3>
+      {/* Section 1: Saint John's Hero */}
+      <div style={{ width: '100%', maxWidth: '430px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+        <span style={{ alignSelf: 'center', margin: '0 auto 12px auto', display: 'inline-flex', alignItems: 'center', padding: '6px 22px', borderRadius: '999px', backgroundColor: 'rgba(139, 26, 43, 0.12)', border: '1px solid rgba(139, 26, 43, 0.24)', color: '#8B1A2B', fontSize: '13.5px', fontWeight: 700, letterSpacing: '0.03em' }}>Saint John's</span>
 
-          <div style={{ width: '100%', height: '210px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: saintJohnsSlides[photoIndex].gradient, marginBottom: '10px' }}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={photoIndex}
-                initial={{ opacity: 0, scale: 1.03 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.75, ease: 'easeInOut' }}
-                style={{ width: '100%', height: '100%', background: saintJohnsSlides[photoIndex].gradient }}
-              >
-                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--white)', fontSize: '14px', fontWeight: 600, opacity: 0.9 }}>
-                  {saintJohnsSlides[photoIndex].caption}
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
+        <div style={{ width: '100%', height: '68vh', minHeight: '380px', maxHeight: '620px', borderRadius: '20px', overflow: 'hidden', position: 'relative', boxShadow: '0 12px 32px rgba(93, 64, 55, 0.12)', background: saintJohnsSlides[photoIndex].gradient }}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={photoIndex}
+              initial={{ opacity: 0, scale: 1.03 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.75, ease: 'easeInOut' }}
+              style={{ width: '100%', height: '100%', background: saintJohnsSlides[photoIndex].gradient }}
+            >
+              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--white)', fontSize: '14px', fontWeight: 600, opacity: 0.9 }}>
+                {saintJohnsSlides[photoIndex].caption}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
+        <div style={{ width: '100%', maxWidth: '490px', backgroundColor: 'var(--white)', borderRadius: '18px', padding: '16px 20px', boxShadow: '0 8px 24px rgba(93, 64, 55, 0.08)', textAlign: 'left' }}>
+          <p style={{ margin: '0 0 14px 0', fontSize: '14.5px', lineHeight: 1.6, color: 'var(--text-brown)' }}>
+            Cheruto gave herself wholeheartedly to the Saint John's Red Cross Community. She showed up for campus first-aid drives, community outreach missions, and peer care with quiet courage and steady hands—always among the first to respond and the last to leave. Her selfless service and unwavering dedication earned her recognition as a Community Service Award Recipient, a reflection of the compassion she carried in everything she did.
+          </p>
           <div style={{ backgroundColor: 'rgba(255, 249, 242, 0.95)', border: '1px solid rgba(212, 163, 67, 0.35)', borderRadius: '14px', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: '10px' }}>
             <Award size={20} style={{ color: '#C58B2A', flexShrink: 0 }} aria-hidden="true" />
             <div>
