@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { MapPin, Award, ChevronDown, ChevronUp, Flame, Bus, HeartHandshake, Calendar, Share2 } from 'lucide-react'
+import { MapPin, Award, ChevronDown, Flame, Bus, HeartHandshake, Calendar, Share2 } from 'lucide-react'
 import useMemorialData from '../hooks/useMemorialData'
 import { supabase } from '../lib/supabaseClient'
 import InputField from '../components/ui/InputField'
@@ -67,10 +67,10 @@ const scheduleEvents = [
 
 export default function GatheringPage() {
   const { schedule = [] } = useMemorialData()
-  const [form, setForm] = useState({ name: '', contact: '', partySize: 1, note: '' })
+  const [form, setForm] = useState({ name: '', contact: '', gender: '', studentId: '', emergencyContact: '', note: '' })
+  const [gender, setGender] = useState('')
   const [memberRole, setMemberRole] = useState('Student')
   const [needsBusTransport, setNeedsBusTransport] = useState(false)
-  const [studentRegPhone, setStudentRegPhone] = useState('')
   const [status, setStatus] = useState({ type: 'idle', message: '' })
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [expandedEventId, setExpandedEventId] = useState(null)
@@ -106,13 +106,24 @@ export default function GatheringPage() {
   const submitAttendance = async (event) => {
     event.preventDefault()
 
-    const partySize = Number(form.partySize)
     if (!form.name.trim()) {
       setStatus({ type: 'error', message: 'Please enter your full name.' })
       return
     }
-    if (!Number.isInteger(partySize) || partySize < 1 || partySize > 20) {
-      setStatus({ type: 'error', message: 'Party size must be between 1 and 20.' })
+    if (!gender) {
+      setStatus({ type: 'error', message: 'Please select your gender.' })
+      return
+    }
+    if (memberRole === 'Student' && !form.studentId.trim()) {
+      setStatus({ type: 'error', message: 'Please enter your MKU Student ID Number.' })
+      return
+    }
+    if (memberRole === 'Student' && !form.emergencyContact.trim()) {
+      setStatus({ type: 'error', message: 'Please enter a parent / next-of-kin phone number.' })
+      return
+    }
+    if (!form.contact.trim()) {
+      setStatus({ type: 'error', message: 'Please enter your phone number.' })
       return
     }
 
@@ -120,12 +131,14 @@ export default function GatheringPage() {
 
     const record = {
       attendee_name: form.name.trim(),
-      attendee_email: form.contact.trim() || null,
-      party_size: partySize,
+      attendee_email: null,
+      party_size: 1,
       attendance_status: 'attending',
+      gender,
       member_role: memberRole,
       needs_school_transport: needsBusTransport,
-      student_reg_phone: needsBusTransport ? studentRegPhone.trim() || null : null,
+      student_id: form.studentId.trim() || null,
+      emergency_contact: form.emergencyContact.trim() || null,
       note: form.note.trim() || null,
     }
 
@@ -135,7 +148,8 @@ export default function GatheringPage() {
         localStorage.setItem('cheruto-rsvp', JSON.stringify([...existing, record]))
       } catch {}
       setStatus({ type: 'success', message: needsBusTransport ? 'Eldoret Wednesday School Bus seat reserved.' : 'We look forward to celebrating with you' })
-      setForm({ name: '', contact: '', partySize: 1, note: '' })
+      setForm({ name: '', contact: '', gender: '', studentId: '', emergencyContact: '', note: '' })
+      setGender('')
       setIsFormOpen(false)
       return
     }
@@ -147,7 +161,8 @@ export default function GatheringPage() {
     }
 
     setStatus({ type: 'success', message: needsBusTransport ? 'Eldoret Wednesday School Bus seat reserved.' : 'We look forward to celebrating with you' })
-    setForm({ name: '', contact: '', partySize: 1, note: '' })
+    setForm({ name: '', contact: '', gender: '', studentId: '', emergencyContact: '', note: '' })
+    setGender('')
     setIsFormOpen(false)
   }
 
@@ -351,149 +366,138 @@ export default function GatheringPage() {
           exit={{ opacity: 0, scale: 0.96 }}
           style={{
             width: '100%',
-            maxWidth: '460px',
+            maxWidth: '440px',
             backgroundColor: 'var(--white)',
             borderRadius: '20px',
-            padding: '16px',
+            padding: '16px 18px',
             boxShadow: '0 12px 32px rgba(93, 64, 55, 0.11)',
             display: 'flex',
             flexDirection: 'column',
-            gap: '14px',
+            gap: '10px',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '4px' }}>
-            <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '18px', fontWeight: 700 }}>Walk With Us — Attendance & Transport</h3>
-            <button
-              type="button"
-              onClick={() => setIsFormOpen(false)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '4px 12px',
-                borderRadius: '999px',
-                backgroundColor: 'rgba(93, 64, 55, 0.06)',
-                border: '1px solid rgba(93, 64, 55, 0.12)',
-                color: 'var(--text-brown)',
-                fontSize: '12px',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              <ChevronUp size={13} style={{ flexShrink: 0 }} aria-hidden="true" />
-              Close
-            </button>
-          </div>
-          <div style={{
-                width: '100%',
-                maxWidth: '460px',
-                display: 'grid',
-                gap: '12px',
-                padding: '20px',
-                background: 'var(--white)',
-                borderRadius: '22px',
-                boxShadow: '0 10px 28px rgba(93,64,55,.10)',
-                textAlign: 'left',
-              }}
-            >
-              <h3 style={{ textAlign: 'center', color: 'var(--text-brown)', fontSize: '20px' }}>Confirm Attendance</h3>
+          <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '20px', textAlign: 'center' }}>Confirm Attendance</h3>
 
-              <label style={{ fontSize: '15px', fontWeight: 700 }}>Guest Full Name <span aria-hidden="true">*</span><InputField required name="name" value={form.name} onChange={(event) => update('name', event.target.value)} placeholder="Your full name" /></label>
+          {/* Full Name */}
+          <label style={{ fontSize: '15px', fontWeight: 700 }}>Full Name <span aria-hidden="true">*</span><InputField required name="name" value={form.name} onChange={(event) => update('name', event.target.value)} placeholder="Your full name" /></label>
 
-              <label style={{ fontSize: '15px', fontWeight: 700, marginTop: '4px' }}>Member Relationship</label>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                {['Student', 'Friend', 'Family'].map((role) => (
-                  <button
-                    key={role}
-                    type="button"
-                    onClick={() => { setMemberRole(role); setNeedsBusTransport(role === 'Student' ? false : false) }}
-                    style={{
-                      minHeight: '44px',
-                      border: `1px solid ${memberRole === role ? 'var(--btn-pink)' : 'rgba(93, 64, 55, 0.25)'}`,
-                      borderRadius: '12px',
-                      background: memberRole === role ? 'var(--btn-pink)' : 'transparent',
-                      color: memberRole === role ? 'var(--white)' : 'var(--text-brown)',
-                      fontSize: '14px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {role}
-                  </button>
-                ))}
-              </div>
-
-              {memberRole === 'Student' && (
-                <div style={{ backgroundColor: 'rgba(255, 249, 242, 0.9)', border: '1px solid rgba(212, 163, 67, 0.25)', borderRadius: '14px', padding: '12px 16px', marginTop: '4px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)' }}>MKU School Transport to Eldoret</div>
-                  <div style={{ fontSize: '12.5px', color: 'rgba(93, 64, 55, 0.8)', lineHeight: 1.5 }}>School-sponsored transport departs Wednesday to Eldoret and returns the same day on the same bus.</div>
-                  <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-brown)', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                    <input
-                      type="checkbox"
-                      checked={needsBusTransport}
-                      onChange={(event) => setNeedsBusTransport(event.target.checked)}
-                      style={{ width: '20px', height: '20px', accentColor: 'var(--btn-pink)' }}
-                    />
-                    Yes, assign me a seat on the MKU school bus to Eldoret (Wednesday — same-day return)
-                  </label>
-                  {needsBusTransport && (
-                    <label style={{ fontSize: '15px', fontWeight: 700 }}>Student Reg / Phone Number <span style={{ fontWeight: 400 }}>(optional)</span><InputField name="studentRegPhone" value={studentRegPhone} onChange={(event) => setStudentRegPhone(event.target.value)} placeholder="Reg number or phone" /></label>
-                  )}
-                </div>
-              )}
-
-              <label style={{ fontSize: '15px', fontWeight: 700 }}>Phone / Email <span style={{ fontWeight: 400 }}>(optional)</span><InputField name="contact" value={form.contact} onChange={(event) => update('contact', event.target.value)} placeholder="Phone or email" /></label>
-
-              <label style={{ fontSize: '15px', fontWeight: 700 }}>Party Size<select name="partySize" value={form.partySize} onChange={(event) => update('partySize', event.target.value)} style={{ width: '100%', minHeight: '44px', marginTop: '8px', border: '1px solid var(--text-brown)', borderRadius: '10px', background: 'var(--bg-cream)', color: 'var(--text-brown)', padding: '8px', fontSize: '16px' }}>{Array.from({ length: 20 }, (_, index) => index + 1).map((size) => <option key={size} value={size}>{size}</option>)}</select></label>
-
-              <label style={{ fontSize: '15px', fontWeight: 700 }}>Attendance Note<textarea name="note" value={form.note} onChange={(event) => update('note', event.target.value)} rows={3} placeholder="Anything you would like to add" style={{ width: '100%', minHeight: '44px', marginTop: '8px', border: '1px solid var(--text-brown)', borderRadius: '10px', background: 'var(--bg-cream)', color: 'var(--text-brown)', padding: '10px', fontSize: '16px', resize: 'vertical' }} /></label>
-
-              {status.message && <p role="status" style={{ minHeight: '20px', color: status.type === 'error' ? '#9C2F46' : 'var(--accent-purple)', fontSize: '15px', fontWeight: 700 }}>{status.message}</p>}
-
+          {/* Gender Selector */}
+          <label style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--text-brown)', marginTop: '4px' }}>Gender</label>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
+            {['Female', 'Male'].map((g) => (
               <button
+                key={g}
                 type="button"
-                onClick={submitAttendance}
-                disabled={status.type === 'loading'}
+                onClick={() => setGender(g)}
                 style={{
-                  width: '100%',
-                  borderRadius: '999px',
-                  minHeight: '48px',
-                  background: status.type === 'loading' ? 'rgba(255, 77, 133, 0.5)' : 'linear-gradient(135deg, var(--btn-pink), #8B1A2B)',
-                  color: 'var(--white)',
-                  border: 'none',
-                  cursor: status.type === 'loading' ? 'default' : 'pointer',
-                  fontSize: '14.5px',
-                  fontWeight: 700,
-                }}
-              >
-                {status.type === 'loading' ? 'Saving…' : needsBusTransport ? 'Reserve Bus Seat' : 'Confirm Attendance'}
-              </button>
-              <button
-                type="button"
-                onClick={handleInvite}
-                style={{
-                  width: '100%',
-                  minHeight: '44px',
-                  borderRadius: '999px',
-                  backgroundColor: 'rgba(139, 26, 43, 0.08)',
-                  border: '1px solid rgba(139, 26, 43, 0.20)',
-                  color: '#8B1A2B',
-                  fontSize: '13.5px',
+                  minHeight: '40px',
+                  border: `1px solid ${gender === g ? 'var(--btn-pink)' : 'rgba(93, 64, 55, 0.25)'}`,
+                  borderRadius: '12px',
+                  background: gender === g ? 'var(--btn-pink)' : 'transparent',
+                  color: gender === g ? 'var(--white)' : 'var(--text-brown)',
+                  fontSize: '14px',
                   fontWeight: 600,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
                   cursor: 'pointer',
-                  marginTop: '8px',
                 }}
               >
-                <Share2 size={15} style={{ flexShrink: 0 }} aria-hidden="true" />
-                <span>Invite Someone to Farewell</span>
+                {g}
               </button>
+            ))}
+          </div>
+
+          {/* Member Relationship Selector */}
+          <label style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--text-brown)', marginTop: '8px' }}>Relationship</label>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+            {['Student', 'Friend', 'Family'].map((role) => (
+              <button
+                key={role}
+                type="button"
+                onClick={() => setMemberRole(role)}
+                style={{
+                  minHeight: '40px',
+                  border: `1px solid ${memberRole === role ? 'var(--btn-pink)' : 'rgba(93, 64, 55, 0.25)'}`,
+                  borderRadius: '12px',
+                  background: memberRole === role ? 'var(--btn-pink)' : 'transparent',
+                  color: memberRole === role ? 'var(--white)' : 'var(--text-brown)',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                {role}
+              </button>
+            ))}
+          </div>
+
+          {/* Conditional MKU Student Transport & Safety Details */}
+          {memberRole === 'Student' && (
+            <div style={{ padding: '10px 12px', borderRadius: '14px', backgroundColor: 'rgba(255, 249, 242, 0.95)', border: '1px solid rgba(139, 26, 43, 0.16)', display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-brown)', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={needsBusTransport}
+                  onChange={(event) => setNeedsBusTransport(event.target.checked)}
+                  style={{ width: '20px', height: '20px', accentColor: 'var(--btn-pink)' }}
+                />
+                Assign transportation (MKU bus to Eldoret — Wed, same-day return)
+              </label>
+              <span style={{ fontSize: '12px', color: '#8B1A2B', fontWeight: 600, marginTop: '2px' }}>🪪 All MKU students must carry their Student ID card.</span>
+              <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: '4px' }}>MKU Student ID Number *<InputField required name="studentId" value={form.studentId} onChange={(event) => update('studentId', event.target.value)} placeholder="BCOM/2023/12345" /></label>
+              <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: '4px' }}>Parent / Next-of-Kin Phone *<InputField required name="emergencyContact" value={form.emergencyContact} onChange={(event) => update('emergencyContact', event.target.value)} placeholder="Emergency backup phone number" /></label>
             </div>
-          </motion.div>
           )}
+
+          {/* Your Phone Number */}
+          <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: '8px' }}>Your Phone Number *<InputField required name="contact" value={form.contact} onChange={(event) => update('contact', event.target.value)} placeholder="07XX XXX XXX" /></label>
+
+          {/* Short Note */}
+          <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: '8px' }}>Note (optional)<textarea name="note" value={form.note} onChange={(event) => update('note', event.target.value)} rows={2} placeholder="Optional note or message" style={{ width: '100%', minHeight: '70px', marginTop: '4px', border: '1px solid var(--text-brown)', borderRadius: '10px', background: 'var(--bg-cream)', color: 'var(--text-brown)', padding: '8px', fontSize: '15px', resize: 'vertical' }} /></label>
+
+          {status.message && <p role="status" style={{ minHeight: '20px', color: status.type === 'error' ? '#9C2F46' : 'var(--accent-purple)', fontSize: '14px', fontWeight: 700 }}>{status.message}</p>}
+
+          <button
+            type="button"
+            onClick={submitAttendance}
+            disabled={status.type === 'loading'}
+            style={{
+              width: '100%',
+              borderRadius: '999px',
+              minHeight: '46px',
+              background: status.type === 'loading' ? 'rgba(255, 77, 133, 0.5)' : 'linear-gradient(135deg, var(--btn-pink), #8B1A2B)',
+              color: 'var(--white)',
+              border: 'none',
+              cursor: status.type === 'loading' ? 'default' : 'pointer',
+              fontSize: '14px',
+              fontWeight: 700,
+            }}
+          >
+            {status.type === 'loading' ? 'Saving…' : 'Confirm Attendance'}
+          </button>
+          <button
+            type="button"
+            onClick={handleInvite}
+            style={{
+              width: '100%',
+              minHeight: '42px',
+              borderRadius: '999px',
+              backgroundColor: 'rgba(139, 26, 43, 0.08)',
+              border: '1px solid rgba(139, 26, 43, 0.20)',
+              color: '#8B1A2B',
+              fontSize: '13px',
+              fontWeight: 600,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              cursor: 'pointer',
+              marginTop: '8px',
+            }}
+          >
+            <Share2 size={15} style={{ flexShrink: 0 }} aria-hidden="true" />
+            <span>Invite Someone to Farewell</span>
+          </button>
+        </motion.div>
+      )}
     </motion.section>
   )
 }
