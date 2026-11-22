@@ -73,7 +73,7 @@ export default function App() {
           maxWidth: '600px',
           margin: '0 auto',
           overflowY: 'auto',
-          paddingTop: 'var(--safe-top)',
+          paddingTop: 0,
           paddingRight: '18px',
           paddingLeft: '18px',
           paddingBottom: 'calc(var(--nav-height) + var(--safe-bottom) + 32px)',

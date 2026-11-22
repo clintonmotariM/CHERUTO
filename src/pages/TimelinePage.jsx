@@ -127,7 +127,7 @@ export default function TimelinePage() {
       animate={{ opacity: 1, y: 0 }}
       style={{
         width: '100%',
-        paddingTop: 'max(14px, calc(var(--safe-top) + 10px))',
+        paddingTop: 0,
         paddingBottom: '24px',
         display: 'flex',
         flexDirection: 'column',

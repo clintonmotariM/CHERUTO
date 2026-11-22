@@ -443,7 +443,7 @@ export default function HerHomePage({ onNavigateHome }) {
       animate={{ opacity: 1, y: 0 }}
       style={{
         width: '100%',
-        paddingTop: 'max(18px, calc(var(--safe-top) + 12px))',
+        paddingTop: 0,
         paddingBottom: 'calc(var(--nav-height) + 48px)',
         display: 'flex',
         flexDirection: 'column',

@@ -137,13 +137,16 @@ textarea {
 .sticky-header-band {
   position: sticky;
   top: 0;
-  z-index: 25;
+  z-index: 30;
   width: 100%;
   background-color: var(--bg-cream, #FFFBF5);
   border: none;
   box-shadow: none;
   border-radius: 0;
-  padding: 12px 16px 10px;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 12px);
+  padding-right: 16px;
+  padding-bottom: 10px;
+  padding-left: 16px;
   margin: 0;
   display: flex;
   align-items: center;
@@ -162,4 +165,17 @@ textarea {
   border: none;
   background: transparent;
   box-shadow: none;
+}
+
+/* Notch/safe-area top shield — absorbs notch height even during overscroll bounce */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: env(safe-area-inset-top, 0px);
+  background-color: var(--bg-cream, #FFFBF5);
+  z-index: 40;
+  pointer-events: none;
 }

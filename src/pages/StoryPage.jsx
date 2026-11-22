@@ -220,7 +220,7 @@ export default function StoryPage() {
         .story-card:focus { outline: none; }
         .story-card:focus-visible { outline: 3px solid var(--accent-green); outline-offset: 3px; }
       `}</style>
-    <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} style={{ paddingTop: 'max(14px, calc(var(--safe-top) + 10px))', paddingBottom: '24px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} style={{ paddingTop: 0, paddingBottom: '24px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <header className="sticky-header-band">
         <h2 className="sticky-header-band-title">Her Story</h2>
       </header>
