@@ -65,29 +65,18 @@ const scheduleEvents = [
   },
 ]
 
-const selectorInputStyle = {
-  backgroundColor: 'rgba(157, 78, 221, 0.04)',
-  border: '1px solid rgba(157, 78, 221, 0.22)',
+const getFieldSurfaceStyle = (isFilled) => ({
+  backgroundColor: isFilled ? 'rgba(157, 78, 221, 0.10)' : 'rgba(255, 255, 255, 0.92)',
+  background: isFilled ? 'linear-gradient(135deg, rgba(157, 78, 221, 0.10), rgba(255, 77, 133, 0.12))' : undefined,
+  border: isFilled ? '1.5px solid rgba(255, 77, 133, 0.42)' : '1px solid rgba(157, 78, 221, 0.22)',
   borderRadius: '12px',
   padding: '10px 12px',
   fontSize: '14px',
   color: 'var(--text-brown)',
   width: '100%',
   boxSizing: 'border-box',
-}
-
-const modalSheetStyle = {
-  maxWidth: '380px',
-  width: '100%',
-  borderRadius: '20px',
-  padding: '16px',
-  border: '1px solid rgba(157, 78, 221, 0.2)',
-  backgroundColor: 'var(--white)',
-  boxShadow: '0 18px 44px rgba(157, 78, 221, 0.22)',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '12px',
-}
+  boxShadow: isFilled ? '0 2px 8px rgba(157, 78, 221, 0.08)' : undefined,
+})
 
 export default function GatheringPage() {
   const { schedule = [] } = useMemorialData()
@@ -100,24 +89,43 @@ export default function GatheringPage() {
   const [expandedEventId, setExpandedEventId] = useState(null)
   const [photoIndex, setPhotoIndex] = useState(0)
   const [slideIndexByEvent, setSlideIndexByEvent] = useState({})
-  const [activePickerModal, setActivePickerModal] = useState(null)
+  const [activeDropdown, setActiveDropdown] = useState(null)
   const shouldReduceMotion = useReducedMotion()
 
   const update = (field, value) => setForm((current) => ({ ...current, [field]: value }))
 
-  const openPicker = (field) => setActivePickerModal(field)
-  const closePicker = () => setActivePickerModal(null)
+  const openDropdown = (field) => setActiveDropdown(field)
+  const closeDropdown = () => setActiveDropdown(null)
 
-  const selectPickerOption = (field, value) => {
+  const selectDropdownOption = (field, value) => {
     if (field === 'gender') setGender(value)
     if (field === 'relationship') setMemberRole(value)
     if (field === 'transport') setNeedsSchoolTransport(value)
-    closePicker()
+    closeDropdown()
   }
 
   const getTransportLabel = () => {
     if (!needsSchoolTransport) return 'Select school bus transport'
     return needsSchoolTransport === 'yes' ? 'Yes — Assign MKU Bus Seat (Same-Day Return)' : 'No — Own Transport'
+  }
+
+  const getDropdownOptions = (field) => {
+    const options = {
+      gender: ['Female', 'Male'],
+      relationship: ['Student', 'Friend', 'Family'],
+      transport: [
+        { value: 'yes', label: 'Yes — Assign MKU Bus Seat', sub: 'Departs Wednesday to Eldoret, returns same day' },
+        { value: 'no', label: 'No — Own Transport', sub: 'Attending without school bus seat' },
+      ],
+    }
+    return options[field] || []
+  }
+
+  const getSelectedValue = (field) => {
+    if (field === 'gender') return gender
+    if (field === 'relationship') return memberRole
+    if (field === 'transport') return needsSchoolTransport
+    return ''
   }
 
   useEffect(() => {
@@ -140,6 +148,10 @@ export default function GatheringPage() {
     }, 5200)
     return () => window.clearInterval(timer)
   }, [shouldReduceMotion, expandedEventId, scheduleEvents])
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Escape') closeDropdown()
+  }
 
   const getSlideIndex = (eventId, count) => ((slideIndexByEvent[eventId] || 0) < count ? (slideIndexByEvent[eventId] || 0) : 0)
 
@@ -231,144 +243,116 @@ export default function GatheringPage() {
     }
   }
 
-  const renderPickerModal = (field) => {
-    const titles = { gender: 'Select Gender', relationship: 'Select Relationship', transport: 'MKU Bus Transport' }
-    const options = {
-      gender: ['Female', 'Male'],
-      relationship: ['Student', 'Friend', 'Family'],
-      transport: [
-        { value: 'yes', label: 'Yes — Assign MKU Bus Seat', sub: 'Departs Wednesday to Eldoret, returns same day' },
-        { value: 'no', label: 'No — Own Transport', sub: 'Attending without school bus seat' },
-      ],
-    }
-    const selected = field === 'gender' ? gender : field === 'relationship' ? memberRole : needsSchoolTransport
-    const isMultiOption = Array.isArray(options[field])
+  const renderSelectorInput = (field, label, placeholder, value) => {
+    const options = getDropdownOptions(field)
+    const isOpen = activeDropdown === field
+    const isFilled = Boolean(value && String(value).trim())
+    const selectedValue = getSelectedValue(field)
 
     return (
-      <AnimatePresence initial={false}>
-        <motion.div
-          key={field}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}
+        onKeyDown={handleKeyDown}
+      >
+        <label style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--text-brown)' }}>{label}</label>
+        <button
+          role="button"
+          tabIndex={0}
+          type="button"
+          onClick={() => { if (!isOpen) openDropdown(field) }}
+          onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openDropdown(field) } }}
           style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 80,
-            backgroundColor: 'rgba(36, 18, 36, 0.42)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
+            ...getFieldSurfaceStyle(isFilled),
+            display: 'inline-flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            padding: '16px',
+            justifyContent: 'space-between',
+            padding: '10px 12px',
+            minHeight: '44px',
+            cursor: 'pointer',
           }}
-          onClick={(event) => { if (event.target === event.currentTarget) closePicker() }}
         >
-          <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-            style={modalSheetStyle}
+          <span>{value || placeholder}</span>
+          <ChevronDown size={14} style={{ color: isFilled ? 'var(--accent-purple)' : 'rgba(157, 78, 221, 0.5)', flexShrink: 0 }} aria-hidden="true" />
+        </button>
+
+        {isOpen && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 'calc(100% + 6px)',
+              left: 0,
+              right: 0,
+              zIndex: 30,
+              backgroundColor: 'var(--white)',
+              borderRadius: '14px',
+              border: '1.5px solid rgba(157, 78, 221, 0.28)',
+              boxShadow: '0 12px 28px rgba(157, 78, 221, 0.16)',
+              overflow: 'hidden',
+              padding: '4px',
+            }}
+            onClick={(event) => { if (event.target === event.currentTarget) closeDropdown() }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '4px' }}>
-              <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '17px', fontWeight: 700 }}>{titles[field]}</h3>
-              <button type="button" onClick={closePicker} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(93, 64, 55, 0.6)', fontSize: '20px', lineHeight: 1 }}>×</button>
-            </div>
-            {isMultiOption
-              ? options[field].map((opt) => {
-                  const value = typeof opt === 'string' ? opt : opt.value
-                  const label = typeof opt === 'string' ? opt : opt.label
-                  const sub = typeof opt === 'string' ? null : opt.sub
-                  const isSelected = selected === value
-                  return (
-                    <button
-                      key={value}
-                      type="button"
-                      onClick={() => selectPickerOption(field, value)}
-                      style={{
-                        width: '100%',
-                        minHeight: '46px',
-                        borderRadius: '12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: '10px',
-                        padding: '10px 12px',
-                        background: isSelected ? 'linear-gradient(135deg, rgba(157, 78, 221, 0.12), rgba(255, 77, 133, 0.14))' : 'transparent',
-                        border: `1px solid ${isSelected ? 'var(--accent-purple)' : 'rgba(93, 64, 55, 0.18)'}`,
-                        color: 'var(--text-brown)',
-                        fontSize: '14px',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        textAlign: 'left',
-                      }}
-                    >
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                        <span>{label}</span>
-                        {sub && <span style={{ fontSize: '11px', color: 'rgba(93, 64, 55, 0.7)', fontWeight: 400 }}>{sub}</span>}
-                      </div>
-                      {isSelected && <Check size={14} style={{ color: 'var(--accent-purple)', flexShrink: 0 }} aria-hidden="true" />}
-                    </button>
-                  )
-                })
-              : options[field].map((opt) => (
-                  <button
-                    key={opt}
-                    type="button"
-                    onClick={() => selectPickerOption(field, opt)}
-                    style={{
-                      width: '100%',
-                      minHeight: '46px',
-                      borderRadius: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: '10px',
-                      padding: '10px 12px',
-                      background: selected === opt ? 'linear-gradient(135deg, rgba(157, 78, 221, 0.12), rgba(255, 77, 133, 0.14))' : 'transparent',
-                      border: `1px solid ${selected === opt ? 'var(--accent-purple)' : 'rgba(93, 64, 55, 0.18)'}`,
-                      color: 'var(--text-brown)',
-                      fontSize: '14px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <span>{opt}</span>
-                    {selected === opt && <Check size={14} style={{ color: 'var(--accent-purple)', flexShrink: 0 }} aria-hidden="true" />}
-                  </button>
-                ))}
-          </motion.div>
-        </motion.div>
-      </AnimatePresence>
+            {options.map((opt) => {
+              const optValue = typeof opt === 'string' ? opt : opt.value
+              const optLabel = typeof opt === 'string' ? opt : opt.label
+              const optSub = typeof opt === 'string' ? null : opt.sub
+              const isSelected = selectedValue === optValue
+
+              return (
+                <button
+                  key={optValue}
+                  type="button"
+                  onClick={() => selectDropdownOption(field, optValue)}
+                  style={{
+                    width: '100%',
+                    minHeight: '44px',
+                    borderBottom: isSelected ? 'none' : '1px solid rgba(157, 78, 221, 0.08)',
+                    padding: '10px 12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '10px',
+                    background: isSelected ? 'linear-gradient(135deg, rgba(157, 78, 221, 0.14), rgba(255, 77, 133, 0.14))' : 'transparent',
+                    border: 'none',
+                    color: isSelected ? 'var(--btn-pink)' : 'var(--text-brown)',
+                    fontSize: '14px',
+                    fontWeight: isSelected ? 700 : 600,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                    <span>{optLabel}</span>
+                    {optSub && <span style={{ fontSize: '11px', color: 'rgba(93, 64, 55, 0.7)', fontWeight: 400 }}>{optSub}</span>}
+                  </div>
+                  {isSelected && <Check size={14} style={{ color: 'var(--accent-purple)', flexShrink: 0 }} aria-hidden="true" />}
+                </button>
+              )
+            })}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  const renderInputField = (label, required, name, placeholder, value, extraStyle) => {
+    const isFilled = Boolean(value && String(value).trim())
+    return (
+      <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: required ? 0 : '8px', display: 'block', marginBottom: '6px' }}>
+        {label} {required && <span style={{ color: '#C58B2A', fontWeight: 700 }}>*</span>}
+        <InputField
+          required={required}
+          name={name}
+          value={value}
+          onChange={(event) => update(name, event.target.value)}
+          placeholder={placeholder}
+          style={{ ...getFieldSurfaceStyle(isFilled), ...extraStyle }}
+        />
+      </label>
     )
   }
 
   const liveSchedule = (schedule || []).filter((item) => item.title && item.location)
   const allEvents = [...scheduleEvents, ...liveSchedule]
-
-  const renderSelectorInput = (field, label, placeholder, value, chevronColor) => (
-    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-      <label style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--text-brown)' }}>{label}</label>
-      <button
-        role="button"
-        tabIndex={0}
-        type="button"
-        onClick={() => openPicker(field)}
-        onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openPicker(field) } }}
-        style={{
-          ...selectorInputStyle,
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '10px 12px',
-          minHeight: '44px',
-        }}
-      >
-        <span>{value || placeholder}</span>
-        <ChevronDown size={14} style={{ color: chevronColor || 'var(--accent-purple)', flexShrink: 0 }} aria-hidden="true" />
-      </button>
-    </div>
-  )
 
   return (
     <motion.section
@@ -564,33 +548,53 @@ export default function GatheringPage() {
             flexDirection: 'column',
             gap: '10px',
           }}
+          onKeyDown={handleKeyDown}
         >
           <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '20px', textAlign: 'center' }}>Confirm Attendance</h3>
 
           {/* Full Name */}
-          <label style={{ fontSize: '15px', fontWeight: 700 }}>Full Name <span aria-hidden="true">*</span><InputField required name="name" value={form.name} onChange={(event) => update('name', event.target.value)} placeholder="Your full name" /></label>
+          {renderInputField('Full Name', true, 'name', 'Your full name', form.name)}
 
           {/* Gender Selector */}
-          {renderSelectorInput('gender', 'Gender *', 'Select gender', gender, 'var(--accent-purple)')}
+          {renderSelectorInput('gender', 'Gender *', 'Select gender', gender)}
 
           {/* Relationship Selector */}
-          {renderSelectorInput('relationship', 'Relationship *', 'Select relationship', memberRole, 'var(--accent-purple)')}
+          {renderSelectorInput('relationship', 'Relationship *', 'Select relationship', memberRole)}
 
           {/* Conditional MKU Student Transport & Safety Details */}
           {memberRole === 'Student' && (
             <div style={{ padding: '12px', borderRadius: '14px', backgroundColor: 'rgba(255, 77, 133, 0.05)', border: '1px solid rgba(255, 77, 133, 0.22)', display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
-              {renderSelectorInput('transport', 'School Bus Transport (Eldoret — Wed)', 'Select transport option', getTransportLabel(), 'var(--accent-purple)')}
+              {renderSelectorInput('transport', 'School Bus Transport (Eldoret — Wed)', 'Select transport option', needsSchoolTransport)}
               <span style={{ fontSize: '12px', color: '#C58B2A', fontWeight: 600, marginTop: '2px' }}>🪪 All MKU students must carry their Student ID card.</span>
-              <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: '4px' }}>MKU Student ID Number *<InputField required name="studentId" value={form.studentId} onChange={(event) => update('studentId', event.target.value)} placeholder="BCOM/2023/12345" /></label>
-              <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: '4px' }}>Parent / Next-of-Kin Phone *<InputField required name="emergencyContact" value={form.emergencyContact} onChange={(event) => update('emergencyContact', event.target.value)} placeholder="Emergency backup phone number" /></label>
+              {renderInputField('MKU Student ID Number', true, 'studentId', 'BCOM/2023/12345', form.studentId)}
+              {renderInputField('Parent / Next-of-Kin Phone', true, 'emergencyContact', 'Emergency backup phone number', form.emergencyContact)}
             </div>
           )}
 
           {/* Your Phone Number */}
-          <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: '8px' }}>Your Phone Number *<InputField required name="contact" value={form.contact} onChange={(event) => update('contact', event.target.value)} placeholder="07XX XXX XXX" /></label>
+          {renderInputField('Your Phone Number', true, 'contact', '07XX XXX XXX', form.contact)}
 
           {/* Short Note */}
-          <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: '8px' }}>Note (optional)<textarea name="note" value={form.note} onChange={(event) => update('note', event.target.value)} rows={2} placeholder="Optional note or message" style={{ width: '100%', minHeight: '70px', marginTop: '4px', border: '1px solid rgba(157, 78, 221, 0.22)', borderRadius: '12px', backgroundColor: 'rgba(157, 78, 221, 0.04)', color: 'var(--text-brown)', padding: '8px', fontSize: '15px', resize: 'vertical' }} /></label>
+          <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: '8px', display: 'block', marginBottom: '6px' }}>
+            Note (optional)
+            <textarea
+              name="note"
+              value={form.note}
+              onChange={(event) => update('note', event.target.value)}
+              rows={2}
+              placeholder="Optional note or message"
+              style={{
+                ...getFieldSurfaceStyle(Boolean(form.note && String(form.note).trim())),
+                width: '100%',
+                minHeight: '70px',
+                marginTop: '4px',
+                color: 'var(--text-brown)',
+                padding: '8px',
+                fontSize: '15px',
+                resize: 'vertical',
+              }}
+            />
+          </label>
 
           {status.message && <p role="status" style={{ minHeight: '20px', color: status.type === 'error' ? '#9C2F46' : 'var(--accent-purple)', fontSize: '14px', fontWeight: 700 }}>{status.message}</p>}
 
@@ -637,8 +641,6 @@ export default function GatheringPage() {
           </button>
         </motion.div>
       )}
-
-      {activePickerModal && renderPickerModal(activePickerModal)}
     </motion.section>
   )
 }
