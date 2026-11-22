@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { MapPin, Award, ChevronDown, Check, Flame, Bus, HeartHandshake, Calendar, Share2 } from 'lucide-react'
+import { MapPin, Award, ChevronDown, Check, Flame, Bus, HeartHandshake, Share2 } from 'lucide-react'
 import useMemorialData from '../hooks/useMemorialData'
 import { supabase } from '../lib/supabaseClient'
 import InputField from '../components/ui/InputField'
@@ -415,87 +415,92 @@ export default function GatheringPage() {
           const slide = item.locationSlides?.[slideIndex] || { caption: '', gradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' }
 
           return (
-            <motion.article
-              key={item.id || index}
-              layout
-              role="button"
-              tabIndex={0}
-              aria-expanded={isExpanded}
-              onClick={() => setExpandedEventId((current) => (current === item.id ? null : item.id))}
-              onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setExpandedEventId((current) => (current === item.id ? null : item.id)) } }}
-              style={{
-                width: '100%',
-                maxWidth: '460px',
-                minHeight: isExpanded ? undefined : '54px',
-                background: 'var(--white)',
-                borderRadius: '18px',
-                padding: isExpanded ? '12px 12px 16px' : '14px 16px',
-                boxShadow: '0 6px 20px rgba(157, 78, 221, 0.10)',
-                border: isExpanded ? '1px solid rgba(157, 78, 221, 0.16)' : undefined,
-                outline: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '8px',
-              }}
-            >
-              {isExpanded ? (
-                <AnimatePresence initial={false}>
-                  <motion.div
-                    key={`expanded-${item.id}`}
-                    initial={{ opacity: 0, height: 0, y: -6 }}
-                    animate={{ opacity: 1, height: 'auto', y: 0 }}
-                    exit={{ opacity: 0, height: 0, y: -6 }}
-                    transition={{ duration: 0.3, ease: 'easeOut' }}
-                    style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px' }}
-                  >
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      <div style={{ width: '100%', height: '240px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: slide.gradient }}>
-                        <>
-                          <AnimatePresence mode="wait">
-                            <motion.div
-                              key={`${item.id}-${slideIndex}`}
-                              initial={{ opacity: 0, scale: 1.04 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              exit={{ opacity: 0 }}
-                              transition={{ duration: 1.15, ease: 'easeInOut' }}
-                              style={{ width: '100%', height: '100%', background: slide.gradient }}
-                            >
-                              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--white)', fontSize: '13px', fontWeight: 600, opacity: 0.85, padding: '10px', textAlign: 'center', boxSizing: 'border-box' }}>
-                                {slide.caption}
-                              </div>
-                            </motion.div>
-                          </AnimatePresence>
-                          <div style={{ position: 'absolute', bottom: '10px', left: '10px', fontSize: '11px', fontWeight: 700, color: 'var(--white)', backgroundColor: 'rgba(0,0,0,0.35)', padding: '4px 8px', borderRadius: '999px', backdropFilter: 'blur(4px)' }}>{item.day}</div>
-                        </>
+            <>
+              <motion.article
+                key={item.id || index}
+                layout
+                role="button"
+                tabIndex={0}
+                aria-expanded={isExpanded}
+                onClick={() => setExpandedEventId((current) => (current === item.id ? null : item.id))}
+                onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setExpandedEventId((current) => (current === item.id ? null : item.id)) } }}
+                style={{
+                  width: '100%',
+                  maxWidth: '460px',
+                  background: 'var(--white)',
+                  borderRadius: '18px',
+                  padding: '10px 14px',
+                  boxShadow: '0 6px 18px rgba(93, 64, 55, 0.06)',
+                  border: '1px solid rgba(93, 64, 55, 0.07)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  cursor: 'pointer',
+                  outline: 'none',
+                  position: 'relative',
+                }}
+              >
+                {isExpanded ? (
+                  <AnimatePresence initial={false}>
+                    <motion.div
+                      key={`expanded-${item.id}`}
+                      initial={{ opacity: 0, height: 0, y: -6 }}
+                      animate={{ opacity: 1, height: 'auto', y: 0 }}
+                      exit={{ opacity: 0, height: 0, y: -6 }}
+                      transition={{ duration: 0.3, ease: 'easeOut' }}
+                      style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px' }}
+                    >
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ width: '100%', height: '240px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: slide.gradient }}>
+                          <>
+                            <AnimatePresence mode="wait">
+                              <motion.div
+                                key={`${item.id}-${slideIndex}`}
+                                initial={{ opacity: 0, scale: 1.04 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 1.15, ease: 'easeInOut' }}
+                                style={{ width: '100%', height: '100%', background: slide.gradient }}
+                              >
+                                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--white)', fontSize: '13px', fontWeight: 600, opacity: 0.85, padding: '10px', textAlign: 'center', boxSizing: 'border-box' }}>
+                                  {slide.caption}
+                                </div>
+                              </motion.div>
+                            </AnimatePresence>
+                            <div style={{ position: 'absolute', bottom: '10px', left: '10px', fontSize: '11px', fontWeight: 700, color: 'var(--white)', backgroundColor: 'rgba(0,0,0,0.35)', padding: '4px 8px', borderRadius: '999px', backdropFilter: 'blur(4px)' }}>{item.day}</div>
+                          </>
+                        </div>
+                        <span style={{ alignSelf: 'flex-start', marginTop: '10px', display: 'inline-flex', alignItems: 'center', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', color: 'var(--accent-purple)', fontSize: '12px', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{item.dayTime}</span>
+                        <p style={{ margin: '10px 4px 0', fontSize: '14.5px', lineHeight: 1.6, color: 'var(--text-brown)', textAlign: 'left' }}>{item.expandedDescription}</p>
+                        <div style={{ alignSelf: 'center', margin: '4px auto 0 auto', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', borderRadius: '999px', backgroundColor: 'rgba(92, 52, 61, 0.08)', border: '1px solid rgba(92, 52, 61, 0.20)' }}>
+                          <MapPin size={13} style={{ color: '#5C343D', flexShrink: 0 }} aria-hidden="true" />
+                          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-brown)' }}>{item.location}</span>
+                        </div>
                       </div>
-                      <span style={{ alignSelf: 'flex-start', marginTop: '10px', display: 'inline-flex', alignItems: 'center', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', color: 'var(--accent-purple)', fontSize: '12px', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{item.dayTime}</span>
-                      <p style={{ margin: '10px 4px 0', fontSize: '14.5px', lineHeight: 1.6, color: 'var(--text-brown)', textAlign: 'left' }}>{item.expandedDescription}</p>
-                      <div style={{ alignSelf: 'center', margin: '4px auto 0 auto', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', borderRadius: '999px', backgroundColor: 'rgba(92, 52, 61, 0.08)', border: '1px solid rgba(92, 52, 61, 0.20)' }}>
-                        <MapPin size={13} style={{ color: '#5C343D', flexShrink: 0 }} aria-hidden="true" />
-                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-brown)' }}>{item.location}</span>
+                    </motion.div>
+                  </AnimatePresence>
+                ) : (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100' }}>
+                    <div style={{ width: '54px', height: '54px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, background: slide.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {Icon}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '7px', flexWrap: 'wrap', marginBottom: '4px' }}>
+                        <span style={{ fontSize: '10.5px', fontWeight: 700, padding: '2px 9px', borderRadius: '999px', color: 'var(--white)', backgroundColor: item.iconColor || 'var(--accent-purple)' }}>{item.day}</span>
+                        <h3 style={{ margin: 0, fontWeight: 700, fontSize: '14.5px', color: 'var(--text-brown)' }}>{item.title}</h3>
                       </div>
+                      <p style={{ margin: 0, fontSize: '12.5px', lineHeight: 1.35, color: 'rgba(93, 64, 55, 0.80)' }}>
+                        {item.location} • {item.timeBadge} — {item.description}
+                      </p>
                     </div>
-                  </motion.div>
-                </AnimatePresence>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '8px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '36px', height: '36px', borderRadius: '11px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(157, 78, 221, 0.08)' }}>{Icon}</div>
-                      <h3 style={{ margin: 0, fontWeight: 700, fontSize: '15.5px', color: 'var(--text-brown)' }}>{item.title}</h3>
-                    </div>
-                    <span style={{ fontSize: '11.5px', fontWeight: 700, padding: '3px 9px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', color: 'var(--accent-purple)' }}>{item.timeBadge}</span>
+                    <ChevronDown size={15} style={{ alignSelf: 'flex-start', marginTop: '4px', color: 'rgba(93, 64, 55, 0.55)', flexShrink: 0 }} />
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px', padding: '6px 10px', borderRadius: '10px', backgroundColor: 'rgba(255, 249, 242, 0.9)', marginBottom: '8px', fontSize: '12.5px', fontWeight: 600 }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'rgba(93, 64, 55, 0.8)' }}><Calendar size={13} aria-hidden="true" /><strong>{item.day}</strong></span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'rgba(93, 64, 55, 0.8)' }}><MapPin size={13} aria-hidden="true" /><strong>{item.location}</strong></span>
-                  </div>
-                  <p style={{ margin: 0, fontSize: '13.5px', lineHeight: 1.45, color: 'rgba(93, 64, 55, 0.85)' }}>{item.description}</p>
-                  <ChevronDown size={15} style={{ alignSelf: 'center', margin: '2px auto 0 auto', transition: 'transform 0.3s ease', transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }} />
-                </div>
+                )}
+              </motion.article>
+              {index < allEvents.length - 1 && (
+                <div style={{ width: '2px', height: '20px', backgroundColor: 'rgba(157, 78, 221, 0.22)', marginLeft: '23px', alignSelf: 'flex-start' }} />
               )}
-            </motion.article>
+            </>
           )
         })}
       </div>
