@@ -460,48 +460,26 @@ export default function GatheringPage() {
                         <div style={{ width: '50%', height: '20px', borderRadius: '999px', className: 'cheruto-skeleton' }} />
                       </div>
                     }
-                  >
-                    <div style={{ width: '100%', height: '240px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: slide.gradient }}>
-                      <>
-                        <AnimatePresence mode="wait">
-                          <motion.div
-                            key={`${item.id}-${slideIndex}`}
-                            initial={{ opacity: 0, scale: 1.04 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 1.15, ease: 'easeInOut' }}
-                            style={{ width: '100%', height: '100%', background: slide.gradient }}
-                          >
-                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--white)', fontSize: '13px', fontWeight: 600, opacity: 0.85, padding: '10px', textAlign: 'center', boxSizing: 'border-box' }}>
-                              {slide.caption}
-                            </div>
-                          </motion.div>
-                        </AnimatePresence>
-                        <div style={{ position: 'absolute', bottom: '10px', left: '10px', fontSize: '11px', fontWeight: 700, color: 'var(--white)', backgroundColor: 'rgba(0,0,0,0.35)', padding: '4px 8px', borderRadius: '999px', backdropFilter: 'blur(4px)' }}>{item.day}</div>
-                      </>
-                    </div>
-                    <span style={{ alignSelf: 'flex-start', marginTop: '10px', display: 'inline-flex', alignItems: 'center', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', color: 'var(--accent-purple)', fontSize: '12px', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{item.dayTime}</span>
-                    <p style={{ margin: '10px 4px 0', fontSize: '14.5px', lineHeight: 1.6, color: 'var(--text-brown)', textAlign: 'left' }}>{item.expandedDescription}</p>
-                    <div style={{ alignSelf: 'center', margin: '4px auto 0 auto', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', borderRadius: '999px', backgroundColor: 'rgba(92, 52, 61, 0.08)', border: '1px solid rgba(92, 52, 61, 0.20)' }}>
-                      <MapPin size={13} style={{ color: '#5C343D', flexShrink: 0 }} aria-hidden="true" />
-                      <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-brown)' }}>{item.location}</span>
-                    </div>
-                  </ExpandableReveal>
-                ) : (
-                  <div className="ch-fade-in" style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
-                    <div style={{ width: '54px', height: '54px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, background: slide.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {Icon}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '7px', flexWrap: 'wrap', marginBottom: '3px' }}>
-                        <h3 style={{ margin: 0, fontWeight: 700, fontSize: '15px', color: 'var(--text-brown)' }}>{item.title}</h3>
-                        <span style={{ fontSize: '11px', fontWeight: 700, color: item.iconColor || 'var(--accent-purple)' }}>{item.timeBadge}</span>
+                    collapsedSkeleton={
+                      <div style={{ width: '100%', height: '68px', borderRadius: '18px', className: 'cheruto-skeleton' }} />
+                    }
+                    collapsedChildren={
+                      <div className="ch-fade-in" style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
+                        <div style={{ width: '54px', height: '54px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, background: slide.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          {Icon}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '7px', flexWrap: 'wrap', marginBottom: '3px' }}>
+                            <h3 style={{ margin: 0, fontWeight: 700, fontSize: '15px', color: 'var(--text-brown)' }}>{item.title}</h3>
+                            <span style={{ fontSize: '11px', fontWeight: 700, color: item.iconColor || 'var(--accent-purple)' }}>{item.timeBadge}</span>
+                          </div>
+                          <p style={{ margin: 0, fontSize: '12.5px', lineHeight: 1.38, color: 'rgba(93, 64, 55, 0.80)' }}>{item.description}</p>
+                        </div>
+                        <ChevronDown size={15} style={{ alignSelf: 'flex-start', marginTop: '4px', color: 'rgba(93, 64, 55, 0.55)', flexShrink: 0 }} />
                       </div>
-                      <p style={{ margin: 0, fontSize: '12.5px', lineHeight: 1.38, color: 'rgba(93, 64, 55, 0.80)' }}>{item.description}</p>
-                    </div>
-                    <ChevronDown size={15} style={{ alignSelf: 'flex-start', marginTop: '4px', color: 'rgba(93, 64, 55, 0.55)', flexShrink: 0 }} />
-                  </div>
-                )}
+                    }
+                  />
+                ) : null}
               </motion.article>
               {index < allEvents.length - 1 && (
                 <div style={{ width: '2px', height: '20px', backgroundColor: 'rgba(157, 78, 221, 0.22)', marginLeft: '23px', alignSelf: 'flex-start' }} />
@@ -541,7 +519,7 @@ export default function GatheringPage() {
         <ChevronDown size={15} style={{ transition: 'transform 0.3s ease', transform: isFormOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </button>
 
-      {isFormOpen && (
+      {isFormOpen ? (
         <ExpandableReveal
           isOpen={isFormOpen}
           delay={400}
@@ -555,97 +533,69 @@ export default function GatheringPage() {
               <div style={{ width: '80%', height: '44px', borderRadius: '999px', className: 'cheruto-skeleton' }} />
             </div>
           }
-        >
-          <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '20px', textAlign: 'center' }}>Confirm Attendance</h3>
-
-          {/* Full Name */}
-          {renderInputField('Full Name', true, 'name', 'Your full name', form.name)}
-
-          {/* Gender Selector */}
-          {renderSelectorInput('gender', 'Gender *', 'Select gender', gender)}
-
-          {/* Relationship Selector */}
-          {renderSelectorInput('relationship', 'Relationship *', 'Select relationship', memberRole)}
-
-          {/* Conditional MKU Student Transport & Safety Details */}
-          {memberRole === 'Student' && (
-            <div style={{ padding: '12px', borderRadius: '14px', backgroundColor: 'rgba(255, 77, 133, 0.05)', border: '1px solid rgba(255, 77, 133, 0.22)', display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
-              {renderSelectorInput('transport', 'School Bus Transport (Eldoret — Wed)', 'Select transport option', needsSchoolTransport)}
-              <span style={{ fontSize: '12px', color: '#C58B2A', fontWeight: 600, marginTop: '2px', textAlign: 'left', alignSelf: 'flex-start' }}>All MKU students must carry their Student ID card.</span>
-              {renderInputField('MKU Student ID Number', true, 'studentId', 'BCOM/2023/12345', form.studentId)}
-              {renderInputField('Parent / Next-of-Kin Phone', true, 'emergencyContact', 'Emergency backup phone number', form.emergencyContact)}
-            </div>
-          )}
-
-          {/* Your Phone Number */}
-          {renderInputField('Your Phone Number', true, 'contact', '07XX XXX XXX', form.contact)}
-
-          {/* Short Note */}
-          <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: '8px', display: 'block', marginBottom: '6px' }}>
-            Note (optional)
-            <textarea
-              name="note"
-              value={form.note}
-              onChange={(event) => update('note', event.target.value)}
-              rows={2}
-              placeholder="Optional note or message"
+          collapsedSkeleton={
+            <div style={{ width: '180px', height: '44px', borderRadius: '999px', margin: '0 auto', className: 'cheruto-skeleton' }} />
+          }
+          collapsedChildren={
+            <button
+              role="button"
+              tabIndex={0}
+              onClick={() => setIsFormOpen((open) => !open)}
+              onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setIsFormOpen((open) => !open) } }}
               style={{
-                ...getFieldSurfaceStyle(Boolean(form.note && String(form.note).trim())),
-                width: '100%',
-                minHeight: '70px',
-                marginTop: '4px',
-                color: 'var(--text-brown)',
-                padding: '8px',
-                fontSize: '15px',
-                resize: 'vertical',
+                margin: '6px auto 0 auto',
+                alignSelf: 'center',
+                width: 'fit-content',
+                minHeight: '48px',
+                padding: '12px 26px',
+                borderRadius: '999px',
+                background: 'linear-gradient(135deg, var(--accent-purple), var(--btn-pink))',
+                color: 'var(--white)',
+                boxShadow: '0 8px 22px rgba(157, 78, 221, 0.26)',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '14.5px',
+                fontWeight: 700,
               }}
-            />
-          </label>
-
-          {status.message && <p role="status" style={{ minHeight: '20px', color: status.type === 'error' ? '#9C2F46' : 'var(--accent-purple)', fontSize: '14px', fontWeight: 700 }}>{status.message}</p>}
-
-          <button
-            type="button"
-            onClick={submitAttendance}
-            disabled={status.type === 'loading'}
-            style={{
-              width: '100%',
-              borderRadius: '999px',
-              minHeight: '46px',
-              background: status.type === 'loading' ? 'rgba(157, 78, 221, 0.5)' : 'linear-gradient(135deg, var(--btn-pink), var(--accent-purple))',
-              color: 'var(--white)',
-              border: 'none',
-              cursor: status.type === 'loading' ? 'default' : 'pointer',
-              fontSize: '14px',
-              fontWeight: 700,
-            }}
-          >
-            {status.type === 'loading' ? 'Saving…' : 'Confirm Attendance'}
-          </button>
-          <button
-            type="button"
-            onClick={handleInvite}
-            style={{
-              width: '100%',
-              minHeight: '42px',
-              borderRadius: '999px',
-              backgroundColor: 'rgba(157, 78, 221, 0.08)',
-              border: '1px solid rgba(157, 78, 221, 0.24)',
-              color: 'var(--accent-purple)',
-              fontSize: '13px',
-              fontWeight: 600,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              cursor: 'pointer',
-              marginTop: '8px',
-            }}
-          >
-            <Share2 size={15} style={{ flexShrink: 0 }} aria-hidden="true" />
-            <span>Invite Someone to Farewell</span>
-          </button>
-        </ExpandableReveal>
+            >
+              <HeartHandshake size={17} style={{ flexShrink: 0 }} aria-hidden="true" />
+              <span>Walk With Us</span>
+              <ChevronDown size={15} style={{ transition: 'transform 0.3s ease', transform: 'rotate(0deg)' }} />
+            </button>
+          }
+        />
+      ) : (
+        <button
+          role="button"
+          tabIndex={0}
+          onClick={() => setIsFormOpen((open) => !open)}
+          onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setIsFormOpen((open) => !open) } }}
+          style={{
+            margin: '6px auto 0 auto',
+            alignSelf: 'center',
+            width: 'fit-content',
+            minHeight: '48px',
+            padding: '12px 26px',
+            borderRadius: '999px',
+            background: 'linear-gradient(135deg, var(--accent-purple), var(--btn-pink))',
+            color: 'var(--white)',
+            boxShadow: '0 8px 22px rgba(157, 78, 221, 0.26)',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '14.5px',
+            fontWeight: 700,
+          }}
+        >
+          <HeartHandshake size={17} style={{ flexShrink: 0 }} aria-hidden="true" />
+          <span>Walk With Us</span>
+          <ChevronDown size={15} style={{ transition: 'transform 0.3s ease', transform: 'rotate(0deg)' }} />
+        </button>
       )}
     </motion.section>
   )

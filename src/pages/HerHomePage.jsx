@@ -350,7 +350,7 @@ export default function HerHomePage({ onNavigateHome }) {
         {formOpen ? 'Close Tribute Form' : <><Share2 size={16} style={{ flexShrink: 0 }} aria-hidden="true" /><span>Leave a Memory</span></>}
       </button>
 
-      {formOpen && (
+      {formOpen ? (
         <ExpandableReveal
           isOpen={formOpen}
           delay={400}
@@ -365,113 +365,65 @@ export default function HerHomePage({ onNavigateHome }) {
               <div style={{ width: '100%', height: '80px', borderRadius: '12px', className: 'cheruto-skeleton' }} />
             </div>
           }
-        >
-          <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '20px', textAlign: 'center' }}>Share a Memory</h3>
-
-          {renderInputField('Your Name', true, 'name', 'Your name', form.name)}
-
-          {renderSelectorInput('memoryTag', 'Memory Tag / Relationship *', 'Select memory tag', form.memoryTag)}
-
-          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
-            <label style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--text-brown)', display: 'block', width: '100%', textAlign: 'left' }}>Photo with Cheruto (Optional)</label>
+          collapsedSkeleton={
+            <div style={{ width: '180px', height: '44px', borderRadius: '999px', margin: '0 auto', className: 'cheruto-skeleton' }} />
+          }
+          collapsedChildren={
             <button
-              type="button"
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (fileInputRef.current) { fileInputRef.current.value = ''; fileInputRef.current.click() } }}
+              role="button"
+              tabIndex={0}
+              onClick={() => setFormOpen((open) => !open)}
+              onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setFormOpen((open) => !open) } }}
               style={{
-                ...getFieldSurfaceStyle(Boolean(form.selectedPhotos.length)),
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                padding: '10px 12px',
-                minHeight: '46px',
-                borderRadius: '12px',
-                border: '1.5px dashed rgba(157, 78, 221, 0.42)',
+                margin: '6px auto 0 auto',
+                alignSelf: 'center',
+                width: 'fit-content',
+                minHeight: '44px',
+                padding: '10px 24px',
+                borderRadius: '999px',
+                background: 'linear-gradient(135deg, var(--accent-purple), var(--btn-pink))',
+                color: 'var(--white)',
+                border: 'none',
                 cursor: 'pointer',
-                width: '100%',
-                boxSizing: 'border-box',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '14px',
+                fontWeight: 700,
               }}
             >
-              <Camera size={14} style={{ flexShrink: 0 }} aria-hidden="true" />
-              <span style={{ fontSize: '13px', color: form.selectedPhotos.length ? 'var(--text-brown)' : 'rgba(93, 64, 55, 0.7)' }}>
-                {form.selectedPhotos.length ? `Photos: ${form.selectedPhotos.length}/3` : 'Add up to 3 photos of you & Cheruto (optional)'}
-              </span>
+              <Share2 size={16} style={{ flexShrink: 0 }} aria-hidden="true" />
+              <span>Leave a Memory</span>
             </button>
-            <input
-              ref={fileInputRef}
-              id="cheruto-memory-photos"
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handlePhotoSelect}
-              style={{ position: 'absolute', width: '1px', height: '1px', opacity: 0, overflow: 'hidden', zIndex: -1 }}
-            />
-            {form.selectedPhotos.length > 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginTop: '6px' }}>
-                {form.selectedPhotos.map((photo, i) => (
-                  <div key={i} style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <img src={photo.preview} alt={`Photo ${i + 1}`} style={{ width: '52px', height: '52px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }} />
-                    <button type="button" onClick={() => removePhoto(i)} style={{ position: 'absolute', top: '-2px', right: '-2px', background: 'rgba(0,0,0,0.55)', border: 'none', borderRadius: '50%', width: '18px', height: '18px', color: 'var(--white)', fontSize: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <X size={10} style={{ flexShrink: 0 }} aria-hidden="true" />
-                    </button>
-                  </div>
-                ))}
-                {form.selectedPhotos.length < 3 && (
-                  <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (fileInputRef.current) { fileInputRef.current.value = ''; fileInputRef.current.click() } }} style={{ width: '52px', height: '52px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px dashed rgba(157, 78, 221, 0.42)', color: 'rgba(157, 78, 221, 0.6)', fontSize: '10px', cursor: 'pointer', backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
-                    <span>+ {3 - form.selectedPhotos.length}</span>
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-
-          <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: '8px', display: 'block', width: '100%', textAlign: 'left', marginBottom: '6px' }}>
-            Your Memory <span aria-hidden="true">*</span>
-            <textarea
-              name="memory"
-              required
-              value={form.memory}
-              maxLength={5000}
-              onChange={(event) => update('memory', event.target.value)}
-              rows={3}
-              placeholder="Write a favorite memory, story, or prayer for Cheruto…"
-              style={{
-                ...getFieldSurfaceStyle(Boolean(form.memory && String(form.memory).trim())),
-                width: '100%',
-                minHeight: '88px',
-                marginTop: '4px',
-                color: 'var(--text-brown)',
-                padding: '8px',
-                fontSize: '15px',
-                resize: 'vertical',
-              }}
-            />
-            <span style={{ fontSize: '12px', color: 'rgba(93, 64, 55, 0.7)', display: 'block', marginTop: '4px', textAlign: 'right' }}>{form.memory.length}/5000</span>
-          </label>
-
-          {status.message && <p role="status" style={{ minHeight: '20px', color: status.type === 'error' ? '#9C2F46' : 'var(--accent-purple)', fontSize: '14px', fontWeight: 700 }}>{status.message}</p>}
-
-          <button
-            type="button"
-            onClick={submitMemory}
-            disabled={status.type === 'loading'}
-            style={{
-              width: 'fit-content',
-              minWidth: '185px',
-              margin: '4px auto 0 auto',
-              padding: '11px 28px',
-              borderRadius: '999px',
-              background: status.type === 'loading' ? 'rgba(157, 78, 221, 0.5)' : 'linear-gradient(135deg, var(--btn-pink), var(--accent-purple))',
-              color: 'var(--white)',
-              border: 'none',
-              cursor: status.type === 'loading' ? 'default' : 'pointer',
-              fontSize: '14px',
-              fontWeight: 700,
-            }}
-          >
-            {status.type === 'loading' ? 'Sharing…' : 'Share Memory'}
-          </button>
-        </ExpandableReveal>
+          }
+        />
+      ) : (
+        <button
+          role="button"
+          tabIndex={0}
+          onClick={() => setFormOpen((open) => !open)}
+          onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setFormOpen((open) => !open) } }}
+          style={{
+            margin: '6px auto 0 auto',
+            alignSelf: 'center',
+            width: 'fit-content',
+            minHeight: '44px',
+            padding: '10px 24px',
+            borderRadius: '999px',
+            background: 'linear-gradient(135deg, var(--accent-purple), var(--btn-pink))',
+            color: 'var(--white)',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '14px',
+            fontWeight: 700,
+          }}
+        >
+          <Share2 size={16} style={{ flexShrink: 0 }} aria-hidden="true" />
+          <span>Leave a Memory</span>
+        </button>
       )}
 
       <div style={{ width: '100%', maxWidth: '440px', display: 'flex', flexDirection: 'column', gap: '10px' }}>

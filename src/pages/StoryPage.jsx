@@ -203,19 +203,21 @@ export default function StoryPage() {
                       <div style={{ width: '80%', height: '55px', borderRadius: '8px', className: 'cheruto-skeleton' }} />
                     </div>
                   }
-                >
-                  {expandedCard(chapter)}
-                </ExpandableReveal>
-              ) : (
-                <div className="ch-fade-in" style={{ display: 'grid', gridTemplateColumns: polaroidLeft ? '66px 1fr' : '1fr 66px', alignItems: 'center', gap: '8px', textAlign: polaroidLeft ? 'left' : 'right', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
-                  {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{chapter.image_url ? <img src={chapter.image_url} alt={chapter.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}</PolaroidFrame>}
-                  <div>
-                    {collapsedInlineHeader(chapter, chapter.era, 'var(--accent-purple)', !polaroidLeft)}
-                    <p style={{ fontSize: '13.5px', lineHeight: 1.38, color: 'var(--text-brown)', margin: 0 }}>{chapter.description}</p>
-                  </div>
-                  {!polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(2deg)' }}>{chapter.image_url ? <img src={chapter.image_url} alt={chapter.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}</PolaroidFrame>}
-                </div>
-              )}
+                  collapsedSkeleton={
+                    <div style={{ width: '100%', height: '68px', borderRadius: '18px', className: 'cheruto-skeleton' }} />
+                  }
+                  collapsedChildren={
+                    <div className="ch-fade-in" style={{ display: 'grid', gridTemplateColumns: polaroidLeft ? '66px 1fr' : '1fr 66px', alignItems: 'center', gap: '8px', textAlign: polaroidLeft ? 'left' : 'right', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
+                      {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{chapter.image_url ? <img src={chapter.image_url} alt={chapter.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}</PolaroidFrame>}
+                      <div>
+                        {collapsedInlineHeader(chapter, chapter.era, 'var(--accent-purple)', !polaroidLeft)}
+                        <p style={{ fontSize: '13.5px', lineHeight: 1.38, color: 'var(--text-brown)', margin: 0 }}>{chapter.description}</p>
+                      </div>
+                      {!polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(2deg)' }}>{chapter.image_url ? <img src={chapter.image_url} alt={chapter.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}</PolaroidFrame>}
+                    </div>
+                  }
+                />
+              ) : null}
             </motion.article>
           )
         })}
@@ -241,19 +243,21 @@ export default function StoryPage() {
                         <div style={{ width: '80%', height: '55px', borderRadius: '8px', className: 'cheruto-skeleton' }} />
                       </div>
                     }
-                  >
-                    {expandedCard(relationship)}
-                  </ExpandableReveal>
-                ) : (
-                  <div className="ch-fade-in" style={{ display: 'grid', gridTemplateColumns: polaroidLeft ? '66px 1fr' : '1fr 66px', alignItems: 'center', gap: '8px', textAlign: polaroidLeft ? 'left' : 'right', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
-                    {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{relationship.photos[0].src ? <img src={relationship.photos[0].src} alt={relationship.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}</PolaroidFrame>}
-                    <div>
-                      {collapsedInlineHeader(relationship, relationship.badge, badgeColor, !polaroidLeft)}
-                      <p style={{ fontSize: '13.5px', lineHeight: 1.38, color: 'var(--text-brown)', margin: 0 }}>{relationship.relationship_type}</p>
-                    </div>
-                    {!polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(2deg)' }}>{relationship.photos[0].src ? <img src={relationship.photos[0].src} alt={relationship.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}</PolaroidFrame>}
-                  </div>
-                )}
+                    collapsedSkeleton={
+                      <div style={{ width: '100%', height: '68px', borderRadius: '18px', className: 'cheruto-skeleton' }} />
+                    }
+                    collapsedChildren={
+                      <div className="ch-fade-in" style={{ display: 'grid', gridTemplateColumns: polaroidLeft ? '66px 1fr' : '1fr 66px', alignItems: 'center', gap: '8px', textAlign: polaroidLeft ? 'left' : 'right', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
+                        {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{relationship.photos[0].src ? <img src={relationship.photos[0].src} alt={relationship.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}</PolaroidFrame>}
+                        <div>
+                          {collapsedInlineHeader(relationship, relationship.badge, badgeColor, !polaroidLeft)}
+                          <p style={{ fontSize: '13.5px', lineHeight: 1.38, color: 'var(--text-brown)', margin: 0 }}>{relationship.relationship_type}</p>
+                        </div>
+                        {!polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(2deg)' }}>{relationship.photos[0].src ? <img src={relationship.photos[0].src} alt={relationship.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}</PolaroidFrame>}
+                      </div>
+                    }
+                  />
+                ) : null}
               </motion.article>
             )
           })}
