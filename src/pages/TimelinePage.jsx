@@ -134,8 +134,8 @@ export default function TimelinePage() {
         alignItems: 'center',
       }}
     >
-      <header style={{ position: 'sticky', top: '12px', zIndex: 25, width: 'fit-content', margin: '0 auto 12px auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '6px 22px', borderRadius: '999px', backgroundColor: 'rgba(255, 255, 255, 0.92)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', border: '1px solid rgba(157, 78, 221, 0.16)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.10)' }}>
-        <h2 style={{ margin: 0, fontFamily: 'var(--font-header)', fontStyle: 'italic', fontWeight: 700, letterSpacing: '0.01em', fontSize: 'clamp(1.6rem, 5vw, 1.9rem)', lineHeight: 1, color: 'var(--text-brown)', whiteSpace: 'nowrap' }}>Her Timeline</h2>
+      <header className="sticky-header-band">
+        <h2 className="sticky-header-band-title">Her Timeline</h2>
       </header>
       {loading && <p style={{ margin: '0 0 8px', fontSize: '14px' }}>Gathering Cheruto’s milestones…</p>}
 

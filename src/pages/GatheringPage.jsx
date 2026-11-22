@@ -571,7 +571,7 @@ export default function GatheringPage() {
     >
       {/* Section 1: Saint John's Hero */}
       <div style={{ width: '100%', maxWidth: '430px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-        <span style={{ position: 'sticky', top: '12px', zIndex: 24, width: 'fit-content', alignSelf: 'center', margin: '0 auto 12px auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '6px 22px', borderRadius: '999px', backgroundColor: 'rgba(255, 255, 255, 0.92)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', border: '1px solid rgba(157, 78, 221, 0.16)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.10)', fontFamily: 'var(--font-header)', fontStyle: 'italic', fontWeight: 700, fontSize: 'clamp(1.25rem, 4.2vw, 1.48rem)', lineHeight: 1.15, color: 'var(--text-brown)' }}>Saint John's</span>
+        <div className="sticky-header-band"><span className="sticky-header-band-title">Saint John's</span></div>
 
         <div style={{ width: '100%', height: '68vh', minHeight: '380px', maxHeight: '620px', borderRadius: '20px', overflow: 'hidden', position: 'relative', boxShadow: '0 12px 32px rgba(157, 78, 221, 0.12)', background: saintJohnsSlides[photoIndex].gradient }}>
           <AnimatePresence mode="wait">
@@ -606,7 +606,7 @@ export default function GatheringPage() {
 
       {/* Section 2: Schedule Cards */}
       <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-        <span style={{ position: 'sticky', top: '12px', zIndex: 25, width: 'fit-content', margin: '0 auto 12px auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '6px 22px', borderRadius: '999px', backgroundColor: 'rgba(255, 255, 255, 0.92)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', border: '1px solid rgba(157, 78, 221, 0.16)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.10)', fontFamily: 'var(--font-header)', fontStyle: 'italic', fontWeight: 700, fontSize: 'clamp(1.25rem, 4.2vw, 1.48rem)', lineHeight: 1.15, color: 'var(--text-brown)' }}>Farewell Schedule</span>
+        <div className="sticky-header-band"><span className="sticky-header-band-title">Farewell Schedule</span></div>
         {allEvents.map((item, index) => renderScheduleCard(item, index))}
       </div>
 

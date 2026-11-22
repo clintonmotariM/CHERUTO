@@ -119,15 +119,6 @@ export default function StoryPage() {
   }, [expandedId, shouldReduceMotion, chapters, relationshipSections])
   const getPhotoIndex = (id, count) => ((photoIndexById[id] || 0) < count ? (photoIndexById[id] || 0) : 0)
 
-  const sectionHeaderStyle = {
-    position: 'sticky', top: '12px', zIndex: 25, width: 'fit-content',
-    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px auto',
-    padding: '6px 22px', borderRadius: '999px', backgroundColor: 'rgba(255, 255, 255, 0.92)',
-    border: '1px solid rgba(157, 78, 221, 0.16)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.10)',
-    fontFamily: 'var(--font-header)', fontStyle: 'italic', fontWeight: 700,
-    fontSize: 'clamp(1.25rem, 4.2vw, 1.48rem)', lineHeight: 1.15, color: 'var(--text-brown)',
-  }
-
   const expandedCard = (item) => {
     const photos = item.photos?.length ? item.photos : [{ src: '', caption: '', fallbackGradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' }]
     const photoIndex = getPhotoIndex(item.id, photos.length)
@@ -230,8 +221,8 @@ export default function StoryPage() {
         .story-card:focus-visible { outline: 3px solid var(--accent-green); outline-offset: 3px; }
       `}</style>
     <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} style={{ paddingTop: 'max(14px, calc(var(--safe-top) + 10px))', paddingBottom: '24px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <header style={{ position: 'sticky', top: '12px', zIndex: 25, width: 'fit-content', margin: '0 auto 12px auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '6px 22px', borderRadius: '999px', backgroundColor: 'rgba(255, 255, 255, 0.92)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', border: '1px solid rgba(157, 78, 221, 0.16)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.10)' }}>
-        <h2 style={{ margin: 0, fontFamily: 'var(--font-header)', fontStyle: 'italic', fontWeight: 700, letterSpacing: '0.01em', fontSize: 'clamp(1.6rem, 5vw, 1.9rem)', lineHeight: 1, color: 'var(--text-brown)', whiteSpace: 'nowrap' }}>Her Story</h2>
+      <header className="sticky-header-band">
+        <h2 className="sticky-header-band-title">Her Story</h2>
       </header>
 
       {loading && <p style={{ fontSize: '14px', margin: '-6px 0 6px' }}>Gathering memories…</p>}
@@ -242,7 +233,7 @@ export default function StoryPage() {
 
       {relationshipSections.map((section, sectionIndex) => (
         <div key={section.name} style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-          <h3 style={sectionHeaderStyle}>{section.name}</h3>
+          <div className="sticky-header-band"><h3 className="sticky-header-band-title">{section.name}</h3></div>
           {section.cards.map((relationship, cardIndex) => renderRelationshipCard(relationship, sectionIndex, cardIndex))}
         </div>
       ))}

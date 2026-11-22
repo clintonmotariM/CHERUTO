@@ -133,24 +133,33 @@ textarea {
   animation: cherutoFadeIn 0.22s ease;
 }
 
-/* --- Sticky pill section headers --- */
-.sticky-pill {
+/* --- Sticky header bands (full-width borderless cream bars) --- */
+.sticky-header-band {
   position: sticky;
-  top: 12px;
+  top: 0;
   z-index: 25;
-  width: fit-content;
-  margin: 0 auto 12px auto;
-  padding: 6px 22px;
-  border-radius: 999px;
-  background-color: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(157, 78, 221, 0.16);
-  box-shadow: 0 6px 20px rgba(93, 64, 55, 0.10);
-  font-family: var(--font-header);
+  width: 100%;
+  background-color: var(--bg-cream, #FFFBF5);
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 12px 16px 10px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.sticky-header-title {
+  font-family: var(--font-header, 'Cormorant Garamond', Georgia, serif);
   font-style: italic;
   font-weight: 700;
-  font-size: clamp(1.25rem, 4.2vw, 1.48rem);
+  font-size: clamp(1.32rem, 4.4vw, 1.56rem);
   line-height: 1.15;
+  letter-spacing: 0.01em;
   color: var(--text-brown);
+  border: none;
+  background: transparent;
+  box-shadow: none;
 }
