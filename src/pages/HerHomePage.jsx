@@ -344,23 +344,25 @@ export default function HerHomePage({ onNavigateHome }) {
           onChange={handlePhotoSelect}
           style={{ position: 'absolute', width: '1px', height: '1px', opacity: 0, overflow: 'hidden', zIndex: -1 }}
         />
-        {form.selectedPhotos.length > 0 && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginTop: '6px' }}>
-            {form.selectedPhotos.map((photo, i) => (
-              <div key={i} style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <img src={photo.preview} alt={`Photo ${i + 1}`} style={{ width: '52px', height: '52px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }} />
-                <button type="button" onClick={() => removePhoto(i)} style={{ position: 'absolute', top: '-2px', right: '-2px', background: 'rgba(0,0,0,0.55)', border: 'none', borderRadius: '50%', width: '18px', height: '18px', color: 'var(--white)', fontSize: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <X size={10} style={{ flexShrink: 0 }} aria-hidden="true" />
-                </button>
+            {form.selectedPhotos.length > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginTop: '6px' }}>
+                {form.selectedPhotos.map((photo, i) => (
+                  <div key={i} style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div className="cheruto-photo-frame" style={{ width: '52px', height: '52px', borderRadius: '10px', padding: 0 }}>
+                      <img className="cheruto-photo-img" src={photo.preview} alt={`Photo ${i + 1}`} />
+                    </div>
+                    <button type="button" onClick={() => removePhoto(i)} style={{ position: 'absolute', top: '-2px', right: '-2px', background: 'rgba(0,0,0,0.55)', border: 'none', borderRadius: '50%', width: '18px', height: '18px', color: 'var(--white)', fontSize: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <X size={10} style={{ flexShrink: 0 }} aria-hidden="true" />
+                    </button>
+                  </div>
+                ))}
+                {form.selectedPhotos.length < 3 && (
+                  <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (fileInputRef.current) { fileInputRef.current.value = ''; fileInputRef.current.click() } }} style={{ width: '52px', height: '52px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px dashed rgba(157, 78, 221, 0.42)', color: 'rgba(157, 78, 221, 0.6)', fontSize: '10px', cursor: 'pointer', backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
+                    <span>+ {3 - form.selectedPhotos.length}</span>
+                  </button>
+                )}
               </div>
-            ))}
-            {form.selectedPhotos.length < 3 && (
-              <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (fileInputRef.current) { fileInputRef.current.value = ''; fileInputRef.current.click() } }} style={{ width: '52px', height: '52px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px dashed rgba(157, 78, 221, 0.42)', color: 'rgba(157, 78, 221, 0.6)', fontSize: '10px', cursor: 'pointer', backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
-                <span>+ {3 - form.selectedPhotos.length}</span>
-              </button>
             )}
-          </div>
-        )}
       </div>
 
       <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)', marginTop: '8px', display: 'block', width: '100%', textAlign: 'left', marginBottom: '6px' }}>
@@ -480,9 +482,9 @@ export default function HerHomePage({ onNavigateHome }) {
           const displayPhoto = hasUploadedPhotos && photoUrls[0] ? photoUrls[0] : fallbackItem.image
           return (
             <article key={memory.id} style={{ width: '100%', padding: '12px 14px', borderRadius: '16px', backgroundColor: 'var(--white)', border: '1px solid rgba(93, 64, 55, 0.08)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.07)', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <div style={{ width: '100%', height: '175px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: fallbackItem.gradient }}>
+              <div className="cheruto-photo-frame" style={{ width: '100%', height: '175px', borderRadius: '14px', background: fallbackItem.gradient }}>
                 {displayPhoto ? (
-                  <img src={displayPhoto} alt="Memory photo" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                  <img className="cheruto-photo-img" src={displayPhoto} alt="Memory photo" />
                 ) : null}
               </div>
               {memory.author_name && memory.memory_tag && memory.author_name.trim().toLowerCase() === memory.memory_tag.trim().toLowerCase() ? null : (

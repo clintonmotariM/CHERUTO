@@ -85,11 +85,9 @@ export default function HomePage() {
             style={{ position: 'absolute', inset: 0 }}
           >
             {activePhotoUrl ? (
-              <img
-                src={activePhotoUrl}
-                alt={slide.alt || 'A shared memory photo'}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-              />
+              <div className="cheruto-photo-frame">
+                <img className="cheruto-photo-img" src={activePhotoUrl} alt={slide.alt || 'A shared memory photo'} />
+              </div>
             ) : (
               <div style={{ width: '100%', height: '100%', background: gradient }} />
             )}
