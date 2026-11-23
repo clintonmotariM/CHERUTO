@@ -189,8 +189,12 @@ export default function TimelinePage() {
                 }
                 expanded={
                   <div style={{ width: '100%', maxWidth: '460px', backgroundColor: 'var(--white)', borderRadius: '20px', padding: '12px 12px 16px', border: '1px solid rgba(93, 64, 55, 0.08)', boxShadow: '0 12px 32px rgba(93, 64, 55, 0.10)', position: 'relative', zIndex: 2 }}>
-                    <div className="cheruto-photo-frame">
-                      {item.photoUrl && <img className="cheruto-photo-img" src={item.photoUrl} alt={item.title} />}
+                    <div className="cheruto-photo-frame" style={{ background: item.photoUrl ? 'transparent' : undefined }}>
+                      {item.photoUrl ? (
+                        <img className="cheruto-photo-img" src={item.photoUrl} alt={item.title} />
+                      ) : (
+                        <div style={{ width: '100%', height: '100%', background: item.gradient }} />
+                      )}
                     </div>
                     <div style={{ padding: '12px 6px 4px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       <div style={{ alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', border: '1px solid rgba(157, 78, 221, 0.22)' }}>

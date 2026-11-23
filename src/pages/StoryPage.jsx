@@ -142,9 +142,18 @@ export default function StoryPage() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.75, ease: 'easeInOut' }}
-              style={{ width: '100%', height: '100%', background: photo.fallbackGradient }}
+              style={{ width: '100%', height: '100%', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', background: photo.src ? 'transparent' : photo.fallbackGradient }}
             >
-              {photo.src && <img className="cheruto-photo-img" src={photo.src} alt={item.title || item.name || 'Cheruto memory'} />}
+              {photo.src ? (
+                <>
+                  <img className="cheruto-photo-img" src={photo.src} alt={item.title || item.name || 'Cheruto memory'} />
+                  <div style={{ marginTop: '10px', textAlign: 'center', fontSize: '13.5px', fontWeight: 700, color: 'var(--text-brown)' }}>
+                    {photo.caption}
+                  </div>
+                </>
+              ) : (
+                <div style={{ width: '100%', height: '100%', background: photo.fallbackGradient }} />
+              )}
             </motion.div>
           </AnimatePresence>
         </div>

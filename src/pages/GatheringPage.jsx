@@ -396,27 +396,18 @@ export default function GatheringPage() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 1.15, ease: 'easeInOut' }}
-                    style={{ width: '100%', height: '100%', position: 'relative' }}
+                    style={{ width: '100%', height: '100%', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', background: slide.image ? 'transparent' : slide.gradient }}
                   >
                     {slide.image ? (
-                      <img className="cheruto-photo-img" src={slide.image} alt={slide.caption} />
+                      <>
+                        <img className="cheruto-photo-img" src={slide.image} alt={slide.caption} />
+                        <div style={{ marginTop: '10px', textAlign: 'center', fontSize: '13.5px', fontWeight: 700, color: 'var(--text-brown)' }}>
+                          {slide.caption}
+                        </div>
+                      </>
                     ) : (
                       <div style={{ width: '100%', height: '100%', background: slide.gradient }} />
                     )}
-                    <div
-                      aria-hidden="true"
-                      style={{
-                        position: 'absolute',
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        height: '50%',
-                        background: 'linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0))',
-                      }}
-                    />
-                    <div style={{ position: 'absolute', bottom: '12px', left: '12px', right: '12px', color: 'var(--white)', fontSize: '13px', fontWeight: 600, textShadow: '0 2px 6px rgba(0,0,0,0.5)', textAlign: 'center' }}>
-                      {slide.caption}
-                    </div>
                   </motion.div>
                 </AnimatePresence>
                 <div style={{ position: 'absolute', top: '10px', left: '10px', fontSize: '11px', fontWeight: 700, color: 'var(--white)', backgroundColor: 'rgba(0,0,0,0.45)', padding: '4px 10px', borderRadius: '999px', backdropFilter: 'blur(4px)' }}>{item.day}</div>
@@ -589,7 +580,7 @@ export default function GatheringPage() {
       <div style={{ width: '100%', maxWidth: '430px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
         <div className="sticky-header-band"><span className="sticky-header-band-title">Saint John's</span></div>
 
-        <div className="cheruto-photo-frame" style={{ width: '100%', height: '68vh', minHeight: '380px', maxHeight: '620px', borderRadius: '20px', boxShadow: '0 12px 32px rgba(157, 78, 221, 0.12)', background: saintJohnsSlides[photoIndex].gradient }}>
+        <div className="cheruto-photo-frame" style={{ width: '100%', height: '68vh', minHeight: '380px', maxHeight: '620px', borderRadius: '20px', boxShadow: '0 12px 32px rgba(157, 78, 221, 0.12)', background: saintJohnsSlides[photoIndex].image ? 'transparent' : saintJohnsSlides[photoIndex].gradient }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={photoIndex}
@@ -597,27 +588,18 @@ export default function GatheringPage() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.75, ease: 'easeInOut' }}
-              style={{ width: '100%', height: '100%', position: 'relative' }}
+              style={{ width: '100%', height: '100%', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
             >
               {saintJohnsSlides[photoIndex].image ? (
-                <img className="cheruto-photo-img" src={saintJohnsSlides[photoIndex].image} alt={saintJohnsSlides[photoIndex].caption} />
+                <>
+                  <img className="cheruto-photo-img" src={saintJohnsSlides[photoIndex].image} alt={saintJohnsSlides[photoIndex].caption} />
+                  <div style={{ marginTop: '10px', textAlign: 'center', fontSize: '13.5px', fontWeight: 700, color: 'var(--text-brown)' }}>
+                    {saintJohnsSlides[photoIndex].caption}
+                  </div>
+                </>
               ) : (
                 <div style={{ width: '100%', height: '100%', background: saintJohnsSlides[photoIndex].gradient }} />
               )}
-              <div
-                aria-hidden="true"
-                style={{
-                  position: 'absolute',
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  height: '42%',
-                  background: 'linear-gradient(to top, rgba(0,0,0,0.65), rgba(0,0,0,0))',
-                }}
-              />
-              <div style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px', color: 'var(--white)', fontSize: '14.5px', fontWeight: 600, textShadow: '0 2px 8px rgba(0,0,0,0.45)', textAlign: 'center' }}>
-                {saintJohnsSlides[photoIndex].caption}
-              </div>
             </motion.div>
           </AnimatePresence>
         </div>
