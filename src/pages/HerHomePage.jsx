@@ -482,11 +482,13 @@ export default function HerHomePage({ onNavigateHome }) {
           const displayPhoto = hasUploadedPhotos && photoUrls[0] ? photoUrls[0] : fallbackItem.image
           return (
             <article key={memory.id} style={{ width: '100%', padding: '12px 14px', borderRadius: '16px', backgroundColor: 'var(--white)', border: '1px solid rgba(93, 64, 55, 0.08)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.07)', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <div className="cheruto-photo-frame" style={{ width: '100%', height: '175px', borderRadius: '14px', background: fallbackItem.gradient }}>
-                {displayPhoto ? (
-                  <img className="cheruto-photo-img" src={displayPhoto} alt="Memory photo" />
-                ) : null}
-              </div>
+            <div style={{ width: '100%', borderRadius: '14px', overflow: 'hidden', background: hasUploadedPhotos ? 'transparent' : fallbackItem.gradient }}>
+              {displayPhoto ? (
+                <img className="cheruto-photo-img" src={displayPhoto} alt="Memory photo" />
+              ) : (
+                <div style={{ width: '100%', height: '175px', background: fallbackItem.gradient }} />
+              )}
+            </div>
               {memory.author_name && memory.memory_tag && memory.author_name.trim().toLowerCase() === memory.memory_tag.trim().toLowerCase() ? null : (
                 <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)' }}>{memory.author_name || 'Friend'}</div>
               )}
