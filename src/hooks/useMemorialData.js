@@ -7,19 +7,20 @@ const fallbackProfile = {
   birth_date: null,
   passing_date: null,
   biography: 'A life remembered with love, laughter, and the many moments that made her unforgettable.',
+  hero_image_url: '/photos/cheruto-main.jpg',
 }
 
 const fallbackTimeline = [
-  { id: '1', title: 'Her Beginning', start_date: null, end_date: null, event_date: null, description: 'A bright spirit from the very start.', image_url: null },
-  { id: '2', title: 'Her Passions', start_date: null, end_date: null, event_date: null, description: 'The things that brought her joy and purpose.', image_url: null },
-  { id: '3', title: 'Her People', start_date: null, end_date: null, event_date: null, description: 'A heart that gathered everyone close.', image_url: null },
-  { id: '4', title: 'Cherished Moments', start_date: null, end_date: null, event_date: null, description: 'Love and laughter held safely in memory.', image_url: null },
+  { id: '1', title: 'Her Beginning', start_date: null, end_date: null, event_date: null, description: 'A bright spirit from the very start.', image_url: '/photos/cheruto-main.jpg' },
+  { id: '2', title: 'Her Passions', start_date: null, end_date: null, event_date: null, description: 'The things that brought her joy and purpose.', image_url: '/photos/cheruto-01.jpg' },
+  { id: '3', title: 'Her People', start_date: null, end_date: null, event_date: null, description: 'A heart that gathered everyone close.', image_url: '/photos/cheruto-02.jpg' },
+  { id: '4', title: 'Cherished Moments', start_date: null, end_date: null, event_date: null, description: 'Love and laughter held safely in memory.', image_url: '/photos/cheruto-03.jpg' },
 ]
 
 const fallbackRelationships = [
-  { id: 'r1', name: 'Family', relationship_type: 'Loved and supported' },
-  { id: 'r2', name: 'Friends', relationship_type: 'Shared in joy' },
-  { id: 'r3', name: 'Community', relationship_type: 'Touched many lives' },
+  { id: 'r1', name: 'Family', relationship_type: 'Loved and supported', image_url: '/photos/cheruto-main.jpg' },
+  { id: 'r2', name: 'Friends', relationship_type: 'Shared in joy', image_url: '/photos/cheruto-01.jpg' },
+  { id: 'r3', name: 'Community', relationship_type: 'Touched many lives', image_url: '/photos/cheruto-02.jpg' },
 ]
 
 const fallbackSchedule = [
@@ -27,11 +28,13 @@ const fallbackSchedule = [
 ]
 
 const fallbackAwareness = [
-  { id: 'a1', name: 'Shared Legacy', relationship_or_context: 'Family and friends', memorial_note: 'Cheruto’s warmth lives on through every act of kindness shared in her name.' },
+  { id: 'a1', name: 'Shared Legacy', relationship_or_context: 'Family and friends', memorial_note: 'Cheruto’s warmth lives on through every act of kindness shared in her name.', image_url: '/photos/cheruto-memorial-2.jpg' },
 ]
 
 const fallbackMemories = [
-  { id: 'm1', author_name: 'Family', relationship: 'Family', memory: 'We carry Cheruto’s joy, strength, and laughter with us always.', is_approved: true, memory_tag: 'Family', photo_url: null },
+  { id: 'm1', author_name: 'Family', relationship: 'Family', memory: 'We carry Cheruto’s joy, strength, and laughter with us always.', is_approved: true, memory_tag: 'Family', photo_url: '/photos/cheruto-main.jpg' },
+  { id: 'm2', author_name: 'MKU Friends', relationship: 'Close Friend', memory: 'Cheru lit up every lecture hall and common room. Her laughter was contagious.', is_approved: true, memory_tag: 'MKU Classmate', photo_url: '/photos/cheruto-02.jpg' },
+  { id: 'm3', author_name: 'Saint John’s Team', relationship: 'Community', memory: 'A dedicated first responder and humanitarian. Always among the first to arrive and last to leave.', is_approved: true, memory_tag: "Saint John's Red Cross", photo_url: '/photos/cheruto-memorial-1.jpg' },
 ]
 
 export default function useMemorialData() {

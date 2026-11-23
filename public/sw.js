@@ -1,10 +1,17 @@
-const CACHE_NAME = 'cheruto-memorial-v3'
+const CACHE_NAME = 'cheruto-memorial-v4'
 const APP_SHELL = [
   '/',
   '/manifest.json',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   '/icons/apple-touch-icon.png',
+  '/photos/cheruto-main.jpg',
+  '/photos/cheruto-memorial-1.jpg',
+  '/photos/cheruto-memorial-2.jpg',
+  '/photos/cheruto-01.jpg',
+  '/photos/cheruto-02.jpg',
+  '/photos/cheruto-03.jpg',
+  '/photos/cheruto-04.jpg',
 ]
 
 self.addEventListener('install', (event) => {

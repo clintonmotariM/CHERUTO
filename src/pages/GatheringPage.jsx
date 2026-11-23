@@ -7,9 +7,9 @@ import InputField from '../components/ui/InputField'
 import ExpandableReveal from '../components/ExpandableReveal'
 
 const saintJohnsSlides = [
-  { caption: 'Campus First-Aid Drives', gradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' },
-  { caption: 'Community Outreach', gradient: 'linear-gradient(145deg, var(--btn-pink), #F5B7A7)' },
-  { caption: "Saint John's Humanitarian Service", gradient: 'linear-gradient(145deg, #F5B7A7, var(--accent-purple))' },
+  { caption: 'Humanitarian Service & Outreach', image: '/photos/cheruto-memorial-1.jpg', gradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' },
+  { caption: 'Campus First-Aid Drives', image: '/photos/cheruto-02.jpg', gradient: 'linear-gradient(145deg, var(--btn-pink), #F5B7A7)' },
+  { caption: "Saint John's Red Cross Service", image: '/photos/cheruto-memorial-2.jpg', gradient: 'linear-gradient(145deg, #F5B7A7, var(--accent-purple))' },
 ]
 
 const scheduleEvents = [
@@ -25,9 +25,9 @@ const scheduleEvents = [
     description: 'Join us in light and remembrance as we gather around the flame to honor Cheruto’s life.',
     expandedDescription: 'The MKU Candle Lighting Vigil brings family, friends, and classmates together on Monday night to share stories, light candles, and carry Cheruto’s light forward. A quiet, sacred moment of remembrance on campus grounds.',
     locationSlides: [
-      { caption: 'Mount Kenya University Campus Grounds', gradient: 'linear-gradient(145deg, var(--accent-purple), #5C343D)' },
-      { caption: 'Evening Vigil Square', gradient: 'linear-gradient(145deg, #5C343D, var(--btn-pink))' },
-      { caption: 'Candlelight Gathering Spot', gradient: 'linear-gradient(145deg, var(--btn-pink), var(--accent-purple))' },
+      { caption: 'Mount Kenya University Campus Grounds', image: '/photos/cheruto-02.jpg', gradient: 'linear-gradient(145deg, var(--accent-purple), #5C343D)' },
+      { caption: 'Evening Vigil Square', image: '/photos/cheruto-memorial-1.jpg', gradient: 'linear-gradient(145deg, #5C343D, var(--btn-pink))' },
+      { caption: 'Candlelight Gathering Spot', image: '/photos/cheruto-01.jpg', gradient: 'linear-gradient(145deg, var(--btn-pink), var(--accent-purple))' },
     ],
   },
   {
@@ -42,9 +42,9 @@ const scheduleEvents = [
     description: 'Complimentary MKU student bus to Eldoret returning the same day on the same bus.',
     expandedDescription: 'A school-sponsored coach departs MKU Main Gate on Wednesday, carrying students to Eldoret for the burial service and returning the same day on the same bus. Reserved seats for students.',
     locationSlides: [
-      { caption: 'MKU Main Gate Departure Point', gradient: 'linear-gradient(145deg, var(--btn-pink), #5C343D)' },
-      { caption: 'Rift Valley Highway Journey to Eldoret', gradient: 'linear-gradient(145deg, #5C343D, var(--accent-purple))' },
-      { caption: 'Student Coach Assembly', gradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' },
+      { caption: 'MKU Main Gate Departure Point', image: '/photos/cheruto-04.jpg', gradient: 'linear-gradient(145deg, var(--btn-pink), #5C343D)' },
+      { caption: 'Rift Valley Highway Journey to Eldoret', image: '/photos/cheruto-03.jpg', gradient: 'linear-gradient(145deg, #5C343D, var(--accent-purple))' },
+      { caption: 'Student Coach Assembly', image: '/photos/cheruto-02.jpg', gradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' },
     ],
   },
   {
@@ -59,9 +59,9 @@ const scheduleEvents = [
     description: 'Final farewell surrounded by family and friends at her home place.',
     expandedDescription: 'The burial service takes place at Cheruto’s family home in Eldoret on Thursday, surrounded by loved ones. A solemn farewell in the place she called home.',
     locationSlides: [
-      { caption: "Cheruto's Family Home in Eldoret", gradient: 'linear-gradient(145deg, #5C343D, var(--accent-purple))' },
-      { caption: 'Homestead Compound & Grounds', gradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' },
-      { caption: 'Final Resting Place', gradient: 'linear-gradient(145deg, var(--btn-pink), #5C343D)' },
+      { caption: "Cheruto's Family Home in Eldoret", image: '/photos/cheruto-main.jpg', gradient: 'linear-gradient(145deg, #5C343D, var(--accent-purple))' },
+      { caption: 'Homestead Compound & Grounds', image: '/photos/cheruto-memorial-2.jpg', gradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' },
+      { caption: 'Final Resting Place', image: '/photos/cheruto-03.jpg', gradient: 'linear-gradient(145deg, var(--btn-pink), #5C343D)' },
     ],
   },
 ]
@@ -396,14 +396,30 @@ export default function GatheringPage() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 1.15, ease: 'easeInOut' }}
-                    style={{ width: '100%', height: '100%', background: slide.gradient }}
+                    style={{ width: '100%', height: '100%', position: 'relative' }}
                   >
-                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--white)', fontSize: '13px', fontWeight: 600, opacity: 0.85, padding: '10px', textAlign: 'center', boxSizing: 'border-box' }}>
+                    {slide.image ? (
+                      <img src={slide.image} alt={slide.caption} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', background: slide.gradient }} />
+                    )}
+                    <div
+                      aria-hidden="true"
+                      style={{
+                        position: 'absolute',
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        height: '50%',
+                        background: 'linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0))',
+                      }}
+                    />
+                    <div style={{ position: 'absolute', bottom: '12px', left: '12px', right: '12px', color: 'var(--white)', fontSize: '13px', fontWeight: 600, textShadow: '0 2px 6px rgba(0,0,0,0.5)', textAlign: 'center' }}>
                       {slide.caption}
                     </div>
                   </motion.div>
                 </AnimatePresence>
-                <div style={{ position: 'absolute', bottom: '10px', left: '10px', fontSize: '11px', fontWeight: 700, color: 'var(--white)', backgroundColor: 'rgba(0,0,0,0.35)', padding: '4px 8px', borderRadius: '999px', backdropFilter: 'blur(4px)' }}>{item.day}</div>
+                <div style={{ position: 'absolute', top: '10px', left: '10px', fontSize: '11px', fontWeight: 700, color: 'var(--white)', backgroundColor: 'rgba(0,0,0,0.45)', padding: '4px 10px', borderRadius: '999px', backdropFilter: 'blur(4px)' }}>{item.day}</div>
               </>
             </div>
             <span style={{ alignSelf: 'flex-start', marginTop: '10px', display: 'inline-flex', alignItems: 'center', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', color: 'var(--accent-purple)', fontSize: '12px', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{item.dayTime}</span>
@@ -581,9 +597,29 @@ export default function GatheringPage() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.75, ease: 'easeInOut' }}
-              style={{ width: '100%', height: '100%', background: saintJohnsSlides[photoIndex].gradient }}
+              style={{ width: '100%', height: '100%', position: 'relative' }}
             >
-              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--white)', fontSize: '14px', fontWeight: 600, opacity: 0.9 }}>
+              {saintJohnsSlides[photoIndex].image ? (
+                <img
+                  src={saintJohnsSlides[photoIndex].image}
+                  alt={saintJohnsSlides[photoIndex].caption}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
+              ) : (
+                <div style={{ width: '100%', height: '100%', background: saintJohnsSlides[photoIndex].gradient }} />
+              )}
+              <div
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: '42%',
+                  background: 'linear-gradient(to top, rgba(0,0,0,0.65), rgba(0,0,0,0))',
+                }}
+              />
+              <div style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px', color: 'var(--white)', fontSize: '14.5px', fontWeight: 600, textShadow: '0 2px 8px rgba(0,0,0,0.45)', textAlign: 'center' }}>
                 {saintJohnsSlides[photoIndex].caption}
               </div>
             </motion.div>

@@ -16,10 +16,13 @@ const memoryTags = [
 ]
 
 const curatedFallbackPhotos = [
-  { gradient: 'linear-gradient(145deg, #9D4EDD 0%, #FF4D85 100%)' },
-  { gradient: 'linear-gradient(145deg, #FF4D85 0%, #F5B7A7 100%)' },
-  { gradient: 'linear-gradient(145deg, #9D4EDD 0%, #2ECC71 100%)' },
-  { gradient: 'linear-gradient(145deg, #F5B7A7 0%, #9D4EDD 100%)' },
+  { image: '/photos/cheruto-main.jpg', gradient: 'linear-gradient(145deg, #9D4EDD 0%, #FF4D85 100%)' },
+  { image: '/photos/cheruto-memorial-1.jpg', gradient: 'linear-gradient(145deg, #FF4D85 0%, #F5B7A7 100%)' },
+  { image: '/photos/cheruto-01.jpg', gradient: 'linear-gradient(145deg, #9D4EDD 0%, #2ECC71 100%)' },
+  { image: '/photos/cheruto-02.jpg', gradient: 'linear-gradient(145deg, #F5B7A7 0%, #9D4EDD 100%)' },
+  { image: '/photos/cheruto-03.jpg', gradient: 'linear-gradient(145deg, #9D4EDD 0%, #2ECC71 100%)' },
+  { image: '/photos/cheruto-04.jpg', gradient: 'linear-gradient(145deg, #FF4D85 0%, #F5B7A7 100%)' },
+  { image: '/photos/cheruto-memorial-2.jpg', gradient: 'linear-gradient(145deg, #F5B7A7 0%, #9D4EDD 100%)' },
 ]
 
 const getFieldSurfaceStyle = (isFilled) => ({
@@ -473,12 +476,13 @@ export default function HerHomePage({ onNavigateHome }) {
         {visibleMemories.map((memory, index) => {
           const photoUrls = Array.isArray(memory.photo_urls) && memory.photo_urls.length > 0 ? memory.photo_urls : (memory.photo_url ? [memory.photo_url] : [])
           const hasUploadedPhotos = photoUrls.length > 0
-          const fallbackGradient = curatedFallbackPhotos[index % curatedFallbackPhotos.length].gradient
+          const fallbackItem = curatedFallbackPhotos[index % curatedFallbackPhotos.length]
+          const displayPhoto = hasUploadedPhotos && photoUrls[0] ? photoUrls[0] : fallbackItem.image
           return (
             <article key={memory.id} style={{ width: '100%', padding: '12px 14px', borderRadius: '16px', backgroundColor: 'var(--white)', border: '1px solid rgba(93, 64, 55, 0.08)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.07)', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <div style={{ width: '100%', height: '160px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: hasUploadedPhotos ? '#f0f0f0' : fallbackGradient }}>
-                {hasUploadedPhotos && photoUrls[0] ? (
-                  <img src={photoUrls[0]} alt="Memory photo" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              <div style={{ width: '100%', height: '175px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: fallbackItem.gradient }}>
+                {displayPhoto ? (
+                  <img src={displayPhoto} alt="Memory photo" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 ) : null}
               </div>
               {memory.author_name && memory.memory_tag && memory.author_name.trim().toLowerCase() === memory.memory_tag.trim().toLowerCase() ? null : (

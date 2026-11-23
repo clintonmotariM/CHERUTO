@@ -2,29 +2,15 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Images } from 'lucide-react'
 import useMemorialData from '../hooks/useMemorialData'
+import { CHERUTO_PHOTOS } from '../data/photos'
 
-const curatedPhotos = [
-  {
-    id: 'curated-purple-pink',
-    caption: 'A life remembered with love, laughter, and the many moments that made her unforgettable.',
-    fallbackGradient: 'linear-gradient(145deg, #9D4EDD 0%, #FF4D85 100%)',
-  },
-  {
-    id: 'curated-pink-peach',
-    caption: 'Her warmth lives in every kindness shared and every story we carry forward.',
-    fallbackGradient: 'linear-gradient(145deg, #FF4D85 0%, #F5B7A7 100%)',
-  },
-  {
-    id: 'curated-purple-green',
-    caption: 'Forever held close in the hearts of all who loved her.',
-    fallbackGradient: 'linear-gradient(145deg, #9D4EDD 0%, #2ECC71 100%)',
-  },
-  {
-    id: 'curated-peach-purple',
-    caption: 'Her light continues to shine through every story told in her name.',
-    fallbackGradient: 'linear-gradient(145deg, #F5B7A7 0%, #9D4EDD 100%)',
-  },
-]
+const curatedPhotos = CHERUTO_PHOTOS.map((photo) => ({
+  id: photo.id,
+  photo_url: photo.src,
+  caption: photo.caption,
+  alt: photo.title,
+  fallbackGradient: 'linear-gradient(145deg, #9D4EDD 0%, #FF4D85 100%)',
+}))
 
 export default function HomePage() {
   const { memories = [], loading } = useMemorialData()
@@ -36,7 +22,8 @@ export default function HomePage() {
 
   const activeSlide = () => {
     if (activeIndex < curatedCount) {
-      return { type: 'curated', ...curatedPhotos[activeIndex] }
+      const curated = curatedPhotos[activeIndex]
+      return { type: 'curated', photo_urls: [curated.photo_url], ...curated }
     }
     const memory = submittedMemories[activeIndex - curatedCount]
     return { type: 'memory', ...memory }
@@ -45,12 +32,12 @@ export default function HomePage() {
   const slide = activeSlide()
   const isMemorySlide = slide.type === 'memory'
 
-  const photoUrls = isMemorySlide && Array.isArray(slide.photo_urls) && slide.photo_urls.length > 0
+  const photoUrls = Array.isArray(slide.photo_urls) && slide.photo_urls.length > 0
     ? slide.photo_urls
-    : (isMemorySlide && slide.photo_url ? [slide.photo_url] : [])
+    : (slide.photo_url ? [slide.photo_url] : [])
 
   const activePhotoUrl = photoUrls.length > 0 ? photoUrls[0] : null
-  const gradient = activePhotoUrl ? null : slide.fallbackGradient || curatedPhotos[activeIndex % curatedCount].fallbackGradient
+  const gradient = activePhotoUrl ? null : slide.fallbackGradient || 'linear-gradient(145deg, #9D4EDD 0%, #FF4D85 100%)'
 
   const showNextPhoto = () => {
     setActiveIndex((currentIndex) => (currentIndex + 1) % totalSlides)
