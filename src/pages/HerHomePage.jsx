@@ -482,13 +482,15 @@ export default function HerHomePage({ onNavigateHome }) {
           const displayPhoto = hasUploadedPhotos && photoUrls[0] ? photoUrls[0] : fallbackItem.image
           return (
             <article key={memory.id} style={{ width: '100%', padding: '12px 14px', borderRadius: '16px', backgroundColor: 'var(--white)', border: '1px solid rgba(93, 64, 55, 0.08)', boxShadow: '0 6px 20px rgba(93, 64, 55, 0.07)', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <div style={{ width: '100%', borderRadius: '14px', overflow: 'hidden', background: hasUploadedPhotos ? 'transparent' : fallbackItem.gradient }}>
-              {displayPhoto ? (
-                <img className="cheruto-photo-img" src={displayPhoto} alt="Memory photo" />
-              ) : (
-                <div style={{ width: '100%', height: '175px', background: fallbackItem.gradient }} />
-              )}
-            </div>
+            {hasUploadedPhotos ? (
+              <div style={{ width: '100%', height: 'auto', minHeight: 'unset', maxHeight: 'none', background: 'transparent', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                {photoUrls.map((photoUrl, i) => (
+                  <img key={i} className="cheruto-photo-img" src={photoUrl} alt="Memory photo" style={{ width: 'auto', maxWidth: '100%', height: 'auto', maxHeight: 'none', display: 'block', margin: '0 auto', borderRadius: '16px', boxShadow: '0 4px 14px rgba(93, 64, 55, 0.08)' }} />
+                ))}
+              </div>
+) : memory.gradient ? (
+              <div style={{ width: '100%', height: '175px', borderRadius: '14px', background: memory.gradient }} />
+) : null}
               {memory.author_name && memory.memory_tag && memory.author_name.trim().toLowerCase() === memory.memory_tag.trim().toLowerCase() ? null : (
                 <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-brown)' }}>{memory.author_name || 'Friend'}</div>
               )}
