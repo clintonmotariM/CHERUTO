@@ -91,11 +91,12 @@ export default function useMemorialData() {
     }
 
     load()
-    return () => { active = false; channel?.unsubscribe() }
+    return () => { active = false; if (channel) supabase.removeChannel(channel) }
   }, [])
 
-  // Real-time subscription for new guestbook memories
-  const channel = supabase.channel('guestbook_memories')
+  // Real-time subscription for new guestbook memories (unique channel per mount to avoid StrictMode double-mount collision)
+  const channelName = `guestbook_memories_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`
+  const channel = supabase.channel(channelName)
   channel
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'guestbook_memories' }, (payload) => {
       const newMemory = payload.new
