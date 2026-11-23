@@ -134,7 +134,7 @@ export default function StoryPage() {
         transition={{ duration: 0.32, ease: 'easeOut' }}
         style={{ width: '100%', overflow: 'hidden', background: 'var(--white)', borderRadius: '18px', padding: '12px', boxShadow: '0 10px 28px rgba(93, 64, 55, 0.12)', position: 'relative' }}
       >
-        <div style={{ width: '100%', height: '285px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: photo.fallbackGradient }}>
+        <div className="cheruto-photo-frame">
           <AnimatePresence mode="wait">
             <motion.div
               key={`${item.id}-${photoIndex}`}
@@ -144,7 +144,7 @@ export default function StoryPage() {
               transition={{ duration: 0.75, ease: 'easeInOut' }}
               style={{ width: '100%', height: '100%', background: photo.fallbackGradient }}
             >
-              {photo.src && <img src={photo.src} alt={item.title || item.name || 'Cheruto memory'} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />}
+              {photo.src && <img className="cheruto-photo-img" src={photo.src} alt={item.title || item.name || 'Cheruto memory'} />}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -175,7 +175,7 @@ export default function StoryPage() {
           variant="card"
           collapsed={
             <div className="ch-fade-in" style={{ display: 'grid', gridTemplateColumns: polaroidLeft ? '66px 1fr' : '1fr 66px', alignItems: 'center', gap: '8px', textAlign: polaroidLeft ? 'left' : 'right', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
-              {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{(chapter.image_url || chapter.photos[0].src) ? <img src={chapter.image_url || chapter.photos[0].src} alt={chapter.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}</PolaroidFrame>}
+              {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{(chapter.image_url || chapter.photos[0].src) ? <img className="cheruto-photo-img" src={chapter.image_url || chapter.photos[0].src} alt={chapter.title} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}</PolaroidFrame>}
               <div>
                 {collapsedInlineHeader(chapter, chapter.era, 'var(--accent-purple)', !polaroidLeft)}
                 <p style={{ fontSize: '13.5px', lineHeight: 1.38, color: 'var(--text-brown)', margin: 0 }}>{chapter.description}</p>
@@ -201,12 +201,12 @@ export default function StoryPage() {
           variant="card"
           collapsed={
             <div className="ch-fade-in" style={{ display: 'grid', gridTemplateColumns: polaroidLeft ? '66px 1fr' : '1fr 66px', alignItems: 'center', gap: '8px', textAlign: polaroidLeft ? 'left' : 'right', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
-              {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{relationship.photos[0].src ? <img src={relationship.photos[0].src} alt={relationship.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}</PolaroidFrame>}
+              {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{relationship.photos[0].src ? <img className="cheruto-photo-img" src={relationship.photos[0].src} alt={relationship.title} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}</PolaroidFrame>}
               <div>
                 {collapsedInlineHeader(relationship, relationship.badge, badgeColor, !polaroidLeft)}
                 <p style={{ fontSize: '13.5px', lineHeight: 1.38, color: 'var(--text-brown)', margin: 0 }}>{relationship.relationship_type}</p>
               </div>
-              {!polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(2deg)' }}>{relationship.photos[0].src ? <img src={relationship.photos[0].src} alt={relationship.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}</PolaroidFrame>}
+              {!polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(2deg)' }}>{relationship.photos[0].src ? <img className="cheruto-photo-img" src={relationship.photos[0].src} alt={relationship.title} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}</PolaroidFrame>}
             </div>
           }
           expanded={expandedCard(relationship)}
@@ -234,7 +234,7 @@ export default function StoryPage() {
 
       {relationshipSections.map((section, sectionIndex) => (
         <div key={section.name} style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-          <div className="sticky-header-band"><h3 className="sticky-header-band-title">{section.name}</h3></div>
+          <div className="sticky-header-band sticky-subheader-band"><h3 className="sticky-header-band-title">{section.name}</h3></div>
           {section.cards.map((relationship, cardIndex) => renderRelationshipCard(relationship, sectionIndex, cardIndex))}
         </div>
       ))}

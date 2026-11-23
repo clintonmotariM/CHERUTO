@@ -387,7 +387,7 @@ export default function GatheringPage() {
         }
         expanded={
           <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', onClick: () => setExpandedEventId(null) }}>
-            <div style={{ width: '100%', height: '240px', borderRadius: '14px', overflow: 'hidden', position: 'relative', background: slide.gradient }}>
+            <div className="cheruto-photo-frame">
               <>
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -399,7 +399,7 @@ export default function GatheringPage() {
                     style={{ width: '100%', height: '100%', position: 'relative' }}
                   >
                     {slide.image ? (
-                      <img src={slide.image} alt={slide.caption} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      <img className="cheruto-photo-img" src={slide.image} alt={slide.caption} />
                     ) : (
                       <div style={{ width: '100%', height: '100%', background: slide.gradient }} />
                     )}
@@ -589,7 +589,7 @@ export default function GatheringPage() {
       <div style={{ width: '100%', maxWidth: '430px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
         <div className="sticky-header-band"><span className="sticky-header-band-title">Saint John's</span></div>
 
-        <div style={{ width: '100%', height: '68vh', minHeight: '380px', maxHeight: '620px', borderRadius: '20px', overflow: 'hidden', position: 'relative', boxShadow: '0 12px 32px rgba(157, 78, 221, 0.12)', background: saintJohnsSlides[photoIndex].gradient }}>
+        <div className="cheruto-photo-frame" style={{ width: '100%', height: '68vh', minHeight: '380px', maxHeight: '620px', borderRadius: '20px', boxShadow: '0 12px 32px rgba(157, 78, 221, 0.12)', background: saintJohnsSlides[photoIndex].gradient }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={photoIndex}
@@ -600,11 +600,7 @@ export default function GatheringPage() {
               style={{ width: '100%', height: '100%', position: 'relative' }}
             >
               {saintJohnsSlides[photoIndex].image ? (
-                <img
-                  src={saintJohnsSlides[photoIndex].image}
-                  alt={saintJohnsSlides[photoIndex].caption}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                />
+                <img className="cheruto-photo-img" src={saintJohnsSlides[photoIndex].image} alt={saintJohnsSlides[photoIndex].caption} />
               ) : (
                 <div style={{ width: '100%', height: '100%', background: saintJohnsSlides[photoIndex].gradient }} />
               )}
@@ -642,7 +638,7 @@ export default function GatheringPage() {
 
       {/* Section 2: Schedule Cards */}
       <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-        <div className="sticky-header-band"><span className="sticky-header-band-title">Farewell Schedule</span></div>
+        <div className="sticky-header-band sticky-subheader-band"><span className="sticky-header-band-title">Farewell Schedule</span></div>
         {allEvents.map((item, index) => renderScheduleCard(item, index))}
       </div>
 

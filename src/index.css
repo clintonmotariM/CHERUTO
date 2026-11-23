@@ -154,6 +154,13 @@ textarea {
   text-align: center;
 }
 
+.sticky-header-band.sticky-subheader-band {
+  padding-top: calc(env(safe-area-inset-top, 0px) + 6px);
+  padding-bottom: 6px;
+  margin-top: 6px;
+  margin-bottom: 4px;
+}
+
 .sticky-header-band-title,
 .sticky-header-title {
   font-family: var(--font-header, 'Cormorant Garamond', Georgia, serif);
@@ -179,4 +186,27 @@ body::before {
   background-color: var(--bg-cream, #FFFBF5);
   z-index: 40;
   pointer-events: none;
+}
+
+/* --- Adaptive full-photo framing (no cropping) --- */
+.cheruto-photo-frame {
+  width: 100%;
+  max-height: 460px;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(157, 78, 221, 0.06), rgba(255, 77, 133, 0.06));
+  padding: 2px 0;
+}
+
+.cheruto-photo-img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 460px;
+  display: block;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(93, 64, 55, 0.08);
 }
