@@ -154,6 +154,7 @@ textarea {
   text-align: center;
 }
 
+.sticky-header-band-title,
 .sticky-header-title {
   font-family: var(--font-header, 'Cormorant Garamond', Georgia, serif);
   font-style: italic;

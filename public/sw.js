@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cheruto-memorial-v2'
+const CACHE_NAME = 'cheruto-memorial-v3'
 const APP_SHELL = [
   '/',
   '/manifest.json',

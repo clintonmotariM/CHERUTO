@@ -25,7 +25,7 @@ export function HomePageSkeleton() {
 
 export function StoryPageSkeleton() {
   return (
-    <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', paddingTop: 'max(14px, calc(var(--safe-top) + 10px))' }}>
+    <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', paddingTop: 0 }}>
       <pill width="140px" height="36px" />
       {[1, 2, 3, 4, 5].map((i) => (
         <row key={i} height="68px" width="460px" />
@@ -36,7 +36,7 @@ export function StoryPageSkeleton() {
 
 export function TimelinePageSkeleton() {
   return (
-    <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', paddingTop: 'max(14px, calc(var(--safe-top) + 10px))' }}>
+    <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', paddingTop: 0 }}>
       <pill width="150px" height="36px" />
       <div style={{ width: '100%', borderRadius: '20px', className: 'cheruto-skeleton', height: '200px' }} />
       {[1, 2, 3].map((i) => (
@@ -51,7 +51,7 @@ export function TimelinePageSkeleton() {
 
 export function GatheringPageSkeleton() {
   return (
-    <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', paddingTop: 'max(18px, calc(var(--safe-top) + 12px))' }}>
+    <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', paddingTop: 0 }}>
       <pill width="130px" height="32px" />
       <div style={{ width: '100%', height: '48vh', minHeight: '380px', maxHeight: '620px', borderRadius: '20px', className: 'cheruto-skeleton' }} />
       <div style={{ width: '100%', maxWidth: '490px', borderRadius: '18px', className: 'cheruto-skeleton', height: '120px' }} />
@@ -64,7 +64,7 @@ export function GatheringPageSkeleton() {
 
 export function HerHomePageSkeleton() {
   return (
-    <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', paddingTop: 'max(18px, calc(var(--safe-top) + 12px))' }}>
+    <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', paddingTop: 0 }}>
       <pill width="140px" height="36px" />
       <div style={{ width: '100%', maxWidth: '440px', borderRadius: '18px', className: 'cheruto-skeleton', height: '80px' }} />
       <div style={{ width: '100%', borderRadius: '20px', className: 'cheruto-skeleton', height: '60px' }} />
