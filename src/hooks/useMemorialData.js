@@ -91,8 +91,21 @@ export default function useMemorialData() {
     }
 
     load()
-    return () => { active = false }
+    return () => { active = false; channel?.unsubscribe() }
   }, [])
+
+  // Real-time subscription for new guestbook memories
+  const channel = supabase.channel('guestbook_memories')
+  channel
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'guestbook_memories' }, (payload) => {
+      const newMemory = payload.new
+      if (!newMemory || !newMemory.is_approved) return
+      setData((current) => ({
+        ...current,
+        memories: [newMemory, ...current.memories],
+      }))
+    })
+    .subscribe()
 
   return { ...data, loading, error, isConfigured: Boolean(supabase) }
 }
