@@ -2,13 +2,13 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Images } from 'lucide-react'
 import useMemorialData from '../hooks/useMemorialData'
-import { CHERUTO_PHOTOS } from '../data/photos'
+import { HOME_ARCH_MEMORIES } from '../data/fallbackData'
 
-const curatedPhotos = CHERUTO_PHOTOS.map((photo) => ({
+const curatedPhotos = HOME_ARCH_MEMORIES.map((photo) => ({
   id: photo.id,
-  photo_url: photo.src,
+  photo_url: photo.image,
   caption: photo.caption,
-  alt: photo.title,
+  alt: photo.badge,
   fallbackGradient: 'linear-gradient(145deg, #9D4EDD 0%, #FF4D85 100%)',
 }))
 
@@ -148,26 +148,12 @@ export default function HomePage() {
           </motion.div>
         </AnimatePresence>
       )}
-
       {!isMemorySlide && (
-        <AnimatePresence mode="wait">
-          <motion.p
-            key={slide.id}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.35 }}
-            style={{
-              maxWidth: '340px',
-              margin: 0,
-              color: 'var(--text-brown)',
-              fontSize: '16px',
-              lineHeight: 1.55,
-            }}
-          >
-            {slide.caption || 'A life remembered with love, laughter, and the many moments that made her unforgettable.'}
-          </motion.p>
-        </AnimatePresence>
+        <div style={{ maxWidth: '340px', margin: 0, color: 'var(--text-brown)', textAlign: 'center', padding: '0 12px', marginBottom: '12px' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '22px', padding: '3px 10px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', border: '1px solid rgba(157, 78, 221, 0.22)', color: 'var(--accent-purple)', fontSize: '11px', fontWeight: 700, marginBottom: '6px', display: 'block' }}>{slide.badge || 'Cherished Moment'}</span>
+          <p style={{ margin: 0, fontSize: '16px', lineHeight: 1.55, color: 'var(--text-brown)' }}>{slide.caption || 'A life remembered with love, laughter, and the many moments that made her unforgettable.'}</p>
+          <p style={{ marginTop: '8px', fontSize: '12.5px', color: 'rgba(93, 64, 55, 0.7)', fontStyle: 'italic', textAlign: 'center' }}>RuthBeryl Cheruto Chepses • "Holland" • 6th March 2006</p>
+        </div>
       )}
 
       <button

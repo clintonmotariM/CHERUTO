@@ -3,88 +3,9 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import ExpandableReveal from '../components/ExpandableReveal'
 import useMemorialData from '../hooks/useMemorialData'
-import { CHERUTO_PHOTOS } from '../data/photos'
+import { TIMELINE_STAGES } from '../data/fallbackData'
 
-const stages = [
-  {
-    id: 'birth',
-    match: ['birth', 'born', 'beginning'],
-    badge: 'Beginning',
-    title: 'Born into Love',
-    preview: 'The day Cheruto arrived and brought new light into the world.',
-    year: 'Birth',
-    place: 'A new beginning',
-    biography: 'Cheruto arrived surrounded by love and possibility. From the beginning, she brought a warmth that would grow into a source of joy and comfort for everyone whose life she touched.',
-    memory: 'The first page of a life that would mean so much to so many.',
-    photoUrl: '/photos/cheruto-main.jpg',
-    gradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))',
-  },
-  {
-    id: 'preschool',
-    match: ['pre-school', 'preschool', 'nursery', 'early years'],
-    badge: 'Early Years',
-    title: 'Pre-School Days',
-    preview: 'Curiosity, bright smiles, and her earliest friendships.',
-    year: 'Early years',
-    place: 'First friendships',
-    biography: 'Cheruto met each new day with curiosity and a bright smile. Her earliest friendships and discoveries hinted at the generous, open-hearted person she would become.',
-    memory: 'Little moments of wonder became the beginning of a beautiful story.',
-    photoUrl: '/photos/cheruto-01.jpg',
-    gradient: 'linear-gradient(145deg, var(--btn-pink), #F5B7A7)',
-  },
-  {
-    id: 'primary',
-    match: ['primary', 'childhood', 'elementary'],
-    badge: 'Childhood',
-    title: 'Primary School',
-    preview: 'Learning, laughter, and discovering her voice and kindness.',
-    year: 'School years',
-    place: 'Learning and growing',
-    biography: 'In her primary years, Cheruto learned with enthusiasm and shared laughter freely. Kindness came naturally, and she began discovering the voice and confidence that made her uniquely Cheru.',
-    memory: 'She made room for learning, laughter, and everyone around her.',
-    photoUrl: '/photos/cheruto-02.jpg',
-    gradient: 'linear-gradient(145deg, var(--accent-green), var(--accent-purple))',
-  },
-  {
-    id: 'high-school',
-    match: ['high school', 'secondary', 'youth'],
-    badge: 'Youth',
-    title: 'High School Years',
-    preview: 'Growing into confidence, lifelong friendships, and bold dreams.',
-    year: 'Youth',
-    place: 'New horizons',
-    biography: 'Cheruto grew into her confidence, built friendships that would last, and began imagining bold possibilities for her future. Her spirit brought energy and encouragement to the people sharing those years with her.',
-    memory: 'Her dreams grew, and so did the circle of people who believed in her.',
-    photoUrl: '/photos/cheruto-03.jpg',
-    gradient: 'linear-gradient(145deg, #F5B7A7, var(--accent-purple))',
-  },
-  {
-    id: 'campus',
-    match: ['campus', 'college', 'university'],
-    badge: 'Chapter',
-    title: 'Campus Life',
-    preview: 'Stepping into independence, passion, and unforgettable memories.',
-    year: 'A new chapter',
-    place: 'Campus years',
-    biography: 'Campus life opened a chapter of independence, discovery, and new possibilities. Cheruto followed her interests, formed meaningful connections, and gathered memories that her loved ones continue to treasure.',
-    memory: 'A season of growing into herself and making every day count.',
-    photoUrl: '/photos/cheruto-04.jpg',
-    gradient: 'linear-gradient(145deg, var(--accent-purple), var(--accent-green))',
-  },
-  {
-    id: 'final-place',
-    match: ['final known place', 'last alive', 'final chapter'],
-    badge: 'Final Chapter',
-    title: 'Where She Was Last Alive',
-    preview: 'The final place Cheruto walked, remembered with tenderness and peace.',
-    year: 'Held in memory',
-    place: 'A place remembered',
-    biography: 'This place is remembered with tenderness and peace. It marks the final chapter of Cheruto’s physical journey, while the love she gave and the memories she made continue to live among us.',
-    memory: 'May this place be held gently, with love for the life that came before it.',
-    photoUrl: '/photos/cheruto-memorial-2.jpg',
-    gradient: 'linear-gradient(145deg, #5C343D, var(--accent-purple))',
-  },
-]
+const stages = TIMELINE_STAGES
 
 const stageDateRanges = {
   0: { from: 'Date of Birth', to: 'Early Infancy' },

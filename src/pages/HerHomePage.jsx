@@ -5,6 +5,7 @@ import useMemorialData from '../hooks/useMemorialData'
 import { supabase } from '../lib/supabaseClient'
 import InputField from '../components/ui/InputField'
 import ExpandableReveal from '../components/ExpandableReveal'
+import { STORY_FAMILY, STORY_FRIENDS, STORY_COMMUNITY } from '../data/fallbackData'
 
 const memoryTags = [
   'Family',
@@ -44,7 +45,20 @@ export default function HerHomePage({ onNavigateHome }) {
   const [form, setForm] = useState({ name: '', memoryTag: '', selectedPhotos: [], memory: '' })
   const [localMemories, setLocalMemories] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('cheruto-memories') || '[]')
+      const stored = JSON.parse(localStorage.getItem('cheruto-memories') || '[]')
+      if (stored.length > 0) return stored
+      // Seed official tributes if no local memories exist yet
+      const seeded = [...STORY_FAMILY, ...STORY_FRIENDS, ...STORY_COMMUNITY].map((t, idx) => ({
+        id: `official-${idx}`,
+        author_name: t.author_name || t.name,
+        memory_tag: t.memory_tag || t.badge || 'Cherished Moment',
+        memory: t.memory || t.relationship_type || t.description,
+        photo_url: null,
+        photo_urls: null,
+        is_approved: true,
+      }))
+      localStorage.setItem('cheruto-memories', JSON.stringify(seeded))
+      return seeded
     } catch {
       return []
     }

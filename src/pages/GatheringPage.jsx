@@ -5,6 +5,7 @@ import useMemorialData from '../hooks/useMemorialData'
 import { supabase } from '../lib/supabaseClient'
 import InputField from '../components/ui/InputField'
 import ExpandableReveal from '../components/ExpandableReveal'
+import { GATHERING_SCHEDULE, FUNERAL_HYMNS, CLOSING_APPRECIATION } from '../data/fallbackData'
 
 const saintJohnsSlides = [
   { caption: 'Humanitarian Service & Outreach', image: '/photos/cheruto-memorial-1.jpg', gradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' },
@@ -12,59 +13,19 @@ const saintJohnsSlides = [
   { caption: "Saint John's Red Cross Service", image: '/photos/cheruto-memorial-2.jpg', gradient: 'linear-gradient(145deg, #F5B7A7, var(--accent-purple))' },
 ]
 
-const scheduleEvents = [
-  {
-    id: 'vigil',
-    icon: <Flame size={18} style={{ color: 'var(--accent-purple)', flexShrink: 0 }} aria-hidden="true" />,
-    iconColor: 'var(--accent-purple)',
-    title: 'MKU Candle Lighting Vigil',
-    timeBadge: '7:00 – 9:00 PM',
-    day: 'Monday Night',
-    location: 'MKU Campus',
-    dayTime: 'MONDAY NIGHT • 7:00 – 9:00 PM',
-    description: 'Join us in light and remembrance as we gather around the flame to honor Cheruto’s life.',
-    expandedDescription: 'The MKU Candle Lighting Vigil brings family, friends, and classmates together on Monday night to share stories, light candles, and carry Cheruto’s light forward. A quiet, sacred moment of remembrance on campus grounds.',
-    locationSlides: [
-      { caption: 'Mount Kenya University Campus Grounds', image: '/photos/cheruto-02.jpg', gradient: 'linear-gradient(145deg, var(--accent-purple), #5C343D)' },
-      { caption: 'Evening Vigil Square', image: '/photos/cheruto-memorial-1.jpg', gradient: 'linear-gradient(145deg, #5C343D, var(--btn-pink))' },
-      { caption: 'Candlelight Gathering Spot', image: '/photos/cheruto-01.jpg', gradient: 'linear-gradient(145deg, var(--btn-pink), var(--accent-purple))' },
-    ],
-  },
-  {
-    id: 'departure',
-    icon: <Bus size={18} style={{ color: 'var(--btn-pink)', flexShrink: 0 }} aria-hidden="true" />,
-    iconColor: 'var(--btn-pink)',
-    title: 'Eldoret School Transport',
-    timeBadge: 'Same-Day Return',
-    day: 'Wednesday',
-    location: 'MKU Main Gate → Eldoret',
-    dayTime: 'WEDNESDAY • SAME-DAY RETURN',
-    description: 'Complimentary MKU student bus to Eldoret returning the same day on the same bus.',
-    expandedDescription: 'A school-sponsored coach departs MKU Main Gate on Wednesday, carrying students to Eldoret for the burial service and returning the same day on the same bus. Reserved seats for students.',
-    locationSlides: [
-      { caption: 'MKU Main Gate Departure Point', image: '/photos/cheruto-04.jpg', gradient: 'linear-gradient(145deg, var(--btn-pink), #5C343D)' },
-      { caption: 'Rift Valley Highway Journey to Eldoret', image: '/photos/cheruto-03.jpg', gradient: 'linear-gradient(145deg, #5C343D, var(--accent-purple))' },
-      { caption: 'Student Coach Assembly', image: '/photos/cheruto-02.jpg', gradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' },
-    ],
-  },
-  {
-    id: 'burial',
-    icon: <HeartHandshake size={18} style={{ color: '#5C343D', flexShrink: 0 }} aria-hidden="true" />,
-    iconColor: '#5C343D',
-    title: 'Burial Service at Home',
-    timeBadge: 'Home Service',
-    day: 'Thursday',
-    location: 'Eldoret — Her Family Home',
-    dayTime: 'THURSDAY • HOME SERVICE',
-    description: 'Final farewell surrounded by family and friends at her home place.',
-    expandedDescription: 'The burial service takes place at Cheruto’s family home in Eldoret on Thursday, surrounded by loved ones. A solemn farewell in the place she called home.',
-    locationSlides: [
-      { caption: "Cheruto's Family Home in Eldoret", image: '/photos/cheruto-main.jpg', gradient: 'linear-gradient(145deg, #5C343D, var(--accent-purple))' },
-      { caption: 'Homestead Compound & Grounds', image: '/photos/cheruto-memorial-2.jpg', gradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' },
-      { caption: 'Final Resting Place', image: '/photos/cheruto-03.jpg', gradient: 'linear-gradient(145deg, var(--btn-pink), #5C343D)' },
-    ],
-  },
-]
+const scheduleEvents = GATHERING_SCHEDULE.map((item) => ({
+  id: item.id,
+  icon: item.id === 'vigil' ? <Flame size={18} style={{ color: 'var(--accent-purple)', flexShrink: 0 }} aria-hidden="true" /> : item.id === 'departure' ? <Bus size={18} style={{ color: 'var(--btn-pink)', flexShrink: 0 }} aria-hidden="true" /> : <HeartHandshake size={18} style={{ color: '#5C343D', flexShrink: 0 }} aria-hidden="true" />,
+  iconColor: item.iconColor,
+  title: item.title,
+  timeBadge: item.timeBadge,
+  day: item.day,
+  location: item.location,
+  dayTime: item.dayTime,
+  description: item.description,
+  expandedDescription: item.expandedDescription,
+  locationSlides: item.locationSlides,
+}))
 
 const getFieldSurfaceStyle = (isFilled) => ({
   backgroundColor: isFilled ? 'rgba(157, 78, 221, 0.10)' : 'rgba(255, 255, 255, 0.92)',
@@ -232,9 +193,9 @@ export default function GatheringPage() {
   }
 
   const handleInvite = () => {
-    const text = `You're invited to celebrate Cheruto's life.\n\n🕯️ MKU Candle Lighting Vigil\nMonday Night • 7:00 – 9:00 PM\nMount Kenya University (MKU) Campus\n\n🚌 Eldoret School Transport\nWednesday • Same-Day Return\nMKU Main Gate → Eldoret\n\n⚰️ Burial Service at Home\nThursday • Home Service\nEldoret — Her Family Home\n\nWalk with us.`
+    const text = `You're invited to celebrate RuthBeryl Cheruto Chepses ("Holland").\n\n🕯️ MKU Candle Lighting Vigil\nMonday Night • 7:00 – 9:00 PM\nMount Kenya University (MKU) Campus\n\n🚌 Eldoret School Transport\nWednesday • Same-Day Return\nMKU Main Gate → Eldoret\n\n⚰️ Burial Service at Home\nThursday • Home Service\nEldoret — Her Family Home\n\nWalk with us.`
     if (navigator.share) {
-      navigator.share({ title: 'Celebrate Cheruto’s Life', text })
+      navigator.share({ title: 'Celebrate RuthBeryl Cheruto Chepses ("Holland")', text })
         .then(() => setStatus({ type: 'success', message: 'Invitation shared' }))
         .catch(() => {})
     } else {
@@ -361,73 +322,73 @@ export default function GatheringPage() {
     return (
       <div key={item.id || index} style={{ width: '100%' }}>
         <div style={{ margin: '0 auto 7px auto', display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '6px' }}>
-        <span style={{ padding: '4px 13px', borderRadius: '999px', fontSize: '11.5px', fontWeight: 700, color: 'var(--white)', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.10)', backgroundColor: item.iconColor || 'var(--accent-purple)' }}>{item.day}</span>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '4px 12px', borderRadius: '999px', backgroundColor: 'var(--white)', border: '1px solid rgba(157, 78, 221, 0.24)', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.06)', fontSize: '11.5px', fontWeight: 700, color: 'var(--text-brown)' }}>
-          <MapPin size={11} style={{ color: item.iconColor || 'var(--accent-purple)', flexShrink: 0 }} aria-hidden="true" />
-          <span>{item.location}</span>
-        </span>
-      </div>
-      <ExpandableReveal
-        isOpen={isExpanded}
-        variant="card"
-        collapsed={
-          <div className="ch-fade-in" onClick={() => setExpandedEventId(item.id)} style={{ width: '100%', backgroundColor: 'var(--white)', borderRadius: '18px', padding: '12px 14px', border: '1px solid rgba(93, 64, 55, 0.08)', boxShadow: '0 6px 18px rgba(93, 64, 55, 0.06)', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-            <div style={{ width: '54px', height: '54px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, background: slide.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {Icon}
-            </div>
-            <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', flexWrap: 'wrap', marginBottom: '3px' }}>
-                <h3 style={{ margin: 0, fontWeight: 700, fontSize: '15px', color: 'var(--text-brown)' }}>{item.title}</h3>
-                <span style={{ fontSize: '11px', fontWeight: 700, color: item.iconColor || 'var(--accent-purple)' }}>{item.timeBadge}</span>
+          <span style={{ padding: '4px 13px', borderRadius: '999px', fontSize: '11.5px', fontWeight: 700, color: 'var(--white)', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.10)', backgroundColor: item.iconColor || 'var(--accent-purple)' }}>{item.day}</span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '4px 12px', borderRadius: '999px', backgroundColor: 'var(--white)', border: '1px solid rgba(157, 78, 221, 0.24)', boxShadow: '0 4px 12px rgba(93, 64, 55, 0.06)', fontSize: '11.5px', fontWeight: 700, color: 'var(--text-brown)' }}>
+            <MapPin size={11} style={{ color: item.iconColor || 'var(--accent-purple)', flexShrink: 0 }} aria-hidden="true" />
+            <span>{item.location}</span>
+          </span>
+        </div>
+        <ExpandableReveal
+          isOpen={isExpanded}
+          variant="card"
+          collapsed={
+            <div className="ch-fade-in" onClick={() => setExpandedEventId(item.id)} style={{ width: '100%', backgroundColor: 'var(--white)', borderRadius: '18px', padding: '12px 14px', border: '1px solid rgba(93, 64, 55, 0.08)', boxShadow: '0 6px 18px rgba(93, 64, 55, 0.06)', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+              <div style={{ width: '54px', height: '54px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, background: slide.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {Icon}
               </div>
-              <p style={{ margin: 0, fontSize: '12.5px', lineHeight: 1.38, color: 'rgba(93, 64, 55, 0.80)' }}>{item.description}</p>
+              <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '7px', flexWrap: 'wrap', marginBottom: '3px' }}>
+                  <h3 style={{ margin: 0, fontWeight: 700, fontSize: '15px', color: 'var(--text-brown)' }}>{item.title}</h3>
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: item.iconColor || 'var(--accent-purple)' }}>{item.timeBadge}</span>
+                </div>
+                <p style={{ margin: 0, fontSize: '12.5px', lineHeight: 1.38, color: 'rgba(93, 64, 55, 0.80)' }}>{item.description}</p>
+              </div>
+              <ChevronDown size={15} style={{ alignSelf: 'flex-start', marginTop: '4px', color: 'rgba(93, 64, 55, 0.55)', flexShrink: 0 }} onClick={(e) => { e.stopPropagation(); setExpandedEventId(item.id); }} />
             </div>
-            <ChevronDown size={15} style={{ alignSelf: 'flex-start', marginTop: '4px', color: 'rgba(93, 64, 55, 0.55)', flexShrink: 0 }} onClick={(e) => { e.stopPropagation(); setExpandedEventId(item.id); }} />
-          </div>
-        }
-        expanded={
-          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', onClick: () => setExpandedEventId(null) }}>
-            <div className="cheruto-photo-frame">
-              <>
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={`${item.id}-${slideIndex}`}
-                    initial={{ opacity: 0, scale: 1.04 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 1.15, ease: 'easeInOut' }}
-                    style={{ width: '100%', height: '100%', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', background: slide.image ? 'transparent' : slide.gradient }}
-                  >
-                    {slide.image ? (
-                      <>
-                        <img className="cheruto-photo-img" src={slide.image} alt={slide.caption} />
-                        <div style={{ marginTop: '10px', textAlign: 'center', fontSize: '13.5px', fontWeight: 700, color: 'var(--text-brown)' }}>
-                          {slide.caption}
-                        </div>
-                      </>
-                    ) : (
-                      <div style={{ width: '100%', height: '100%', background: slide.gradient }} />
-                    )}
-                  </motion.div>
-                </AnimatePresence>
-                <div style={{ position: 'absolute', top: '10px', left: '10px', fontSize: '11px', fontWeight: 700, color: 'var(--white)', backgroundColor: 'rgba(0,0,0,0.45)', padding: '4px 10px', borderRadius: '999px', backdropFilter: 'blur(4px)' }}>{item.day}</div>
-              </>
+          }
+          expanded={
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', onClick: () => setExpandedEventId(null) }}>
+              <div className="cheruto-photo-frame">
+                <>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={`${item.id}-${slideIndex}`}
+                      initial={{ opacity: 0, scale: 1.04 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 1.15, ease: 'easeInOut' }}
+                      style={{ width: '100%', height: '100%', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', background: slide.image ? 'transparent' : slide.gradient }}
+                    >
+                      {slide.image ? (
+                        <>
+                          <img className="cheruto-photo-img" src={slide.image} alt={slide.caption} />
+                          <div style={{ marginTop: '10px', textAlign: 'center', fontSize: '13.5px', fontWeight: 700, color: 'var(--text-brown)' }}>
+                            {slide.caption}
+                          </div>
+                        </>
+                      ) : (
+                        <div style={{ width: '100%', height: '100%', background: slide.gradient }} />
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
+                  <div style={{ position: 'absolute', top: '10px', left: '10px', fontSize: '11px', fontWeight: 700, color: 'var(--white)', backgroundColor: 'rgba(0,0,0,0.45)', padding: '4px 10px', borderRadius: '999px', backdropFilter: 'blur(4px)' }}>{item.day}</div>
+                </>
+              </div>
+              <span style={{ alignSelf: 'flex-start', marginTop: '10px', display: 'inline-flex', alignItems: 'center', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', color: 'var(--accent-purple)', fontSize: '12px', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{item.dayTime}</span>
+              <div style={{ margin: '10px 4px 0', fontSize: '14.5px', lineHeight: 1.6, color: 'var(--text-brown)', textAlign: 'left', fontWeight: 600 }}>{item.expandedDescription}</div>
+              <div style={{ alignSelf: 'center', margin: '4px auto 0 auto', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', borderRadius: '999px', backgroundColor: 'rgba(92, 52, 61, 0.08)', border: '1px solid rgba(92, 52, 61, 0.20)' }}>
+                <MapPin size={13} style={{ color: '#5C343D', flexShrink: 0 }} aria-hidden="true" />
+                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-brown)' }}>{item.location}</span>
+              </div>
             </div>
-            <span style={{ alignSelf: 'flex-start', marginTop: '10px', display: 'inline-flex', alignItems: 'center', padding: '6px 14px', borderRadius: '999px', backgroundColor: 'rgba(157, 78, 221, 0.10)', color: 'var(--accent-purple)', fontSize: '12px', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{item.dayTime}</span>
-            <div style={{ margin: '10px 4px 0', fontSize: '14.5px', lineHeight: 1.6, color: 'var(--text-brown)', textAlign: 'left', fontWeight: 600 }}>{item.expandedDescription}</div>
-            <div style={{ alignSelf: 'center', margin: '4px auto 0 auto', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', borderRadius: '999px', backgroundColor: 'rgba(92, 52, 61, 0.08)', border: '1px solid rgba(92, 52, 61, 0.20)' }}>
-              <MapPin size={13} style={{ color: '#5C343D', flexShrink: 0 }} aria-hidden="true" />
-              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-brown)' }}>{item.location}</span>
-            </div>
-          </div>
-        }
-      />
-      {index < allEvents.length - 1 && (
-        <div style={{ width: '2px', height: '20px', backgroundColor: 'rgba(157, 78, 221, 0.22)', marginLeft: '23px', alignSelf: 'flex-start' }} />
-      )}
-    </div>
-    )
-  }
+          }
+        />
+        {index < allEvents.length - 1 && (
+          <div style={{ width: '2px', height: '20px', backgroundColor: 'rgba(157, 78, 221, 0.22)', marginLeft: '23px', alignSelf: 'flex-start' }} />
+        )}
+      </div>
+      )
+    }
 
   const renderWalkWithUsButton = () => {
     const isExpanded = isFormOpen
@@ -606,7 +567,7 @@ export default function GatheringPage() {
 
         <div style={{ width: '100%', maxWidth: '490px', backgroundColor: 'var(--white)', borderRadius: '18px', padding: '16px 20px', boxShadow: '0 8px 24px rgba(157, 78, 221, 0.12)', textAlign: 'left' }}>
           <p style={{ margin: '0 0 14px 0', fontSize: '14.5px', lineHeight: 1.6, color: 'var(--text-brown)' }}>
-            Cheruto gave herself wholeheartedly to the Saint John's Red Cross Community. She showed up for campus first-aid drives, community outreach missions, and peer care with quiet courage and steady hands—always among the first to respond and the last to leave. Her selfless service and unwavering dedication earned her recognition as a Community Service Award Recipient, a reflection of the compassion she carried in everything she did.
+            RuthBeryl gave herself wholeheartedly to the Saint John's Red Cross Community. She showed up for campus first-aid drives, community outreach missions, and peer care with quiet courage and steady hands—always among the first to respond and the last to leave. Her selfless service and unwavering dedication earned her recognition as a Community Service Award Recipient, a reflection of the compassion she carried in everything she did.
           </p>
           <div style={{ backgroundColor: 'rgba(255, 249, 242, 0.95)', border: '1px solid rgba(212, 163, 67, 0.35)', borderRadius: '14px', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: '10px' }}>
             <Award size={20} style={{ color: '#C58B2A', flexShrink: 0 }} aria-hidden="true" />
@@ -624,8 +585,40 @@ export default function GatheringPage() {
         {allEvents.map((item, index) => renderScheduleCard(item, index))}
       </div>
 
+      {/* Section 3: Service & Humanitarian Legacy */}
+      <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+        <div className="sticky-header-band sticky-subheader-band"><span className="sticky-header-band-title">Service & Humanitarian Legacy</span></div>
+        <div style={{ width: '100%', padding: '12px 14px', borderRadius: '18px', backgroundColor: 'var(--white)', border: '1px solid rgba(93, 64, 55, 0.08)', boxShadow: '0 6px 18px rgba(93, 64, 55, 0.07)', textAlign: 'left' }}>
+          <p style={{ margin: '0 0 12px 0', fontSize: '14px', lineHeight: 1.6, color: 'var(--text-brown)' }}>
+            RuthBeryl served as a Certified First Aid Trainer with St. John Ambulance, volunteered with the Red Cross and Scouts, and represented youth leadership at the Africa Forward Summit. Her commitment to service was love in action—always ready to help, always ready to serve.
+          </p>
+        </div>
+      </div>
+
+      {/* Section 4: Funeral Hymns */}
+      <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+        <div className="sticky-header-band sticky-subheader-band"><span className="sticky-header-band-title">Funeral Hymns</span></div>
+        {FUNERAL_HYMNS.map((hymn) => (
+          <div key={hymn.id} style={{ width: '100%', padding: '12px 14px', borderRadius: '18px', backgroundColor: 'var(--white)', border: '1px solid rgba(93, 64, 55, 0.08)', boxShadow: '0 6px 18px rgba(93, 64, 55, 0.07)', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '22px', padding: '3px 8px', borderRadius: '999px', background: 'var(--accent-purple)', color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>{hymn.title}</span>
+              <span style={{ fontSize: '11px', color: 'rgba(93, 64, 55, 0.7)', fontStyle: 'italic' }}>{hymn.language} • {hymn.stanzas} stanzas</span>
+            </div>
+            <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.6, color: 'var(--text-brown)', whiteSpace: 'pre-line', fontFamily: "'Courier New', monospace" }}>{hymn.lyrics}</p>
+          </div>
+        ))}
+      </div>
+
       {/* Section 3: Walk With Us — Attendance & Transport */}
       {renderWalkWithUsButton()}
+
+      {/* Section 5: Closing Appreciation */}
+      <div style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+        <div className="sticky-header-band sticky-subheader-band"><span className="sticky-header-band-title">Forever, Holland</span></div>
+        <div style={{ width: '100%', padding: '12px 14px', borderRadius: '18px', backgroundColor: 'var(--white)', border: '1px solid rgba(93, 64, 55, 0.08)', boxShadow: '0 6px 18px rgba(93, 64, 55, 0.07)', textAlign: 'center' }}>
+          <p style={{ margin: '0', fontSize: '14px', lineHeight: 1.7, color: 'var(--text-brown)' }}>{CLOSING_APPRECIATION}</p>
+        </div>
+      </div>
     </motion.section>
   )
 }

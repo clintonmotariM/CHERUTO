@@ -4,59 +4,7 @@ import { ChevronDown } from 'lucide-react'
 import useMemorialData from '../hooks/useMemorialData'
 import PolaroidFrame from '../components/ui/PolaroidFrame'
 import ExpandableReveal from '../components/ExpandableReveal'
-import { CHERUTO_PHOTOS } from '../data/photos'
-
-const chapterDefaults = [
-  { id: 'chapter-beginning', title: 'Her Beginning', era: 'Roots', description: 'A bright spirit from the very start.', fullStory: 'Cheruto began a life marked by warmth, curiosity, and an open heart. Her beginning was shaped by the people and places that taught her to notice beauty, care deeply, and make others feel at home.', photos: [
-    { src: '/photos/cheruto-main.jpg', caption: 'Her Beginning', fallbackGradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' },
-    { src: '/photos/cheruto-memorial-1.jpg', caption: 'Roots', fallbackGradient: 'linear-gradient(145deg, var(--btn-pink), #F5B7A7)' },
-  ] },
-  { id: 'chapter-passions', title: 'Her Passions', era: 'Joy', description: 'The things that brought her purpose and delight.', fullStory: 'Cheruto found joy in the things that let her create, serve, laugh, and connect. Her passions were never only hobbies; they were the gifts she shared generously with the people around her.', photos: [
-    { src: '/photos/cheruto-01.jpg', caption: 'Her Passions', fallbackGradient: 'linear-gradient(145deg, var(--btn-pink), #F5B7A7)' },
-    { src: '/photos/cheruto-02.jpg', caption: 'Joy', fallbackGradient: 'linear-gradient(145deg, var(--accent-purple), var(--accent-green))' },
-  ] },
-  { id: 'chapter-people', title: 'Her People', era: 'Love', description: 'A heart that gathered family and friends close.', fullStory: 'Cheruto made people feel seen. Her friendships and family relationships were built through presence, honesty, celebration, and an uncommon ability to turn ordinary moments into lasting memories.', photos: [
-    { src: '/photos/cheruto-03.jpg', caption: 'Her People', fallbackGradient: 'linear-gradient(145deg, var(--accent-purple), var(--accent-green))' },
-    { src: '/photos/cheruto-04.jpg', caption: 'Love', fallbackGradient: 'linear-gradient(145deg, var(--btn-pink), var(--accent-purple))' },
-  ] },
-  { id: 'chapter-moments', title: 'Cherished Moments', era: 'Forever', description: 'Laughter, kindness, and memories held safely in time.', fullStory: 'The moments that meant most were often the simplest: a shared meal, a quiet conversation, a celebration, or a spontaneous burst of laughter. Those memories now carry Cheruto’s presence forward.', photos: [
-    { src: '/photos/cheruto-memorial-2.jpg', caption: 'Cherished Moments', fallbackGradient: 'linear-gradient(145deg, var(--accent-green), var(--btn-pink))' },
-    { src: '/photos/cheruto-main.jpg', caption: 'Forever', fallbackGradient: 'linear-gradient(145deg, var(--accent-purple), #F5B7A7)' },
-  ] },
-]
-
-const relationshipDefaults = {
-  Family: [
-    { id: 'family-home', name: 'Family', badge: 'Roots', title: 'Home & Kin', relationship_type: 'The laughter, guidance, and unconditional love that shaped Cheruto.', fullStory: 'Home was a place of rooted love and honest belonging. Cheruto carried the laughter, guidance, traditions, and quiet strength of family with her wherever she went.', photos: [
-      { src: '/photos/cheruto-main.jpg', caption: 'Home & Kin', fallbackGradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' },
-      { src: '/photos/cheruto-memorial-1.jpg', caption: 'Roots', fallbackGradient: 'linear-gradient(145deg, var(--btn-pink), #F5B7A7)' },
-    ] },
-    { id: 'family-sunday', name: 'Family', badge: 'Tradition', title: 'Sunday Gatherings', relationship_type: 'Shared meals, stories, and quiet moments around the family table.', fullStory: 'The family table held ordinary moments that became lasting treasures: shared meals, familiar stories, gentle laughter, and the comfort of being together.', photos: [
-      { src: '/photos/cheruto-memorial-2.jpg', caption: 'Sunday Gatherings', fallbackGradient: 'linear-gradient(145deg, var(--btn-pink), var(--accent-purple))' },
-      { src: '/photos/cheruto-03.jpg', caption: 'Tradition', fallbackGradient: 'linear-gradient(145deg, var(--accent-purple), #F5B7A7)' },
-    ] },
-  ],
-  Friends: [
-    { id: 'friends-kindred', name: 'Friends', badge: 'Circle', title: 'Kindred Spirits', relationship_type: 'Late-night talks, spontaneous adventures, and steadfast loyalty.', fullStory: 'Cheru made room for kindred spirits. Their friendships were strengthened by late-night conversations, spontaneous adventures, honest support, and steadfast loyalty.', photos: [
-      { src: '/photos/cheruto-01.jpg', caption: 'Kindred Spirits', fallbackGradient: 'linear-gradient(145deg, var(--btn-pink), #F5B7A7)' },
-      { src: '/photos/cheruto-04.jpg', caption: 'Circle', fallbackGradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' },
-    ] },
-    { id: 'friends-laughter', name: 'Friends', badge: 'Laughter', title: 'Unforgettable Days', relationship_type: 'The inside jokes and celebrations that lit up every room Cheru entered.', fullStory: 'The days with Cheru seemed brighter because of her humor and joy. Inside jokes, celebrations, and spontaneous laughter became memories her friends will always carry.', photos: [
-      { src: '/photos/cheruto-02.jpg', caption: 'Unforgettable Days', fallbackGradient: 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))' },
-      { src: '/photos/cheruto-01.jpg', caption: 'Laughter', fallbackGradient: 'linear-gradient(145deg, #F5B7A7, var(--accent-purple))' },
-    ] },
-  ],
-  Community: [
-    { id: 'community-heart', name: 'Community', badge: 'Grace', title: 'A Welcoming Heart', relationship_type: 'Always making space for newcomers and lifting those around her.', fullStory: 'Cheruto welcomed people with grace. She made newcomers feel seen, lifted others with encouragement, and helped community spaces feel warmer and more inclusive.', photos: [
-      { src: '/photos/cheruto-02.jpg', caption: 'A Welcoming Heart', fallbackGradient: 'linear-gradient(145deg, var(--accent-green), var(--accent-purple))' },
-      { src: '/photos/cheruto-03.jpg', caption: 'Grace', fallbackGradient: 'linear-gradient(145deg, var(--accent-purple), var(--accent-green))' },
-    ] },
-    { id: 'community-kindness', name: 'Community', badge: 'Legacy', title: 'Shared Kindness', relationship_type: 'Small everyday acts of care that left a lasting mark on everyone she met.', fullStory: 'Cheruto’s legacy in the community was built through small, everyday acts of care. A kind word, a thoughtful gesture, or a willingness to help could change someone’s whole day.', photos: [
-      { src: '/photos/cheruto-main.jpg', caption: 'Shared Kindness', fallbackGradient: 'linear-gradient(145deg, var(--accent-green), var(--btn-pink))' },
-      { src: '/photos/cheruto-memorial-2.jpg', caption: 'Legacy', fallbackGradient: 'linear-gradient(145deg, var(--accent-purple), var(--accent-green))' },
-    ] },
-  ],
-}
+import { STORY_CHAPTERS, STORY_FAMILY, STORY_FRIENDS, STORY_COMMUNITY } from '../data/fallbackData'
 
 export default function StoryPage() {
   const [expandedId, setExpandedId] = useState(null)
@@ -65,7 +13,7 @@ export default function StoryPage() {
   const { timeline, relationships, loading } = useMemorialData()
 
   const chapters = timeline?.length ? timeline.map((event, index) => {
-    const fallback = chapterDefaults[index] || chapterDefaults[chapterDefaults.length - 1]
+    const fallback = STORY_CHAPTERS[index] || STORY_CHAPTERS[STORY_CHAPTERS.length - 1]
     return {
       ...fallback,
       id: event.id || fallback.id,
@@ -75,29 +23,13 @@ export default function StoryPage() {
       fullStory: event.description ? `${event.description} These memories continue to reveal Cheruto’s light, love, and lasting impact on everyone who knew Cheru.` : fallback.fullStory,
       photos: event.image_url ? [{ src: event.image_url, caption: event.title || fallback.title, fallbackGradient: fallback.photos[0].fallbackGradient }, ...fallback.photos.slice(1)] : fallback.photos,
     }
-  }) : chapterDefaults
+  }) : STORY_CHAPTERS
 
-  const relationshipSections = ['Family', 'Friends', 'Community'].map((sectionName) => {
-    const nameMatches = (relationships || []).filter((relationship) => {
-      const name = (relationship.name || '').toLowerCase()
-      if (sectionName === 'Family') return name.includes('family')
-      if (sectionName === 'Friends') return name.includes('friend')
-      return name.includes('community')
-    })
-
-    const cards = relationshipDefaults[sectionName].map((fallback, index) => {
-      const live = nameMatches[index]
-      return {
-        ...fallback,
-        id: live?.id || fallback.id,
-        photos: live?.image_url
-          ? [{ src: live.image_url, caption: fallback.title, fallbackGradient: fallback.photos[0].fallbackGradient }, ...fallback.photos.slice(1)]
-          : fallback.photos,
-      }
-    })
-
-    return { name: sectionName, cards }
-  })
+  const relationshipSections = [
+    { name: 'Family', cards: STORY_FAMILY },
+    { name: 'Friends', cards: STORY_FRIENDS },
+    { name: 'Community', cards: STORY_COMMUNITY },
+  ]
 
   const toggleExpanded = (id) => setExpandedId((current) => current === id ? null : id)
 
@@ -184,12 +116,12 @@ export default function StoryPage() {
           variant="card"
           collapsed={
             <div className="ch-fade-in" style={{ display: 'grid', gridTemplateColumns: polaroidLeft ? '66px 1fr' : '1fr 66px', alignItems: 'center', gap: '8px', textAlign: polaroidLeft ? 'left' : 'right', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
-              {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{(chapter.image_url || chapter.photos[0].src) ? <img className="cheruto-photo-img" src={chapter.image_url || chapter.photos[0].src} alt={chapter.title} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}</PolaroidFrame>}
+              {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{chapter.image_url || chapter.photos[0].src ? <img className="cheruto-photo-img" src={chapter.image_url || chapter.photos[0].src} alt={chapter.title} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}</PolaroidFrame>}
               <div>
                 {collapsedInlineHeader(chapter, chapter.era, 'var(--accent-purple)', !polaroidLeft)}
                 <p style={{ fontSize: '13.5px', lineHeight: 1.38, color: 'var(--text-brown)', margin: 0 }}>{chapter.description}</p>
               </div>
-              {!polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(2deg)' }}>{(chapter.image_url || chapter.photos[0].src) ? <img src={chapter.image_url || chapter.photos[0].src} alt={chapter.title} style={{ width: '100%', height: '64px', objectFit: 'cover', display: 'block' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}</PolaroidFrame>}
+              {!polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(2deg)' }}>{chapter.image_url || chapter.photos[0].src ? <img className="cheruto-photo-img" src={chapter.image_url || chapter.photos[0].src} alt={chapter.title} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}</PolaroidFrame>}
             </div>
           }
           expanded={expandedCard(chapter)}
