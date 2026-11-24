@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import useMemorialData from '../hooks/useMemorialData'
-import PolaroidFrame from '../components/ui/PolaroidFrame'
 import ExpandableReveal from '../components/ExpandableReveal'
 import { STORY_CHAPTERS, STORY_FAMILY, STORY_FRIENDS, STORY_COMMUNITY } from '../data/fallbackData'
 
@@ -97,17 +96,8 @@ export default function StoryPage() {
     )
   }
 
-  const collapsedInlineHeader = (item, era, badgeColor, isRightAligned) => (
-    <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '4px', justifyContent: isRightAligned ? 'flex-end' : 'flex-start' }}>
-      <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '20px', padding: '3px 8px', borderRadius: '999px', background: badgeColor, color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>{era}</span>
-      <h3 style={{ fontSize: '15px', margin: 0, color: 'var(--text-brown)' }}>{item.title}</h3>
-      <ChevronDown size={15} aria-hidden="true" />
-    </div>
-  )
-
   const renderChapterCard = (chapter, index) => {
     const isExpanded = expandedId === chapter.id
-    const polaroidLeft = index % 2 === 0
 
     return (
       <motion.article className="story-card" layout key={chapter.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(chapter.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(chapter.id) } }} style={{ width: '100%', minHeight: '44px', cursor: 'pointer' }}>
@@ -115,13 +105,18 @@ export default function StoryPage() {
           isOpen={isExpanded}
           variant="card"
           collapsed={
-            <div className="ch-fade-in" style={{ display: 'grid', gridTemplateColumns: polaroidLeft ? '66px 1fr' : '1fr 66px', alignItems: 'center', gap: '8px', textAlign: polaroidLeft ? 'left' : 'right', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
-              {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{chapter.image_url || chapter.photos[0].src ? <img className="cheruto-photo-img" src={chapter.image_url || chapter.photos[0].src} alt={chapter.title} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}</PolaroidFrame>}
+            <div className="ch-fade-in" style={{ display: 'grid', gridTemplateColumns: '1fr 66px', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '16px', backgroundColor: 'var(--white)', boxShadow: '0 6px 18px rgba(93,64,55,.07)', border: '1px solid rgba(93, 64, 55, 0.07)', textAlign: 'left', position: 'relative', zIndex: 2 }}>
               <div>
-                {collapsedInlineHeader(chapter, chapter.era, 'var(--accent-purple)', !polaroidLeft)}
-                <p style={{ fontSize: '13.5px', lineHeight: 1.38, color: 'var(--text-brown)', margin: 0 }}>{chapter.description}</p>
+                <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '7px', marginBottom: '4px' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '22px', padding: '3px 8px', borderRadius: '999px', background: chapter.badgeColor || 'var(--accent-purple)', color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>{chapter.badge}</span>
+                  <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '15px' }}>{chapter.title}</h3>
+                </div>
+                <p style={{ margin: 0, color: 'var(--text-brown)', fontSize: '13.5px', lineHeight: 1.38 }}>{chapter.description}</p>
               </div>
-              {!polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(2deg)' }}>{chapter.image_url || chapter.photos[0].src ? <img className="cheruto-photo-img" src={chapter.image_url || chapter.photos[0].src} alt={chapter.title} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}</PolaroidFrame>}
+              <div style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', background: 'var(--white)', boxShadow: '0 6px 15px rgba(93,64,55,.14)' }}>
+                {chapter.image_url || chapter.photos[0].src ? <img className="cheruto-photo-img" src={chapter.image_url || chapter.photos[0].src} alt={chapter.title} style={{ width: '100%', height: '64px', display: 'block', objectFit: 'cover', borderRadius: '3px' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}
+              </div>
+              <ChevronDown size={16} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', flexShrink: 0 }} />
             </div>
           }
           expanded={expandedCard(chapter)}
@@ -132,7 +127,6 @@ export default function StoryPage() {
 
   const renderRelationshipCard = (relationship, sectionIndex, cardIndex) => {
     const isExpanded = expandedId === relationship.id
-    const polaroidLeft = (sectionIndex * 2 + cardIndex) % 2 === 0
     const badgeColor = sectionIndex === 0 ? 'var(--accent-purple)' : sectionIndex === 1 ? 'var(--btn-pink)' : 'var(--accent-green)'
 
     return (
@@ -141,13 +135,18 @@ export default function StoryPage() {
           isOpen={isExpanded}
           variant="card"
           collapsed={
-            <div className="ch-fade-in" style={{ display: 'grid', gridTemplateColumns: polaroidLeft ? '66px 1fr' : '1fr 66px', alignItems: 'center', gap: '8px', textAlign: polaroidLeft ? 'left' : 'right', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
-              {polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>{relationship.photos[0].src ? <img className="cheruto-photo-img" src={relationship.photos[0].src} alt={relationship.title} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}</PolaroidFrame>}
+            <div className="ch-fade-in" style={{ display: 'grid', gridTemplateColumns: '1fr 66px', alignItems: 'center', gap: '8px', textAlign: 'left', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
               <div>
-                {collapsedInlineHeader(relationship, relationship.badge, badgeColor, !polaroidLeft)}
-                <p style={{ fontSize: '13.5px', lineHeight: 1.38, color: 'var(--text-brown)', margin: 0 }}>{relationship.relationship_type}</p>
+                <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '7px', marginBottom: '4px' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '20px', padding: '3px 8px', borderRadius: '999px', background: relationship.badge, color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>{relationship.badge}</span>
+                  <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '15px' }}>{relationship.title}</h3>
+                </div>
+                <p style={{ margin: 0, color: 'var(--text-brown)', fontSize: '13.5px', lineHeight: 1.38 }}>{relationship.relationship_type}</p>
               </div>
-              {!polaroidLeft && <PolaroidFrame style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(2deg)' }}>{relationship.photos[0].src ? <img className="cheruto-photo-img" src={relationship.photos[0].src} alt={relationship.title} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}</PolaroidFrame>}
+              <div style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', background: 'var(--white)', boxShadow: '0 6px 15px rgba(93,64,55,.14)' }}>
+                {relationship.photos[0].src ? <img className="cheruto-photo-img" src={relationship.photos[0].src} alt={relationship.title} style={{ width: '100%', height: '64px', display: 'block', objectFit: 'cover', borderRadius: '3px' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}
+              </div>
+              <ChevronDown size={15} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', flexShrink: 0 }} />
             </div>
           }
           expanded={expandedCard(relationship)}
@@ -167,16 +166,30 @@ export default function StoryPage() {
         <h2 className="sticky-header-band-title">Her Story</h2>
       </header>
 
-      {loading && <p style={{ fontSize: '14px', margin: '-6px 0 6px' }}>Gathering memories…</p>}
-
       <div style={{ width: '100%', maxWidth: '460px', display: 'grid', gap: '12px', position: 'relative' }}>
-        {chapters.slice(0, 4).map((chapter, index) => renderChapterCard(chapter, index))}
+        {chapters.slice(0, 4).map((chapter, index) => (
+          <>
+            {renderChapterCard(chapter, index)}
+            {index < chapters.slice(0, 4).length - 1 && (
+              <div aria-hidden="true" style={{ position: 'absolute', top: '34px', bottom: '34px', right: '26px', width: '2px', borderRadius: '2px', zIndex: 0, background: 'linear-gradient(180deg, rgba(157,78,221,.35), rgba(255,77,133,.34), rgba(92,52,61,.38))' }} />
+            )}
+          </>
+        ))}
       </div>
 
       {relationshipSections.map((section, sectionIndex) => (
         <div key={section.name} style={{ width: '100%', maxWidth: '460px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
           <div className="sticky-header-band sticky-subheader-band"><h3 className="sticky-header-band-title">{section.name}</h3></div>
-          {section.cards.map((relationship, cardIndex) => renderRelationshipCard(relationship, sectionIndex, cardIndex))}
+          <div style={{ width: '100%', maxWidth: '460px', display: 'grid', gap: '12px', position: 'relative' }}>
+            {section.cards.map((relationship, cardIndex) => (
+              <>
+                {renderRelationshipCard(relationship, sectionIndex, cardIndex)}
+                {cardIndex < section.cards.length - 1 && (
+                  <div aria-hidden="true" style={{ position: 'absolute', top: '34px', bottom: '34px', right: '26px', width: '2px', borderRadius: '2px', zIndex: 0, background: 'linear-gradient(180deg, rgba(157,78,221,.35), rgba(255,77,133,.34), rgba(92,52,61,.38))' }} />
+                )}
+              </>
+            ))}
+          </div>
         </div>
       ))}
     </motion.section>
