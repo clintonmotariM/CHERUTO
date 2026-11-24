@@ -141,7 +141,7 @@ export default function StoryPage() {
                   <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '20px', padding: '3px 8px', borderRadius: '999px', background: relationship.badge, color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>{relationship.badge}</span>
                   <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '15px' }}>{relationship.title}</h3>
                 </div>
-                <p style={{ margin: 0, color: 'var(--text-brown)', fontSize: '13.5px', lineHeight: 1.38 }}>{relationship.relationship_type}</p>
+                <p style={{ margin: 0, color: 'var(--text-brown)', fontSize: '13.5px', lineHeight: 1.38, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{relationship.relationship_type}</p>
               </div>
               <div style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', background: 'var(--white)', boxShadow: '0 6px 15px rgba(93,64,55,.14)' }}>
                 {relationship.photos[0].src ? <img className="cheruto-photo-img" src={relationship.photos[0].src} alt={relationship.title} style={{ width: '100%', height: '64px', display: 'block', objectFit: 'cover', borderRadius: '3px' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}
@@ -170,8 +170,8 @@ export default function StoryPage() {
         {chapters.slice(0, 4).map((chapter, index) => (
           <>
             {renderChapterCard(chapter, index)}
-            {index < chapters.slice(0, 4).length - 1 && (
-              <div aria-hidden="true" style={{ position: 'absolute', top: '34px', bottom: '34px', right: '26px', width: '2px', borderRadius: '2px', zIndex: 0, background: 'linear-gradient(180deg, rgba(157,78,221,.35), rgba(255,77,133,.34), rgba(92,52,61,.38))' }} />
+                {index < chapters.slice(0, 4).length - 1 && (
+                  <div aria-hidden="true" style={{ position: 'absolute', top: '34px', bottom: '34px', right: '26px', width: '2px', borderRadius: '2px', zIndex: 0, pointerEvents: 'none', background: 'linear-gradient(180deg, rgba(157,78,221,.35), rgba(255,77,133,.34), rgba(92,52,61,.38))' }} />
             )}
           </>
         ))}
@@ -185,7 +185,7 @@ export default function StoryPage() {
               <>
                 {renderRelationshipCard(relationship, sectionIndex, cardIndex)}
                 {cardIndex < section.cards.length - 1 && (
-                  <div aria-hidden="true" style={{ position: 'absolute', top: '34px', bottom: '34px', right: '26px', width: '2px', borderRadius: '2px', zIndex: 0, background: 'linear-gradient(180deg, rgba(157,78,221,.35), rgba(255,77,133,.34), rgba(92,52,61,.38))' }} />
+                  <div aria-hidden="true" style={{ position: 'absolute', top: '34px', bottom: '34px', right: '26px', width: '2px', borderRadius: '2px', zIndex: 0, pointerEvents: 'none', background: 'linear-gradient(180deg, rgba(157,78,221,.35), rgba(255,77,133,.34), rgba(92,52,61,.38))' }} />
                 )}
               </>
             ))}

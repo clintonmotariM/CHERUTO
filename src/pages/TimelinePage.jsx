@@ -17,11 +17,12 @@ const stageDateRanges = {
 }
 
 function findEvent(stage, index, events) {
-  const terms = stage.match.map((term) => term.toLowerCase())
-  return events.find((event) => {
+  const safeEvents = events || []
+  const terms = (stage.match || []).map((term) => term.toLowerCase())
+  return safeEvents.find((event) => {
     const title = (event.title || '').toLowerCase()
     return terms.some((term) => title.includes(term))
-  }) || events[index]
+  }) || safeEvents[index]
 }
 
 export default function TimelinePage() {
