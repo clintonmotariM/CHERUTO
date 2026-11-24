@@ -96,31 +96,65 @@ export default function StoryPage() {
     )
   }
 
+  const StoryCollapsedRow = ({ item, badgeColor, isExpanded }) => {
+    const photoSrc = item.image_url || (item.photos?.[0]?.src) || null
+    const photoFallbackGradient = item.photos?.[0]?.fallbackGradient || item.fallbackGradient || 'linear-gradient(145deg, var(--accent-purple), var(--btn-pink))'
+    const title = item.title || item.name || 'Untitled'
+    const subtitle = item.description || item.relationship_type || ''
+
+    return (
+      <ExpandableReveal
+        isOpen={isExpanded}
+        variant="card"
+        collapsed={
+          <div className="ch-fade-in" style={{
+            width: '100%',
+            height: '74px',
+            minHeight: '74px',
+            maxHeight: '74px',
+            backgroundColor: 'var(--white)',
+            borderRadius: '18px',
+            padding: '10px 14px',
+            border: '1px solid rgba(93, 64, 55, 0.08)',
+            boxShadow: '0 6px 18px rgba(93, 64, 55, 0.06)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            position: 'relative',
+            zIndex: 2,
+            cursor: 'pointer',
+            overflow: 'hidden',
+          }}>
+            <div style={{ width: '54px', height: '54px', borderRadius: '12px', flexShrink: 0, overflow: 'hidden', background: item.gradient }}>
+              {photoSrc ? (
+                <img className="cheruto-photo-img" src={photoSrc} alt={title} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }} />
+              ) : (
+                <div style={{ width: '100%', height: '100%', background: photoFallbackGradient }} />
+              )}
+            </div>
+            <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+              <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '7px', marginBottom: '4px' }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '22px', padding: '3px 8px', borderRadius: '999px', background: badgeColor || 'var(--accent-purple)', color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>{item.badge || 'Cherished Moment'}</span>
+                <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '15px', fontWeight: 700, textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>{title}</h3>
+              </div>
+              <p style={{ margin: 0, color: 'var(--text-brown)', fontSize: '13px', lineHeight: 1.45, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                {subtitle}
+              </p>
+            </div>
+            <ChevronDown size={15} style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', flexShrink: 0 }} />
+          </div>
+        }
+        expanded={expandedCard(item)}
+      />
+    )
+  }
+
   const renderChapterCard = (chapter, index) => {
     const isExpanded = expandedId === chapter.id
 
     return (
-      <motion.article className="story-card" layout key={chapter.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(chapter.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(chapter.id) } }} style={{ width: '100%', minHeight: '44px', cursor: 'pointer' }}>
-        <ExpandableReveal
-          isOpen={isExpanded}
-          variant="card"
-          collapsed={
-            <div className="ch-fade-in" style={{ display: 'grid', gridTemplateColumns: '1fr 66px', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '16px', backgroundColor: 'var(--white)', boxShadow: '0 6px 18px rgba(93,64,55,.07)', border: '1px solid rgba(93, 64, 55, 0.07)', textAlign: 'left', position: 'relative', zIndex: 2 }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '7px', marginBottom: '4px' }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '22px', padding: '3px 8px', borderRadius: '999px', background: chapter.badgeColor || 'var(--accent-purple)', color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>{chapter.badge}</span>
-                  <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '15px' }}>{chapter.title}</h3>
-                </div>
-                <p style={{ margin: 0, color: 'var(--text-brown)', fontSize: '13.5px', lineHeight: 1.38 }}>{chapter.description}</p>
-              </div>
-              <div style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', background: 'var(--white)', boxShadow: '0 6px 15px rgba(93,64,55,.14)' }}>
-                {chapter.image_url || chapter.photos[0].src ? <img className="cheruto-photo-img" src={chapter.image_url || chapter.photos[0].src} alt={chapter.title} style={{ width: '100%', height: '64px', display: 'block', objectFit: 'cover', borderRadius: '3px' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: chapter.photos[0].fallbackGradient }} />}
-              </div>
-              <ChevronDown size={16} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', flexShrink: 0 }} />
-            </div>
-          }
-          expanded={expandedCard(chapter)}
-        />
+      <motion.article className="story-card" layout key={chapter.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(chapter.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(chapter.id) } }} style={{ width: '100%', minHeight: '74px', cursor: 'pointer' }}>
+        <StoryCollapsedRow item={chapter} badgeColor={chapter.badgeColor || 'var(--accent-purple)'} isExpanded={isExpanded} />
       </motion.article>
     )
   }
@@ -130,27 +164,8 @@ export default function StoryPage() {
     const badgeColor = sectionIndex === 0 ? 'var(--accent-purple)' : sectionIndex === 1 ? 'var(--btn-pink)' : 'var(--accent-green)'
 
     return (
-      <motion.article className="story-card" layout key={relationship.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(relationship.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(relationship.id) } }} style={{ width: '100%', minHeight: '44px', cursor: 'pointer' }}>
-        <ExpandableReveal
-          isOpen={isExpanded}
-          variant="card"
-          collapsed={
-            <div className="ch-fade-in" style={{ display: 'grid', gridTemplateColumns: '1fr 66px', alignItems: 'center', gap: '8px', textAlign: 'left', background: 'var(--white)', borderRadius: '16px', padding: '10px 12px', boxShadow: '0 6px 18px rgba(93,64,55,.07)' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '7px', marginBottom: '4px' }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '20px', padding: '3px 8px', borderRadius: '999px', background: relationship.badge, color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>{relationship.badge}</span>
-                  <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '15px' }}>{relationship.title}</h3>
-                </div>
-                <p style={{ margin: 0, color: 'var(--text-brown)', fontSize: '13.5px', lineHeight: 1.38, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{relationship.relationship_type}</p>
-              </div>
-              <div style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', background: 'var(--white)', boxShadow: '0 6px 15px rgba(93,64,55,.14)' }}>
-                {relationship.photos[0].src ? <img className="cheruto-photo-img" src={relationship.photos[0].src} alt={relationship.title} style={{ width: '100%', height: '64px', display: 'block', objectFit: 'cover', borderRadius: '3px' }} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: relationship.photos[0].fallbackGradient }} />}
-              </div>
-              <ChevronDown size={15} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', flexShrink: 0 }} />
-            </div>
-          }
-          expanded={expandedCard(relationship)}
-        />
+      <motion.article className="story-card" layout key={relationship.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(relationship.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(relationship.id) } }} style={{ width: '100%', minHeight: '74px', cursor: 'pointer' }}>
+        <StoryCollapsedRow item={relationship} badgeColor={badgeColor} isExpanded={isExpanded} />
       </motion.article>
     )
   }
@@ -170,8 +185,8 @@ export default function StoryPage() {
         {chapters.slice(0, 4).map((chapter, index) => (
           <>
             {renderChapterCard(chapter, index)}
-                {index < chapters.slice(0, 4).length - 1 && (
-                  <div aria-hidden="true" style={{ position: 'absolute', top: '34px', bottom: '34px', right: '26px', width: '2px', borderRadius: '2px', zIndex: 0, pointerEvents: 'none', background: 'linear-gradient(180deg, rgba(157,78,221,.35), rgba(255,77,133,.34), rgba(92,52,61,.38))' }} />
+            {index < chapters.slice(0, 4).length - 1 && (
+              <div aria-hidden="true" style={{ position: 'absolute', top: '34px', bottom: '34px', right: '26px', width: '2px', borderRadius: '2px', zIndex: 0, pointerEvents: 'none', background: 'linear-gradient(180deg, rgba(157,78,221,.35), rgba(255,77,133,.34), rgba(92,52,61,.38))' }} />
             )}
           </>
         ))}
