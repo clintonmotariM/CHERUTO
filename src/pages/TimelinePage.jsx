@@ -30,23 +30,38 @@ export default function TimelinePage() {
   const [expandedId, setExpandedId] = useState(null)
 
   const items = stages.map((stage, index) => {
-    const event = findEvent(stage, index, timeline)
-    const title = event?.title && stage.match.some((term) => event.title.toLowerCase().includes(term))
+    const safeEvent = timeline[index] || {}
+    const mergedStage = {
+      ...stage,
+      ...safeEvent,
+      title: safeEvent.title || stage.title,
+      photoUrl: safeEvent.image_url || stage.photoUrl || null,
+      biography: safeEvent.description
+        ? `${safeEvent.description} ${stage.biography}`
+        : stage.biography,
+      year: safeEvent.event_date
+        ? new Date(`${safeEvent.event_date}T12:00:00`).toLocaleDateString(undefined, { year: 'numeric' })
+        : stage.year,
+      place: safeEvent.location_name || stage.place,
+    }
+
+    const event = findEvent(mergedStage, index, timeline)
+    const title = event?.title && (stage.match || []).some((term) => event.title.toLowerCase().includes(term))
       ? stage.title
       : stage.title
 
     return {
-      ...stage,
+      ...mergedStage,
       title,
-      preview: stage.preview,
-      photoUrl: event?.image_url || stage.photoUrl || null,
+      preview: mergedStage.preview,
+      photoUrl: event?.image_url || mergedStage.photoUrl || null,
       biography: event?.description
-        ? `${event.description} ${stage.biography}`
-        : stage.biography,
+        ? `${event.description} ${mergedStage.biography}`
+        : mergedStage.biography,
       year: event?.event_date
         ? new Date(`${event.event_date}T12:00:00`).toLocaleDateString(undefined, { year: 'numeric' })
-        : stage.year,
-      place: event?.location_name || stage.place,
+        : mergedStage.year,
+      place: event?.location_name || mergedStage.place,
     }
   })
 
