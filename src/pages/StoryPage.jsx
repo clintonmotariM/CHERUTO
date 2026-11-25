@@ -184,8 +184,8 @@ export default function StoryPage() {
         {chapters.slice(0, 4).map((chapter, index) => (
           <>
             {renderChapterCard(chapter, index)}
-            {index < chapters.slice(0, 4).length - 1 && (
-              <div aria-hidden="true" style={{ position: 'absolute', top: '34px', bottom: '34px', right: '26px', width: '2px', borderRadius: '2px', zIndex: 0, pointerEvents: 'none', background: 'linear-gradient(180deg, rgba(157,78,221,.35), rgba(255,77,133,.34), rgba(92,52,61,.38))' }} />
+                {index < chapters.slice(0, 4).length - 1 && (
+                  <div aria-hidden="true" style={{ position: 'absolute', top: '34px', bottom: '34px', left: '40px', width: '2px', borderRadius: '2px', zIndex: 0, pointerEvents: 'none', background: 'linear-gradient(180deg, rgba(157,78,221,.35), rgba(255,77,133,.34), rgba(92,52,61,.38))' }} />
             )}
           </>
         ))}
@@ -199,7 +199,7 @@ export default function StoryPage() {
               <>
                 {renderRelationshipCard(relationship, sectionIndex, cardIndex)}
                 {cardIndex < section.cards.length - 1 && (
-                  <div aria-hidden="true" style={{ position: 'absolute', top: '34px', bottom: '34px', right: '26px', width: '2px', borderRadius: '2px', zIndex: 0, pointerEvents: 'none', background: 'linear-gradient(180deg, rgba(157,78,221,.35), rgba(255,77,133,.34), rgba(92,52,61,.38))' }} />
+                  <div aria-hidden="true" style={{ position: 'absolute', top: '34px', bottom: '34px', left: '40px', width: '2px', borderRadius: '2px', zIndex: 0, pointerEvents: 'none', background: 'linear-gradient(180deg, rgba(157,78,221,.35), rgba(255,77,133,.34), rgba(92,52,61,.38))' }} />
                 )}
               </>
             ))}

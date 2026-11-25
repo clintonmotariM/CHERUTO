@@ -115,12 +115,12 @@ export default function TimelinePage() {
                       {item.photoUrl ? <img className="cheruto-photo-img" src={item.photoUrl} alt={item.title} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: item.gradient }} />}
                     </div>
                     <div>
-                      <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '7px', marginBottom: '4px' }}>
-                        <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '22px', padding: '3px 8px', borderRadius: '999px', background: badgeColor, color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>{item.badge}</span>
-                        <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '15px' }}>{item.title}</h3>
-                        <ChevronDown size={16} aria-hidden="true" style={{ marginLeft: 'auto', flexShrink: 0 }} />
-                      </div>
-                      <p style={{ margin: 0, color: 'var(--text-brown)', fontSize: '13.5px', lineHeight: 1.38 }}>{item.preview}</p>
+              <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '7px', marginBottom: '4px' }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '22px', padding: '3px 8px', borderRadius: '999px', background: badgeColor, color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>{item.tag || item.badge}</span>
+                <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '15px' }}>{item.title}</h3>
+                <ChevronDown size={16} aria-hidden="true" style={{ marginLeft: 'auto', flexShrink: 0 }} />
+              </div>
+              <p style={{ margin: 0, color: 'var(--text-brown)', fontSize: '13px', lineHeight: 1.38, marginBottom: '4px' }}>{item.summary || item.preview}</p>
                     </div>
                   </div>
                 }
