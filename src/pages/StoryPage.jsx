@@ -19,7 +19,7 @@ export default function StoryPage() {
       title: event.title || fallback.title,
       era: event.event_date ? new Date(`${event.event_date}T12:00:00`).toLocaleDateString(undefined, { year: 'numeric', month: 'short' }) : fallback.era,
       description: event.description || fallback.description,
-      fullStory: event.description ? `${event.description} These memories continue to reveal Cheruto’s light, love, and lasting impact on everyone who knew Cheru.` : fallback.fullStory,
+      fullStory: event.description ? `${event.description} These memories continue to reveal Cheruto's light, love, and lasting impact on everyone who knew Cheru.` : fallback.fullStory,
       photos: event.image_url ? [{ src: event.image_url, caption: event.title || fallback.title, fallbackGradient: fallback.photos[0].fallbackGradient }, ...fallback.photos.slice(1)] : fallback.photos,
     }
   }) : STORY_CHAPTERS
@@ -49,6 +49,7 @@ export default function StoryPage() {
 
     return () => window.clearInterval(timer)
   }, [expandedId, shouldReduceMotion, chapters, relationshipSections])
+
   const getPhotoIndex = (id, count) => ((photoIndexById[id] || 0) < count ? (photoIndexById[id] || 0) : 0)
 
   const expandedCard = (item) => {
@@ -146,6 +147,10 @@ export default function StoryPage() {
         expanded={expandedCard(item)}
       />
     )
+  }
+
+  const renderChapterCard = (chapter) => {
+    const isExpanded = expandedId === chapter.id
 
     return (
       <motion.article className="story-card" layout key={chapter.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(chapter.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(chapter.id) } }} style={{ width: '100%', minHeight: '72px', cursor: 'pointer' }}>
@@ -179,9 +184,9 @@ export default function StoryPage() {
       <div style={{ width: '100%', maxWidth: '460px', display: 'grid', gap: '12px', position: 'relative' }}>
         {chapters.slice(0, 4).map((chapter, index) => (
           <>
-            {renderChapterCard(chapter, index)}
-                {index < chapters.slice(0, 4).length - 1 && (
-                  <div aria-hidden="true" style={{ position: 'absolute', top: '34px', bottom: '34px', left: '40px', width: '2px', borderRadius: '2px', zIndex: 0, pointerEvents: 'none', background: 'linear-gradient(180deg, rgba(157,78,221,.35), rgba(255,77,133,.34), rgba(92,52,61,.38))' }} />
+            {renderChapterCard(chapter)}
+            {index < chapters.slice(0, 4).length - 1 && (
+              <div aria-hidden="true" style={{ position: 'absolute', top: '34px', bottom: '34px', left: '40px', width: '2px', borderRadius: '2px', zIndex: 0, pointerEvents: 'none', background: 'linear-gradient(180deg, rgba(157,78,221,.35), rgba(255,77,133,.34), rgba(92,52,61,.38))' }} />
             )}
           </>
         ))}
