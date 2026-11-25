@@ -84,7 +84,7 @@ export default function TimelinePage() {
       {loading && <p style={{ margin: '0 0 8px', fontSize: '14px' }}>Gathering Cheruto’s milestones…</p>}
 
       <div style={{ width: '100%', maxWidth: '460px', position: 'relative', display: 'grid', gap: '12px' }}>
-        <div aria-hidden="true" style={{ position: 'absolute', top: '34px', bottom: '34px', left: '32px', width: '2px', borderRadius: '2px', zIndex: 0, background: 'linear-gradient(180deg, rgba(157,78,221,.35), rgba(255,77,133,.34), rgba(92,52,61,.38))' }} />
+        <div aria-hidden="true" style={{ position: 'absolute', top: '34px', bottom: '34px', left: '39px', width: '2px', borderRadius: '2px', zIndex: 0, background: 'linear-gradient(180deg, rgba(157,78,221,.35), rgba(255,77,133,.34), rgba(92,52,61,.38))' }} />
 
         {items.map((item, index) => {
           const isExpanded = expandedId === item.id
@@ -110,17 +110,34 @@ export default function TimelinePage() {
                 isOpen={isExpanded}
                 variant="card"
                 collapsed={
-                  <div className="ch-fade-in" style={{ display: 'grid', gridTemplateColumns: '66px 1fr', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '16px', backgroundColor: 'var(--white)', boxShadow: '0 6px 18px rgba(93,64,55,.07)', border: '1px solid rgba(93, 64, 55, 0.07)', textAlign: 'left', position: 'relative', zIndex: 2 }}>
-                    <div className="cheruto-photo-frame" style={{ width: '66px', height: '74px', padding: '5px', borderRadius: '6px', transform: 'rotate(-2deg)' }}>
-                      {item.photoUrl ? <img className="cheruto-photo-img" src={item.photoUrl} alt={item.title} /> : <div style={{ width: '100%', height: '64px', borderRadius: '3px', background: item.gradient }} />}
+                  <div className="ch-fade-in" style={{
+                    width: '100%',
+                    minHeight: '72px',
+                    height: 'auto',
+                    padding: '10px 14px',
+                    borderRadius: '18px',
+                    backgroundColor: 'var(--white)',
+                    boxShadow: '0 6px 18px rgba(93,64,55,.07)',
+                    border: '1px solid rgba(93, 64, 55, 0.07)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    position: 'relative',
+                    zIndex: 2,
+                    cursor: 'pointer',
+                  }}>
+                    <div className="cheruto-photo-frame" style={{ width: '50px', height: '50px', borderRadius: '11px', flexShrink: 0, overflow: 'hidden', background: item.gradient }}>
+                      {item.photoUrl ? <img className="cheruto-photo-img" src={item.photoUrl} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '11px' }} /> : <div style={{ width: '100%', height: '100%', background: item.gradient }} />}
                     </div>
-                    <div>
-              <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '7px', marginBottom: '4px' }}>
-                <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '22px', padding: '3px 8px', borderRadius: '999px', background: badgeColor, color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>{item.tag || item.badge}</span>
-                <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '15px' }}>{item.title}</h3>
-                <ChevronDown size={16} aria-hidden="true" style={{ marginLeft: 'auto', flexShrink: 0 }} />
-              </div>
-              <p style={{ margin: 0, color: 'var(--text-brown)', fontSize: '13px', lineHeight: 1.38, marginBottom: '4px' }}>{item.summary || item.preview}</p>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '7px', flexWrap: 'nowrap', minWidth: 0, marginBottom: '3px' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '22px', padding: '2px 8px', borderRadius: '999px', background: badgeColor, color: 'var(--white)', fontSize: '10.5px', fontWeight: 700 }}>{item.tag || item.badge}</span>
+                        <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '14px', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>{item.title}</h3>
+                        <ChevronDown size={13} style={{ marginLeft: '4px', flexShrink: 0 }} />
+                      </div>
+                      <p style={{ margin: 0, color: 'var(--text-brown)', fontSize: '12.5px', lineHeight: 1.45, color: 'var(--text-brown)', marginTop: '3px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        {item.summary || item.preview}
+                      </p>
                     </div>
                   </div>
                 }

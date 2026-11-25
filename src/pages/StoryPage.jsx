@@ -109,50 +109,46 @@ export default function StoryPage() {
         collapsed={
           <div className="ch-fade-in" style={{
             width: '100%',
-            minHeight: '82px',
+            minHeight: '72px',
             height: 'auto',
-            padding: '14px 16px',
+            padding: '10px 14px',
             backgroundColor: 'var(--white)',
             borderRadius: '18px',
             border: '1px solid rgba(93, 64, 55, 0.08)',
             boxShadow: '0 6px 18px rgba(93, 64, 55, 0.06)',
             display: 'flex',
             alignItems: 'center',
-            gap: '14px',
+            gap: '12px',
             position: 'relative',
             zIndex: 2,
             cursor: 'pointer',
             overflow: 'hidden',
           }}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '12px', flexShrink: 0, overflow: 'hidden', background: item.gradient }}>
+            <div style={{ width: '50px', height: '50px', borderRadius: '11px', flexShrink: 0, overflow: 'hidden', background: item.gradient }}>
               {photoSrc ? (
-                <img className="cheruto-photo-img" src={photoSrc} alt={title} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }} />
+                <img className="cheruto-photo-img" src={photoSrc} alt={title} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '11px' }} />
               ) : (
                 <div style={{ width: '100%', height: '100%', background: photoFallbackGradient }} />
               )}
             </div>
             <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-              <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '4px' }}>
-                <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '22px', padding: '3px 8px', borderRadius: '999px', background: badgeColor || 'var(--accent-purple)', color: 'var(--white)', fontSize: '11px', fontWeight: 700 }}>{item.badge || 'Cherished Moment'}</span>
-                <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '14.5px', fontWeight: 700, textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>{title}</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', flexWrap: 'nowrap', minWidth: 0, marginBottom: '3px' }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '22px', padding: '2px 8px', borderRadius: '999px', background: badgeColor || 'var(--accent-purple)', color: 'var(--white)', fontSize: '10.5px', fontWeight: 700 }}>{item.badge || 'Cherished Moment'}</span>
+                <h3 style={{ margin: 0, color: 'var(--text-brown)', fontSize: '14px', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>{title}</h3>
+                <ChevronDown size={13} style={{ marginLeft: '4px', flexShrink: 0 }} />
               </div>
-              <p style={{ margin: 0, color: 'var(--text-brown)', fontSize: '13px', lineHeight: 1.45, marginTop: '4px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+              <p style={{ margin: 0, color: 'var(--text-brown)', fontSize: '12.5px', lineHeight: 1.45, color: 'var(--text-brown)', marginTop: '3px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {subtitle}
               </p>
             </div>
-            <ChevronDown size={14} style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', flexShrink: 0 }} />
           </div>
         }
         expanded={expandedCard(item)}
       />
     )
-  }
-
-  const renderChapterCard = (chapter, index) => {
-    const isExpanded = expandedId === chapter.id
 
     return (
-      <motion.article className="story-card" layout key={chapter.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(chapter.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(chapter.id) } }} style={{ width: '100%', minHeight: '82px', cursor: 'pointer' }}>
+      <motion.article className="story-card" layout key={chapter.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(chapter.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(chapter.id) } }} style={{ width: '100%', minHeight: '72px', cursor: 'pointer' }}>
         <StoryCollapsedRow item={chapter} badgeColor={chapter.badgeColor || 'var(--accent-purple)'} isExpanded={isExpanded} />
       </motion.article>
     )
@@ -163,7 +159,7 @@ export default function StoryPage() {
     const badgeColor = sectionIndex === 0 ? 'var(--accent-purple)' : sectionIndex === 1 ? 'var(--btn-pink)' : 'var(--accent-green)'
 
     return (
-      <motion.article className="story-card" layout key={relationship.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(relationship.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(relationship.id) } }} style={{ width: '100%', minHeight: '82px', cursor: 'pointer' }}>
+      <motion.article className="story-card" layout key={relationship.id} role="button" tabIndex={0} aria-expanded={isExpanded} onClick={() => toggleExpanded(relationship.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpanded(relationship.id) } }} style={{ width: '100%', minHeight: '72px', cursor: 'pointer' }}>
         <StoryCollapsedRow item={relationship} badgeColor={badgeColor} isExpanded={isExpanded} />
       </motion.article>
     )
